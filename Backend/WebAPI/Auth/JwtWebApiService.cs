@@ -1,5 +1,6 @@
 ﻿using ITTitans.Hackathon2025.EntityModel;
 using ITTitans.Hackathon2025.EntityModel.Auth;
+using ITTitans.Hackathon2025.EntityModel.Skill;
 using ITTitans.Hackathon2025.Model;
 using ITTitans.Hackathon2025.Model.Auth;
 using ITTitans.Hackathon2025.Service.Interfaces;
@@ -72,12 +73,16 @@ public class JwtWebApiService : IJwtWebApiService
             new(HackathonClaims.DisplayNameClaimName, user.DisplayName),
         ];
         
+        // add auth claims to token
         IEnumerable<AuthClaimType> authClaimTypes = await this.GetAuthClaimTypesOfUserAsync(user.Id, CancellationToken.None);
         foreach (AuthClaimType authClaimType in authClaimTypes)
         {
             claims.AddRange(new Claim(HackathonClaims.AuthClaimName, authClaimType.ToString()));
         }
         
+        // add possible skills to review to token
+        IEnumerable<Guid> possibleSkillsToReview = await this.GetPossibleSkillsToReviewAsync(user.Id);
+        claims.AddRange(possibleSkillsToReview.Select(skillId => new Claim(HackathonClaims.PossibleSkillsToReviewClaimName, skillId.ToString())));
 
         return claims;
     }
@@ -108,5 +113,24 @@ public class JwtWebApiService : IJwtWebApiService
             .Where(authClaimType => authClaimType.HasValue)
             .Select(authClaimType => authClaimType!.Value)
             .ToList();
+    }
+
+    private async Task<IEnumerable<Guid>> GetPossibleSkillsToReviewAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        bool isPredefinedAdmin = userId == StaticData.PredefinedAdminUserId;
+
+        IQueryable<SkillEntity> skillsQuery = this.hackathonDbContext.Skills;
+        
+        if (!isPredefinedAdmin)
+        {
+            skillsQuery = skillsQuery
+                .Where(skill => skill.PossibleReviewer.Any(r => r.Id == userId));
+        }
+        
+        return await skillsQuery
+            .Select(skill => skill.Id)
+            .ToListAsync(cancellationToken);
     }
 }

@@ -5,4 +5,5 @@ public static class HackathonClaims
     public const string UserIdClaimName = "Hackathon-User-ID";
     public const string AuthClaimName = "Hackathon-Auth";
     public const string DisplayNameClaimName = "Hackathon-Display-Name";
+    public const string PossibleSkillsToReviewClaimName = "Hackathon-Possible-Skills-To-Review";
 }
