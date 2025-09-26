@@ -12,6 +12,9 @@
     }
   ],
   "compilerOptions": {
-    "module": "NodeNext"
+    "module": "NodeNext",
+    
+    // volar support:
+    "types": ["element-plus/global"]
   }
 }

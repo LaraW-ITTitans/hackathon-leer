@@ -1,85 +1,41 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <el-config-provider :size="size" :z-index="zIndex" :locale="language">
+    <el-container>
+      <el-header v-if="!isBlacklistedRoute">
+        <PageHeaderComponent />
+      </el-header>
+      <el-container>
+        <el-aside width="200px" v-if="!(isBlacklistedRoute || isFullPageRoute)">
+        </el-aside>
+        <el-container>
+          <el-main>
+            <RouterView />
+          </el-main>
+          <el-footer v-if="!isBlacklistedRoute">
+            <PageFooterComponent />
+          </el-footer>
+        </el-container>
+      </el-container>
+    </el-container>
+  </el-config-provider>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
+<script setup lang="ts">
+import { computed } from 'vue'
+import { ElConfigProvider } from 'element-plus'
+import { RouterView, useRoute } from 'vue-router'
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
+import PageHeaderComponent from '@/components/layout/PageHeaderComponent.vue'
+import PageFooterComponent from '@/components/layout/PageFooterComponent.vue'
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
+const zIndex = 3000
+const size = 'default'
+const language = 'de'
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
+const blacklist = ['/auth', '/register']
+const fullPages = ['/']
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
+const route = useRoute()
+const isBlacklistedRoute = computed(() => blacklist.includes(route.path))
+const isFullPageRoute = computed(() => fullPages.includes(route.path))
+</script>
