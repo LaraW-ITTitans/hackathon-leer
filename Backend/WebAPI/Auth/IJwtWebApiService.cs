@@ -8,5 +8,6 @@ public interface IJwtWebApiService
     Task<string> CreateToken(
         HackathonUserEntity user,
         ClaimsPrincipal userAsClaimsPrincipal,
+        bool longLived,
         CancellationToken cancellationToken = default);
 }

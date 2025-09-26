@@ -14,7 +14,8 @@ namespace ITTitans.Hackathon2025.WebAPI.Auth;
 
 public class JwtWebApiService : IJwtWebApiService
 {
-    private static readonly TimeSpan TokenExpirationDuration = TimeSpan.FromDays(1);
+    private static readonly TimeSpan ShortLivedTokenExpiration = TimeSpan.FromDays(1);
+    private static readonly TimeSpan LongLivedTokenExpiration = TimeSpan.FromDays(30);
     
     private readonly IWebServerAppSettingsService webServerAppSettingsService;
     private readonly IAuthClaimFactory authClaimFactory;
@@ -30,12 +31,13 @@ public class JwtWebApiService : IJwtWebApiService
     public async Task<string> CreateToken(
         HackathonUserEntity user,
         ClaimsPrincipal userAsClaimsPrincipal,
+        bool longLived,
         CancellationToken cancellationToken = default)
     {
         JwtAppSettingsDto jwtSettings = this.webServerAppSettingsService.GetJwtSettings();
 
         IEnumerable<Claim> claims = await this.GenerateClaimsAsync(user, jwtSettings.Subject);
-        DateTime expires = DateTime.Now.Add(TokenExpirationDuration);
+        DateTime expires = DateTime.Now.Add(longLived ? LongLivedTokenExpiration : ShortLivedTokenExpiration);
         SigningCredentials signingCredentials = CreateSigningCredentials(jwtSettings.Key);
 
         var token = new JwtSecurityToken(

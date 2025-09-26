@@ -46,15 +46,16 @@ public class LoginEndpoint : Endpoint<LoginBindingModel, LoginResponseBindingMod
             return;
         }
 
-        LoginResponseBindingModel result = await this.GenerateLoginResponseModelAsync(user, ct);
+        LoginResponseBindingModel result = await this.GenerateLoginResponseModelAsync(user, req.RememberMe, ct);
         await this.Send.OkAsync(result, ct);
     }
     
     private async Task<LoginResponseBindingModel> GenerateLoginResponseModelAsync(
         HackathonUserEntity user,
+        bool longLived,
         CancellationToken cancellationToken = default)
     {
-        string token = await this.jwtWebApiService.CreateToken(user, this.User, cancellationToken);
+        string token = await this.jwtWebApiService.CreateToken(user, this.User, longLived, cancellationToken);
 
         return new LoginResponseBindingModel
         {
