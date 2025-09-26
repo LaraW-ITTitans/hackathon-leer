@@ -7,6 +7,8 @@ import {
   SkillsApiClient,
 } from '@/api/codegen'
 
+/*
+
 let BASE_PATH = undefined
 let configFile = undefined
 
@@ -22,7 +24,10 @@ try {
   console.error(e)
 }
 
-BASE_PATH = configFile ?? import.meta.env.VITE_API_URI;
+BASE_PATH = configFile ?? import.meta.env.VITE_API_URI; */
+
+// TODO
+const BASE_PATH = 'https://localhost:7108'
 
 /* API CLIENTS */
 
