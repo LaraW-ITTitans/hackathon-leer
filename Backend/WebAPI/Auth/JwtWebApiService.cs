@@ -9,7 +9,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Json;
 
 namespace ITTitans.Hackathon2025.WebAPI.Auth;
 
@@ -68,9 +67,12 @@ public class JwtWebApiService : IJwtWebApiService
             new(HackathonClaims.DisplayNameClaimName, user.DisplayName),
         ];
         
-        IEnumerable<AuthClaimType> allClaims = await this.GetAuthClaimTypesOfUserAsync(user.Id, CancellationToken.None);
-        var authClaims = new Claim(HackathonClaims.AuthClaimName, JsonSerializer.Serialize(allClaims));
-        claims.AddRange(authClaims);
+        IEnumerable<AuthClaimType> authClaimTypes = await this.GetAuthClaimTypesOfUserAsync(user.Id, CancellationToken.None);
+        foreach (AuthClaimType authClaimType in authClaimTypes)
+        {
+            claims.AddRange(new Claim(HackathonClaims.AuthClaimName, authClaimType.ToString()));
+        }
+        
 
         return claims;
     }

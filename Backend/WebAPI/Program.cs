@@ -1,5 +1,4 @@
 using FastEndpoints;
-using FastEndpoints.Swagger;
 using ITTitans.Hackathon2025.EntityModel;
 using ITTitans.Hackathon2025.Model;
 using ITTitans.Hackathon2025.Service.Interfaces;
@@ -11,7 +10,6 @@ using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
 using System.Text;
 
 namespace ITTitans.Hackathon2025.WebAPI;
@@ -74,7 +72,7 @@ public static class Program
             {
                 swaggerGenerationOptions.SwaggerDoc(
                     "v1",
-                    new OpenApiInfo { Title = "Hackathon API", Version = "v1" }
+                    new OpenApiInfo { Title = "Hackathon API", Version = "1.0.0" }
                 );
 
                 // enforce using JWT
@@ -86,7 +84,7 @@ public static class Program
                         BearerFormat = "JWT",
                         In = ParameterLocation.Header,
                         Scheme = "bearer",
-                        Description = "SiGeKo JWT",
+                        Description = "Hackathon JWT",
                         Name = Program.JwtHttpHeader,
                     }
                 );
@@ -106,11 +104,6 @@ public static class Program
                         },
                     }
                 );
-
-                // integrate documentation
-                string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                swaggerGenerationOptions.IncludeXmlComments(xmlPath);
             });
         }
         
@@ -174,19 +167,22 @@ public static class Program
 
                             return Task.CompletedTask;
                         },
+                        OnAuthenticationFailed = context =>
+                        {
+                            Console.WriteLine(context);
+                            
+                            return Task.CompletedTask;
+                        },
                     };
                 }
             );
         builder.Services.AddHackathonPolicies();
-
-        builder.Services.AddAuthorization();
     }
 
     private static void ConfigureApp(WebApplication app)
     {
         app.UseCors(Program.CorsConfigurationName);
         
-        app.UseHttpsRedirection();
         app.UseRouting();
         
         JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -198,7 +194,10 @@ public static class Program
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hackathon API v1");
+            });
         }
     }
 

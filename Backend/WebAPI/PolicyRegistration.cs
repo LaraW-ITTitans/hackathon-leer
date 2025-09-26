@@ -1,5 +1,6 @@
 ﻿using ITTitans.Hackathon2025.Model.Auth;
 using ITTitans.Hackathon2025.Utils;
+using ITTitans.Hackathon2025.WebAPI.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 
@@ -12,17 +13,18 @@ public static class PolicyRegistration
         AuthorizationBuilder authorizationBuilder = services.AddAuthorizationBuilder();
         
         AuthClaimType[] authClaimTypes = Enum.GetValues<AuthClaimType>();
+
         foreach (AuthClaimType authClaimType in authClaimTypes)
         {
             authorizationBuilder.AddPolicy(
                 authClaimType.ToString(),
                 policy =>
                 {
-                    policy.AddRequirements(new ClaimsAuthorizationRequirement(ClaimUtils.AuthClaimType, [authClaimType.ToString()]));
+                    policy.AddRequirements(new OrClaimsRequirement(authClaimType));
                 }
             );
         }
-
+        
         return services;
     }
 }
