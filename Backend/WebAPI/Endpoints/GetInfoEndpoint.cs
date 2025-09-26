@@ -18,6 +18,10 @@ public class GetInfoEndpoint : EndpointWithoutRequest<ApiInfoBindingModel>
     {
         this.Get("api/info");
         this.AllowAnonymous();
+        
+        this.Description(builder => builder
+            .WithName("Show API Info")
+            .WithTags("Info"));
     }
 
     public override async Task HandleAsync(CancellationToken ct)

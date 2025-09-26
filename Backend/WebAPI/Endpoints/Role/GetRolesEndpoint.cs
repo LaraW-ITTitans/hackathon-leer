@@ -21,6 +21,10 @@ public class GetRolesEndpoint : EndpointWithoutRequest<List<BasicRoleBindingMode
     {
         this.Get("api/roles");
         this.AddHackathonPolicy(AuthClaimType.SeeRole);
+        
+        this.Description(builder => builder
+            .WithName("Get All Roles")
+            .WithTags("Roles"));
     }
 
     public override async Task HandleAsync(CancellationToken ct)

@@ -22,6 +22,10 @@ public class DeleteRoleEndpoint : Endpoint<DeleteRoleBindingModel>
     {
         this.Delete("api/roles");
         this.AddHackathonPolicy(AuthClaimType.ManageRole);
+        
+        this.Description(builder => builder
+            .WithName("Delete Role")
+            .WithTags("Roles"));
     }
 
     public override async Task HandleAsync(DeleteRoleBindingModel req, CancellationToken ct)
