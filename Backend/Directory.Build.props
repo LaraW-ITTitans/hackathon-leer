@@ -19,7 +19,7 @@
     <Copyright>2025 IT-Titans GmbH</Copyright>
   </PropertyGroup>
   <PropertyGroup>
-    <NoWarn>$(NoWarn);CA2007;1591</NoWarn>
+    <NoWarn>$(NoWarn);CA2007;1591;CA1848;CA1008</NoWarn>
     <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>

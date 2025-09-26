@@ -34,6 +34,8 @@ public class JwtWebApiService : IJwtWebApiService
         bool longLived,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(user);
+        
         JwtAppSettingsDto jwtSettings = this.webServerAppSettingsService.GetJwtSettings();
 
         IEnumerable<Claim> claims = await this.GenerateClaimsAsync(user, jwtSettings.Subject);

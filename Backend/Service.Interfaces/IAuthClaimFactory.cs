@@ -5,7 +5,7 @@ namespace ITTitans.Hackathon2025.Service.Interfaces;
 
 public interface IAuthClaimFactory
 {
-    Claim BuildClaim(AuthClaimType siGeKoAuthClaimType);
+    Claim BuildClaim(AuthClaimType authClaimType);
     
     AuthClaimType? Extract(Claim claim);
     
