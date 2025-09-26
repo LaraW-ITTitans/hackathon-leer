@@ -1,42 +1,101 @@
-var builder = WebApplication.CreateBuilder(args);
+using FastEndpoints;
+using FastEndpoints.Swagger;
+using ITTitans.Hackathon2025.EntityModel;
+using ITTitans.Hackathon2025.Service.Interfaces;
+using ITTitans.Hackathon2025.Service.Settings;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
-// Add services to the container.
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+namespace ITTitans.Hackathon2025.WebAPI;
 
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+public static class Program
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast",
-        () =>
+    private const string CorsConfigurationName = "CorsConfiguration";
+    
+    public static async Task Main(string[] args)
+    {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+        
+        builder.Configuration
+            .SetBasePath(builder.Environment.ContentRootPath)
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables();
+        var webServerAppSettingsService = new WebServerAppSettingsService(new AppSettingsReader(builder.Configuration));
+        
+        builder.Services.AddFastEndpoints();
+        
+        builder.Services.AddCors(options =>
         {
-            var forecast = Enumerable.Range(1, 5).Select(index =>
-                    new WeatherForecast(
-                        DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                        Random.Shared.Next(-20, 55),
-                        summaries[Random.Shared.Next(summaries.Length)]
-                    ))
-                .ToArray();
-            return forecast;
-        })
-    .WithName("GetWeatherForecast");
+            options.AddPolicy(
+                name: Program.CorsConfigurationName,
+                corsPolicyBuilder =>
+                {
+                    // frontend
+                    string frontendUriAsString = webServerAppSettingsService.GetFrontendUri().OriginalString;
+                    corsPolicyBuilder
+                        .WithOrigins(frontendUriAsString)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .WithExposedHeaders("Content-Disposition");
+                }
+            );
+        });
+        
+        builder.Services.SwaggerDocument();
+        
+        string connectionString = webServerAppSettingsService.GetHackathonDbContextConnectionString();
+        builder.Services.AddDbContext<HackathonDbContext>(options =>
+            options.UseNpgsql(connectionString));
+        
+        builder.Services
+            .AddIdentityCore<HackathonUserEntity>(options =>
+            {
+                options.User.RequireUniqueEmail = false;
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = true;
+            })
+            .AddRoles<HackathonRoleEntity>()
+            .AddEntityFrameworkStores<HackathonDbContext>()
+            .AddSignInManager();
 
-app.Run();
+        builder.Services.AddDependencyInjectionRegistrations();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme);
+
+        builder.Services.AddAuthorization();
+
+        WebApplication app = builder.Build();
+        
+        app.UseCors(Program.CorsConfigurationName);
+        app.UseHttpsRedirection();
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseFastEndpoints();
+
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwaggerGen();
+        }
+
+        using (IServiceScope serviceScope = app.Services.CreateScope())
+        {
+            await EnsureDatabaseCreatedAsync(serviceScope);
+        }
+
+        await app.RunAsync();
+    }
+
+    private static async Task EnsureDatabaseCreatedAsync(
+        IServiceScope serviceScope,
+        CancellationToken cancellationToken = default)
+    {
+        var dbContext = serviceScope.ServiceProvider.GetRequiredService<HackathonDbContext>();
+        await dbContext.Database.MigrateAsync(cancellationToken);
+        
+        var ensureCreatedPredefinedEntitiesService = serviceScope.ServiceProvider.GetRequiredService<IEnsureCreatedPredefinedEntitiesService>();
+        await ensureCreatedPredefinedEntitiesService.EnsureCreatedAsync(cancellationToken);
+    }
 }

@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <RootNamespace>ITTitans.Hackathon2025.Service</RootNamespace>
+        <AssemblyName>$(RootNamespace)</AssemblyName>
+    </PropertyGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\EntityModel\EntityModel.csproj" />
+      <ProjectReference Include="..\Service.Interfaces\Service.Interfaces.csproj" />
+    </ItemGroup>
+
+</Project>
