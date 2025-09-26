@@ -78,7 +78,8 @@ const form = reactive({
 const rules: FormRules = {
   email: [
     { required: true, message: 'E-Mail-Adresse ist erforderlich', trigger: 'blur' },
-    { type: 'email', message: 'Bitte eine gültige E-Mail-Adresse eingeben', trigger: ['blur', 'change'] },
+    // { type: 'email', message: 'Bitte eine gültige E-Mail-Adresse eingeben', trigger: ['blur', 'change'] },
+    { min: 3, message: 'Mindestens 3 Zeichen', trigger: 'blur' },
   ],
   password: [
     { required: true, message: 'Passwort ist erforderlich', trigger: 'blur' },
@@ -86,7 +87,7 @@ const rules: FormRules = {
   ],
 }
 
-async function onSubmit() {
+const onSubmit = async () => {
   if (!formRef.value) return
   try {
     await formRef.value.validate()
