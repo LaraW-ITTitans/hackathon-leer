@@ -1,3 +1,5 @@
+using FastEndpoints;
+using FastEndpoints.Swagger;
 using ITTitans.Hackathon2025.EntityModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -18,8 +20,8 @@ public class Program
             .AddEnvironmentVariables();
 
         // Add services to the container.
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddFastEndpoints();
+        builder.Services.SwaggerDocument();
 
         // Configure EF Core DbContext with PostgreSQL (Npgsql)
         string connectionString = builder.Configuration.GetConnectionString("HackathonDbContext")
@@ -47,13 +49,16 @@ public class Program
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            // Swagger is configured via FastEndpoints.Swagger
+            // builder.Services.SwaggerDocument() + app.UseSwaggerGen()
         }
 
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
+
+        app.UseFastEndpoints();
+        app.UseSwaggerGen();
 
         await EnsureDatabaseCreatedAsync(app);
 
