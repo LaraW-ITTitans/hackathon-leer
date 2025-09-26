@@ -1,4 +1,4 @@
-﻿namespace ITTitans.Hackathon2025.WebAPI.Auth;
+﻿namespace ITTitans.Hackathon2025.Model.Auth;
 
 public enum AuthClaimType
 {

@@ -1,4 +1,5 @@
-﻿using ITTitans.Hackathon2025.WebAPI.Auth;
+﻿using ITTitans.Hackathon2025.Model;
+using ITTitans.Hackathon2025.Model.Auth;
 
 namespace ITTitans.Hackathon2025.WebAPI.Utils;
 

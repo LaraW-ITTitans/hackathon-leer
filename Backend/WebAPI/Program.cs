@@ -1,6 +1,8 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using ITTitans.Hackathon2025.EntityModel;
+using ITTitans.Hackathon2025.Service.Interfaces;
+using ITTitans.Hackathon2025.Service.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,67 +10,92 @@ namespace ITTitans.Hackathon2025.WebAPI;
 
 public static class Program
 {
+    private const string CorsConfigurationName = "CorsConfiguration";
+    
     public static async Task Main(string[] args)
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
-        // Explicitly configure configuration sources: appsettings.json, environment-specific json, and environment variables
+        
         builder.Configuration
             .SetBasePath(builder.Environment.ContentRootPath)
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
             .AddEnvironmentVariables();
-
-        // Add services to the container.
+        var webServerAppSettingsService = new WebServerAppSettingsService(new AppSettingsReader(builder.Configuration));
+        
         builder.Services.AddFastEndpoints();
+        
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(
+                name: Program.CorsConfigurationName,
+                corsPolicyBuilder =>
+                {
+                    // frontend
+                    string frontendUriAsString = webServerAppSettingsService.GetFrontendUri().OriginalString;
+                    corsPolicyBuilder
+                        .WithOrigins(frontendUriAsString)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .WithExposedHeaders("Content-Disposition");
+                }
+            );
+        });
+        
         builder.Services.SwaggerDocument();
-
-        // Configure EF Core DbContext with PostgreSQL (Npgsql)
-        string connectionString = builder.Configuration.GetConnectionString("HackathonDbContext")
-                                  ?? throw new InvalidOperationException("ConnectionStrings:HackathonDbContext is not configured.");
+        
+        string connectionString = webServerAppSettingsService.GetHackathonDbContextConnectionString();
         builder.Services.AddDbContext<HackathonDbContext>(options =>
             options.UseNpgsql(connectionString));
-
-        // Configure ASP.NET Core Identity with EF Core stores (lean setup for APIs)
+        
         builder.Services
             .AddIdentityCore<HackathonUserEntity>(options =>
             {
                 options.User.RequireUniqueEmail = false;
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = true;
             })
             .AddRoles<HackathonRoleEntity>()
             .AddEntityFrameworkStores<HackathonDbContext>()
             .AddSignInManager();
 
-        builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
-            .AddIdentityCookies();
+        builder.Services.AddDependencyInjectionRegistrations();
+
+        builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme);
 
         builder.Services.AddAuthorization();
 
         WebApplication app = builder.Build();
-
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            // Swagger is configured via FastEndpoints.Swagger
-            // builder.Services.SwaggerDocument() + app.UseSwaggerGen()
-        }
-
+        
+        app.UseCors(Program.CorsConfigurationName);
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseFastEndpoints();
-        app.UseSwaggerGen();
 
-        await EnsureDatabaseCreatedAsync(app);
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwaggerGen();
+        }
+
+        using (IServiceScope serviceScope = app.Services.CreateScope())
+        {
+            await EnsureDatabaseCreatedAsync(serviceScope);
+        }
 
         await app.RunAsync();
     }
 
-    private static async Task EnsureDatabaseCreatedAsync(WebApplication app, CancellationToken cancellationToken = default)
+    private static async Task EnsureDatabaseCreatedAsync(
+        IServiceScope serviceScope,
+        CancellationToken cancellationToken = default)
     {
-        IServiceScope serviceScope = app.Services.CreateScope();
         var dbContext = serviceScope.ServiceProvider.GetRequiredService<HackathonDbContext>();
-        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
+        await dbContext.Database.MigrateAsync(cancellationToken);
+        
+        var ensureCreatedPredefinedEntitiesService = serviceScope.ServiceProvider.GetRequiredService<IEnsureCreatedPredefinedEntitiesService>();
+        await ensureCreatedPredefinedEntitiesService.EnsureCreatedAsync(cancellationToken);
     }
 }
