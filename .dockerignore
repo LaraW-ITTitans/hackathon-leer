@@ -1,0 +1,11 @@
+# general
+.git/
+.idea/
+.vscode/
+
+# dotnet
+bin/
+obj/
+
+# node
+node_modules/

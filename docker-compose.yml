@@ -1,0 +1,46 @@
+﻿name: 'hackathon-leer'
+
+services:
+  api:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    environment:
+      ConnectionStrings__HackathonDbContext: "Host=db;Port=5432;Database=hackathon;Username=admin;Password=jdhksadkash"
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "8080:5000" # http
+    depends_on:
+      - db
+    networks:
+      - leer-network
+  
+  #frontend:
+  #  build:
+  #    context: ./frontend
+  #    dockerfile: Dockerfile
+  #  depends_on:
+  #    - api
+  #    - db
+  #  networks:
+  #    - leer-network
+  
+  db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_DB: hackathon
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: jdhksadkash
+    ports:
+      - '5432:5432'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - leer-network
+
+volumes:
+  db-data:
+
+networks:
+  leer-network:
+    driver: bridge
