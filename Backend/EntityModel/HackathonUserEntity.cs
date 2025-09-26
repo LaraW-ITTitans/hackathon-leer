@@ -8,4 +8,6 @@ public class HackathonUserEntity : IdentityUser<Guid>
 {
     [StringLength(StringLengths.Name)]
     public string DisplayName { get; set; } = null!;
+
+    public bool IsDeleted { get; set; }
 }

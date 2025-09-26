@@ -4,4 +4,5 @@ namespace ITTitans.Hackathon2025.EntityModel;
 
 public class HackathonRoleEntity : IdentityRole<Guid>
 {
+    public bool IsDeleted { get; set; }
 }

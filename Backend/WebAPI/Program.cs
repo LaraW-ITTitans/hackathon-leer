@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ITTitans.Hackathon2025.WebAPI;
 
-public class Program
+public static class Program
 {
     public static async Task Main(string[] args)
     {
