@@ -18,5 +18,7 @@ public class SkillEntity
 
     public IList<HackathonUserEntity> PossibleReviewer { get; init; } = [];
 
-    public bool IsDeleted { get; set; } = false;
+    public bool IsDeleted { get; set; }
+
+    public IList<SkillAssignmentEntity> SkillAssignments { get; init; } = [];
 }
