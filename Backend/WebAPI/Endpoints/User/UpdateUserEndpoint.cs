@@ -23,6 +23,10 @@ public class UpdateUserEndpoint : Endpoint<UpdateUserBindingModel, BasicUserBind
     {
         this.Put("api/users");
         this.AddHackathonPolicy(AuthClaimType.ManageUser);
+        
+        this.Description(builder => builder
+            .WithName("UpdateUser")
+            .WithTags("Users"));
     }
 
     public override async Task HandleAsync(UpdateUserBindingModel req, CancellationToken ct)

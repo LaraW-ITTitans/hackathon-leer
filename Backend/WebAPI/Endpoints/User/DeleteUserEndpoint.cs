@@ -23,6 +23,10 @@ public class DeleteUserEndpoint : Endpoint<DeleteUserBindingModel>
     {
         this.Delete("api/users");
         this.AddHackathonPolicy(AuthClaimType.ManageUser);
+        
+        this.Description(builder => builder
+            .WithName("DeleteUser")
+            .WithTags("Users"));
     }
 
     public override async Task HandleAsync(DeleteUserBindingModel req, CancellationToken ct)

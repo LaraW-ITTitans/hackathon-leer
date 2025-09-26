@@ -20,7 +20,7 @@ public class GetInfoEndpoint : EndpointWithoutRequest<ApiInfoBindingModel>
         this.AllowAnonymous();
         
         this.Description(builder => builder
-            .WithName("Show API Info")
+            .WithName("GetInfo")
             .WithTags("Info"));
     }
 

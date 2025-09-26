@@ -24,6 +24,10 @@ public class ChangeOwnPasswordEndpoint : Endpoint<ChangeOwnPasswordBindingModel>
         this.Put("api/users/change-password");
         // No special claim required; any authenticated user can call this.
         // Authorization is enforced by requiring presence of our user id claim at runtime.
+        
+        this.Description(builder => builder
+            .WithName("ChangeOwnPassword")
+            .WithTags("Users"));
     }
 
     public override async Task HandleAsync(ChangeOwnPasswordBindingModel req, CancellationToken ct)

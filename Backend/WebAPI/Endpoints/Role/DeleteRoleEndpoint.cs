@@ -25,7 +25,7 @@ public class DeleteRoleEndpoint : Endpoint<DeleteRoleBindingModel>
         this.AddHackathonPolicy(AuthClaimType.ManageRole);
         
         this.Description(builder => builder
-            .WithName("Delete Role")
+            .WithName("DeleteRole")
             .WithTags("Roles"));
     }
 

@@ -26,7 +26,7 @@ public class CreateRoleEndpoint : Endpoint<CreateRoleBindingModel, BasicRoleBind
         this.AddHackathonPolicy(AuthClaimType.ManageRole);
         
         this.Description(builder => builder
-            .WithName("Create Role")
+            .WithName("CreateRole")
             .WithTags("Roles"));
     }
 

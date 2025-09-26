@@ -23,6 +23,10 @@ public class CreateUserEndpoint : Endpoint<CreateUserBindingModel, BasicUserBind
     {
         this.Post("api/users");
         this.AddHackathonPolicy(AuthClaimType.ManageUser);
+        
+        this.Description(builder => builder
+            .WithName("CreateUser")
+            .WithTags("Users"));
     }
 
     public override async Task HandleAsync(CreateUserBindingModel req, CancellationToken ct)

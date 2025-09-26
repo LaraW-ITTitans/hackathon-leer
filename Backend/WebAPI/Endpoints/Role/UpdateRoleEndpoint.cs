@@ -25,7 +25,7 @@ public class UpdateRoleEndpoint : Endpoint<UpdateRoleBindingModel, BasicRoleBind
         this.AddHackathonPolicy(AuthClaimType.ManageRole);
         
         this.Description(builder => builder
-            .WithName("Update Role")
+            .WithName("UpdateRole")
             .WithTags("Roles"));
     }
 

@@ -22,6 +22,10 @@ public class GetUsersEndpoint : EndpointWithoutRequest<List<BasicUserBindingMode
     {
         this.Get("api/users");
         this.AddHackathonPolicy(AuthClaimType.SeeUser);
+        
+        this.Description(builder => builder
+            .WithName("GetUsers")
+            .WithTags("Users"));
     }
 
     public override async Task HandleAsync(CancellationToken ct)
