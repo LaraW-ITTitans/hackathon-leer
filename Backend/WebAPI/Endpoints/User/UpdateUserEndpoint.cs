@@ -25,7 +25,7 @@ public class UpdateUserEndpoint : Endpoint<UpdateUserBindingModel, BasicUserBind
         this.AddHackathonPolicy(AuthClaimType.ManageUser);
         
         this.Description(builder => builder
-            .WithName("UpdateUser")
+            .WithName("Update User")
             .WithTags("Users"));
     }
 

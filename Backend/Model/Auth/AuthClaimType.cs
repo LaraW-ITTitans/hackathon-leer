@@ -8,6 +8,9 @@ public enum AuthClaimType
     SeeRole = 10,
     ManageRole = 11,
     
+    SeeSkill = 12,
+    ManageSkill = 13,
+    
     SupplyCertificateWorkflowStart = 20,
     SupplyCertificateWorkflowProcess = 21,
     

@@ -17,4 +17,6 @@ public class SkillEntity
     public string? Description { get; set; }
 
     public IList<HackathonUserEntity> PossibleReviewer { get; init; } = [];
+
+    public bool IsDeleted { get; set; } = false;
 }
