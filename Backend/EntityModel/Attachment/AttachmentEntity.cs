@@ -28,7 +28,9 @@ public class AttachmentEntity
     
     public DateTimeOffset Created { get; set; }
     
-    public virtual IList<AttachmentLinkEntity> Links { get; } = [];
+    public IList<AttachmentLinkEntity> Links { get; } = [];
 
     public int Version { get; set; }
+
+    public required byte[] Content { get; set; }
 }
