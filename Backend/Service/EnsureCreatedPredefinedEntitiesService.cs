@@ -52,18 +52,18 @@ public class EnsureCreatedPredefinedEntitiesService : IEnsureCreatedPredefinedEn
         }
 
         // ensure assigned claims to admin role
-        AuthClaimType[] allSiGeKoAuthClaimTypes = Enum.GetValues<AuthClaimType>();
+        AuthClaimType[] allAuthClaimTypes = Enum.GetValues<AuthClaimType>();
 
         IList<Claim> assignedClaims = await this.roleManager.GetClaimsAsync(predefinedAdminRole);
-        IList<AuthClaimType> assignedSiGeKoAuthClaims = assignedClaims
+        IList<AuthClaimType> assignedAuthClaims = assignedClaims
             .Select(this.authClaimFactory.Extract)
-            .Where(nullableSiGeKoAuthClaim => nullableSiGeKoAuthClaim.HasValue)
-            .Select(nullableSiGeKoAuthClaim => nullableSiGeKoAuthClaim!.Value)
+            .Where(nullableAuthClaim => nullableAuthClaim.HasValue)
+            .Select(nullableAuthClaim => nullableAuthClaim!.Value)
             .ToList();
-        IEnumerable<AuthClaimType> unassignedSiGeKoAuthClaims =
-            allSiGeKoAuthClaimTypes.Except(assignedSiGeKoAuthClaims);
+        IEnumerable<AuthClaimType> unassignedAuthClaims =
+            allAuthClaimTypes.Except(assignedAuthClaims);
 
-        foreach (AuthClaimType authClaimType in unassignedSiGeKoAuthClaims)
+        foreach (AuthClaimType authClaimType in unassignedAuthClaims)
         {
             Claim claim = this.authClaimFactory.BuildClaim(authClaimType);
 

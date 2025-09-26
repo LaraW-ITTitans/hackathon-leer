@@ -1,11 +1,8 @@
 using System.Security.Claims;
 using FastEndpoints;
-using ITTitans.Hackathon2025.EntityModel;
 using ITTitans.Hackathon2025.EntityModel.Auth;
-using ITTitans.Hackathon2025.Model.Auth;
 using ITTitans.Hackathon2025.WebAPI.Auth;
 using ITTitans.Hackathon2025.WebAPI.Model.User;
-using ITTitans.Hackathon2025.WebAPI.Utils;
 using Microsoft.AspNetCore.Identity;
 
 namespace ITTitans.Hackathon2025.WebAPI.Endpoints.User;
