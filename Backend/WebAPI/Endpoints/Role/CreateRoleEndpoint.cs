@@ -24,6 +24,10 @@ public class CreateRoleEndpoint : Endpoint<CreateRoleBindingModel, BasicRoleBind
     {
         this.Post("api/roles");
         this.AddHackathonPolicy(AuthClaimType.ManageRole);
+        
+        this.Description(builder => builder
+            .WithName("Create Role")
+            .WithTags("Roles"));
     }
 
     public override async Task HandleAsync(CreateRoleBindingModel req, CancellationToken ct)

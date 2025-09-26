@@ -24,6 +24,10 @@ public class LoginEndpoint : Endpoint<LoginBindingModel, LoginResponseBindingMod
     {
         this.Post("api/auth/login");
         this.AllowAnonymous();
+        
+        this.Description(builder => builder
+            .WithName("Login")
+            .WithTags("Auth"));
     }
     
     public override async Task HandleAsync(LoginBindingModel req, CancellationToken ct)

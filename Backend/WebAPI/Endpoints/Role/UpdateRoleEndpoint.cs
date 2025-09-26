@@ -23,6 +23,10 @@ public class UpdateRoleEndpoint : Endpoint<UpdateRoleBindingModel, BasicRoleBind
     {
         this.Put("api/roles");
         this.AddHackathonPolicy(AuthClaimType.ManageRole);
+        
+        this.Description(builder => builder
+            .WithName("Update Role")
+            .WithTags("Roles"));
     }
 
     public override async Task HandleAsync(UpdateRoleBindingModel req, CancellationToken ct)
