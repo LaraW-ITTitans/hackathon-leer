@@ -1,42 +1,69 @@
-var builder = WebApplication.CreateBuilder(args);
+using ITTitans.Hackathon2025.EntityModel;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
-// Add services to the container.
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+namespace ITTitans.Hackathon2025.WebAPI;
 
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+public class Program
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    public static async Task Main(string[] args)
+    {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-app.UseHttpsRedirection();
+        // Explicitly configure configuration sources: appsettings.json, environment-specific json, and environment variables
+        builder.Configuration
+            .SetBasePath(builder.Environment.ContentRootPath)
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+        // Add services to the container.
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
 
-app.MapGet("/weatherforecast",
-        () =>
+        // Configure EF Core DbContext with PostgreSQL (Npgsql)
+        string connectionString = builder.Configuration.GetConnectionString("HackathonDbContext")
+                                  ?? throw new InvalidOperationException("ConnectionStrings:HackathonDbContext is not configured.");
+        builder.Services.AddDbContext<HackathonDbContext>(options =>
+            options.UseNpgsql(connectionString));
+
+        // Configure ASP.NET Core Identity with EF Core stores (lean setup for APIs)
+        builder.Services
+            .AddIdentityCore<HackathonUserEntity>(options =>
+            {
+                options.User.RequireUniqueEmail = false;
+            })
+            .AddRoles<HackathonRoleEntity>()
+            .AddEntityFrameworkStores<HackathonDbContext>()
+            .AddSignInManager();
+
+        builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
+            .AddIdentityCookies();
+
+        builder.Services.AddAuthorization();
+
+        WebApplication app = builder.Build();
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
         {
-            var forecast = Enumerable.Range(1, 5).Select(index =>
-                    new WeatherForecast(
-                        DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                        Random.Shared.Next(-20, 55),
-                        summaries[Random.Shared.Next(summaries.Length)]
-                    ))
-                .ToArray();
-            return forecast;
-        })
-    .WithName("GetWeatherForecast");
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
 
-app.Run();
+        app.UseHttpsRedirection();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        await EnsureDatabaseCreatedAsync(app);
+
+        await app.RunAsync();
+    }
+
+    private static async Task EnsureDatabaseCreatedAsync(WebApplication app, CancellationToken cancellationToken = default)
+    {
+        IServiceScope serviceScope = app.Services.CreateScope();
+        var dbContext = serviceScope.ServiceProvider.GetRequiredService<HackathonDbContext>();
+        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
+    }
 }
