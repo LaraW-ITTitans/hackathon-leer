@@ -1,3 +1,4 @@
+using ITTitans.Hackathon2025.EntityModel.Auth;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

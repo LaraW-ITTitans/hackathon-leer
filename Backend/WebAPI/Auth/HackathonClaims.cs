@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-
-namespace ITTitans.Hackathon2025.WebAPI.Auth;
+﻿namespace ITTitans.Hackathon2025.WebAPI.Auth;
 
 public static class HackathonClaims
 {

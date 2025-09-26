@@ -1,5 +1,6 @@
 using FastEndpoints;
 using ITTitans.Hackathon2025.EntityModel;
+using ITTitans.Hackathon2025.EntityModel.Auth;
 using ITTitans.Hackathon2025.Model;
 using ITTitans.Hackathon2025.Service.Interfaces;
 using ITTitans.Hackathon2025.Service.Settings;

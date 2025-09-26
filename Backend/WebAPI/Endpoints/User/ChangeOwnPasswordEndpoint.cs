@@ -1,5 +1,6 @@
 using FastEndpoints;
 using ITTitans.Hackathon2025.EntityModel;
+using ITTitans.Hackathon2025.EntityModel.Auth;
 using ITTitans.Hackathon2025.WebAPI.Auth;
 using ITTitans.Hackathon2025.WebAPI.Model.User;
 using Microsoft.AspNetCore.Identity;

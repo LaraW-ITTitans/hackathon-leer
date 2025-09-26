@@ -2,7 +2,7 @@ using ITTitans.Hackathon2025.Utils;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
-namespace ITTitans.Hackathon2025.EntityModel;
+namespace ITTitans.Hackathon2025.EntityModel.Auth;
 
 public class HackathonUserEntity : IdentityUser<Guid>
 {

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace ITTitans.Hackathon2025.EntityModel;
+namespace ITTitans.Hackathon2025.EntityModel.Auth;
 
 public class HackathonRoleEntity : IdentityRole<Guid>
 {
