@@ -1,3 +1,4 @@
+using ITTitans.Hackathon2025.EntityModel.Skill;
 using ITTitans.Hackathon2025.Utils;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
@@ -10,4 +11,6 @@ public class HackathonUserEntity : IdentityUser<Guid>
     public string DisplayName { get; set; } = null!;
 
     public bool IsDeleted { get; set; }
+
+    public IList<SkillEntity> PossibleSkillsToReview { get; init; } = [];
 }
