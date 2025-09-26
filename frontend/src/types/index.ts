@@ -8,10 +8,12 @@ type User = {
   id: string
   name: string
   email: string
+  claims: string[]
 }
 
 interface AuthResult {
   token: string
+  expiration: number
   user: User
 }
 

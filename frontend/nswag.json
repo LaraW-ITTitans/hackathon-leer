@@ -72,7 +72,7 @@
         "checksumCacheEnabled": false,
         "serviceHost": "$(API_HOST)",
         "serviceSchemes": ["https"],
-        "newLineBehavior": "Auto",
+        "newLineBehavior": "Auto"
       }
     }
   }

@@ -9,11 +9,12 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import { Key } from '@element-plus/icons-vue'
 import ThemeToggle from '@/components/theme-toggle/ThemeToggleComponent.vue'
-import router from '@/router'
 import useUserStore from '@/stores/user.ts'
 
+const router = useRouter()
 const { isAuthenticated } = useUserStore();
 
 const onLoginClick = () => {

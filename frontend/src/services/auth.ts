@@ -1,4 +1,9 @@
-﻿import type { AuthResult, Credentials } from '@/types'
+﻿import { jwtDecode } from 'jwt-decode'
+import type { AuthResult, Credentials, User } from '@/types'
+import {
+  authApi
+} from '@/api'
+import { LoginBindingModel } from '@/api/codegen'
 
 const mockLoginTime = (duration: number) => {
   return new Promise((resolve) => {
@@ -9,19 +14,29 @@ const mockLoginTime = (duration: number) => {
 }
 
 export const login = async (credentials: Credentials): Promise<AuthResult> => {
-  await mockLoginTime(2500)
+  const loginResponse = await authApi.login(new LoginBindingModel({
+    userName: credentials.email,
+    password: credentials.password,
+    rememberMe: credentials.remember,
+  }))
 
-   // TODO
-  if (credentials.email === 'lara@local.dev')
+  // ok
+  if (loginResponse && loginResponse.token)
   {
+    const decodedToken = jwtDecode(loginResponse.token)
+
+    await mockLoginTime(750)
+
     return {
-      token: 'i-bims-1-jwt-töken',
+      token: loginResponse.token,
+      expiration: decodedToken.exp,
       user: {
-        id: 1,
-        name: 'Lara Test',
-        email: credentials.email
-      }
-    }
+        id: decodedToken['Hackathon-User-ID'],
+        name: decodedToken['Hackathon-Display-Name'],
+        email: undefined,
+        claims: decodedToken['Hackathon-Auth']
+      } as User
+    } as AuthResult
   }
 
   return {
