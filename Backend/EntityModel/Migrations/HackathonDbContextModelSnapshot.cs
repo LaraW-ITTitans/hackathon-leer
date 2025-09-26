@@ -197,13 +197,13 @@ namespace ITTitans.Hackathon2025.EntityModel.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("SkillId")
+                    b.Property<Guid>("SkillId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("WorkflowId")
+                    b.Property<Guid>("WorkflowId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -283,6 +283,9 @@ namespace ITTitans.Hackathon2025.EntityModel.Migrations
                     b.Property<Guid?>("ReviewerId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("SkillId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("State")
                         .HasColumnType("integer");
 
@@ -291,6 +294,8 @@ namespace ITTitans.Hackathon2025.EntityModel.Migrations
                     b.HasIndex("InitiatorId");
 
                     b.HasIndex("ReviewerId");
+
+                    b.HasIndex("SkillId");
 
                     b.ToTable("SupplyCertificateWorkflow");
                 });
@@ -424,7 +429,9 @@ namespace ITTitans.Hackathon2025.EntityModel.Migrations
                 {
                     b.HasOne("ITTitans.Hackathon2025.EntityModel.Skill.SkillEntity", "Skill")
                         .WithMany("SkillAssignments")
-                        .HasForeignKey("SkillId");
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ITTitans.Hackathon2025.EntityModel.Auth.HackathonUserEntity", "User")
                         .WithMany("SkillAssignments")
@@ -434,7 +441,9 @@ namespace ITTitans.Hackathon2025.EntityModel.Migrations
 
                     b.HasOne("ITTitans.Hackathon2025.EntityModel.Workflow.SupplyCertificate.SupplyCertificateWorkflowEntity", "Workflow")
                         .WithMany()
-                        .HasForeignKey("WorkflowId");
+                        .HasForeignKey("WorkflowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Skill");
 
@@ -474,9 +483,17 @@ namespace ITTitans.Hackathon2025.EntityModel.Migrations
                         .WithMany("ReviewedSupplyCertificateWorkflows")
                         .HasForeignKey("ReviewerId");
 
+                    b.HasOne("ITTitans.Hackathon2025.EntityModel.Skill.SkillEntity", "Skill")
+                        .WithMany()
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Initiator");
 
                     b.Navigation("Reviewer");
+
+                    b.Navigation("Skill");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

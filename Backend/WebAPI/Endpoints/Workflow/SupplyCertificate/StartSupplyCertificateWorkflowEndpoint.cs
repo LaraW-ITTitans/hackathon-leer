@@ -2,6 +2,7 @@ using System.Security.Claims;
 using FastEndpoints;
 using ITTitans.Hackathon2025.EntityModel;
 using ITTitans.Hackathon2025.EntityModel.Attachment;
+using ITTitans.Hackathon2025.EntityModel.Skill;
 using ITTitans.Hackathon2025.EntityModel.Workflow.SupplyCertificate;
 using ITTitans.Hackathon2025.Model;
 using ITTitans.Hackathon2025.Model.Auth;
@@ -9,6 +10,7 @@ using ITTitans.Hackathon2025.Model.Workflow.SupplyCertificate;
 using ITTitans.Hackathon2025.WebAPI.Auth;
 using ITTitans.Hackathon2025.WebAPI.Model.Workflow.SupplyCertificate;
 using ITTitans.Hackathon2025.WebAPI.Utils;
+using Microsoft.EntityFrameworkCore;
 
 namespace ITTitans.Hackathon2025.WebAPI.Endpoints.Workflow.SupplyCertificate;
 
@@ -62,12 +64,22 @@ public class StartSupplyCertificateWorkflowEndpoint : Endpoint<StartSupplyCertif
 
         DateTimeOffset now = DateTimeOffset.UtcNow;
 
+        SkillEntity? skill = await this.dbContext.Skills
+            .FirstOrDefaultAsync(x => x.Id == req.SkillId && !x.IsDeleted, ct);
+        if (skill is null)
+        {
+            this.AddError($"skill with id {req.SkillId} not found");
+            await this.Send.ErrorsAsync(cancellation: ct);
+            return;
+        }
+        
         // create workflow
         var workflow = new SupplyCertificateWorkflowEntity
         {
             Id = Guid.NewGuid(),
             State = SupplyCertificateWorkflowStateType.InReview,
             InitiatorId = userId,
+            Skill = skill,
             Created = now,
         };
 
