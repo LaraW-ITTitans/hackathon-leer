@@ -1,21 +1,44 @@
 using FastEndpoints;
-using FastEndpoints.Swagger;
 using ITTitans.Hackathon2025.EntityModel;
+using ITTitans.Hackathon2025.Model;
 using ITTitans.Hackathon2025.Service.Interfaces;
 using ITTitans.Hackathon2025.Service.Settings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 namespace ITTitans.Hackathon2025.WebAPI;
 
 public static class Program
 {
+    private const string JwtHttpHeader = "X-Hackathon-Token";
     private const string CorsConfigurationName = "CorsConfiguration";
     
     public static async Task Main(string[] args)
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
         
+        ConfigureService(builder);
+
+        WebApplication app = builder.Build();
+        
+        ConfigureApp(app);
+
+        using (IServiceScope serviceScope = app.Services.CreateScope())
+        {
+            await EnsureDatabaseCreatedAsync(serviceScope);
+        }
+
+        await app.RunAsync();
+    }
+
+    private static void ConfigureService(WebApplicationBuilder builder)
+    {
         builder.Configuration
             .SetBasePath(builder.Environment.ContentRootPath)
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -41,8 +64,48 @@ public static class Program
                 }
             );
         });
-        
-        builder.Services.SwaggerDocument();
+
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen(swaggerGenerationOptions =>
+            {
+                swaggerGenerationOptions.SwaggerDoc(
+                    "v1",
+                    new OpenApiInfo { Title = "Hackathon API", Version = "1.0.0" }
+                );
+
+                // enforce using JWT
+                swaggerGenerationOptions.AddSecurityDefinition(
+                    "Bearer",
+                    new OpenApiSecurityScheme
+                    {
+                        Type = SecuritySchemeType.Http,
+                        BearerFormat = "JWT",
+                        In = ParameterLocation.Header,
+                        Scheme = "bearer",
+                        Description = "Hackathon JWT",
+                        Name = Program.JwtHttpHeader,
+                    }
+                );
+                swaggerGenerationOptions.AddSecurityRequirement(
+                    new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer",
+                                },
+                            },
+                            Array.Empty<string>()
+                        },
+                    }
+                );
+            });
+        }
         
         string connectionString = webServerAppSettingsService.GetHackathonDbContextConnectionString();
         builder.Services.AddDbContext<HackathonDbContext>(options =>
@@ -62,14 +125,67 @@ public static class Program
 
         builder.Services.AddDependencyInjectionRegistrations();
 
-        builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme);
+        JwtAppSettingsDto jwtSettings = webServerAppSettingsService.GetJwtSettings();
+        builder.Services
+            .AddAuthentication(authenticationOptions =>
+            {
+                authenticationOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                authenticationOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(
+                JwtBearerDefaults.AuthenticationScheme,
+                jwtBearerOptions =>
+                {
+                    string keyAsString = jwtSettings.Key;
+                    byte[] key = Encoding.UTF8.GetBytes(keyAsString);
 
-        builder.Services.AddAuthorization();
+                    jwtBearerOptions.SaveToken = true;
+                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtSettings.Issuer,
+                        ValidAudience = jwtSettings.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                    };
 
-        WebApplication app = builder.Build();
-        
+                    jwtBearerOptions.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            if (
+                                context.Request.Headers.TryGetValue(
+                                    Program.JwtHttpHeader,
+                                    out StringValues value
+                                )
+                            )
+                            {
+                                context.Token = value;
+                            }
+
+                            return Task.CompletedTask;
+                        },
+                        OnAuthenticationFailed = context =>
+                        {
+                            Console.WriteLine(context);
+                            
+                            return Task.CompletedTask;
+                        },
+                    };
+                }
+            );
+        builder.Services.AddHackathonPolicies();
+    }
+
+    private static void ConfigureApp(WebApplication app)
+    {
         app.UseCors(Program.CorsConfigurationName);
-        app.UseHttpsRedirection();
+        
+        app.UseRouting();
+        
+        JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         app.UseAuthentication();
         app.UseAuthorization();
 
@@ -77,15 +193,12 @@ public static class Program
 
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwaggerGen();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hackathon API v1");
+            });
         }
-
-        using (IServiceScope serviceScope = app.Services.CreateScope())
-        {
-            await EnsureDatabaseCreatedAsync(serviceScope);
-        }
-
-        await app.RunAsync();
     }
 
     private static async Task EnsureDatabaseCreatedAsync(
