@@ -1,0 +1,27 @@
+<Project>
+  <PropertyGroup>
+    <BuildNumber Condition="'$(PipelineBuildId)'==''">0</BuildNumber>
+    <BuildNumber Condition="'$(PipelineBuildId)'!=''">$(PipelineBuildId)</BuildNumber>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AnalysisLevel>latest-Recommended</AnalysisLevel>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NeutralLanguage>en</NeutralLanguage>
+    <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Version>1.0.0.$(BuildNumber)</Version>
+    <Company>IT-Titans GmbH</Company>
+    <Copyright>2025 IT-Titans GmbH</Copyright>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);CA2007;1591</NoWarn>
+    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <AnalysisLevel>latest</AnalysisLevel>
+  </PropertyGroup>
+</Project>
