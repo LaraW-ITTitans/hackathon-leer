@@ -1,5 +1,5 @@
 <template>
-  <el-config-provider :size="size" :z-index="zIndex" :locale="language">
+  <el-config-provider :size="size" :z-index="zIndex" :locale="german">
     <el-container>
       <el-header v-if="!isBlacklistedRoute">
         <PageHeaderComponent />
@@ -25,12 +25,13 @@ import { computed } from 'vue'
 import { ElConfigProvider } from 'element-plus'
 import { RouterView, useRoute } from 'vue-router'
 
+import german from 'element-plus/es/locale/lang/de'
+
 import PageHeaderComponent from '@/components/layout/PageHeaderComponent.vue'
 import PageFooterComponent from '@/components/layout/PageFooterComponent.vue'
 
 const zIndex = 3000
 const size = 'default'
-const language = 'de'
 
 const blacklist = ['/auth', '/register']
 const fullPages = ['/']
