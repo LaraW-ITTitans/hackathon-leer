@@ -2,5 +2,5 @@
 
 public enum EntityType
 {
-    
+    SupplyCertificateWorkflow = 1,
 }

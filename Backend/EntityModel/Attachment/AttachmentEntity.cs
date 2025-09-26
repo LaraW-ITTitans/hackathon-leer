@@ -2,6 +2,7 @@
 using ITTitans.Hackathon2025.Utils;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ITTitans.Hackathon2025.EntityModel.Attachment;
 
@@ -31,6 +32,7 @@ public class AttachmentEntity
     public IList<AttachmentLinkEntity> Links { get; } = [];
 
     public int Version { get; set; }
-
+    
+    [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "EF Core API")]
     public required byte[] Content { get; set; }
 }
