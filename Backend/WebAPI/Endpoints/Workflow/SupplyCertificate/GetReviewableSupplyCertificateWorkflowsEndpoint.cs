@@ -3,6 +3,7 @@ using FastEndpoints;
 using ITTitans.Hackathon2025.EntityModel;
 using ITTitans.Hackathon2025.Model.Auth;
 using ITTitans.Hackathon2025.Model.Workflow.SupplyCertificate;
+using ITTitans.Hackathon2025.Utils;
 using ITTitans.Hackathon2025.WebAPI.Auth;
 using ITTitans.Hackathon2025.WebAPI.Model.Skill;
 using ITTitans.Hackathon2025.WebAPI.Model.User;
@@ -32,11 +33,32 @@ public class GetReviewableSupplyCertificateWorkflowsEndpoint : EndpointWithoutRe
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        HashSet<Guid> allowedSkillClaims = this.User.FindAll(HackathonClaims.PossibleSkillsToReviewClaimName)
-            .Select(c => c.Value)
-            .Where(v => Guid.TryParse(v, out _))
-            .Select(Guid.Parse)
-            .ToHashSet();
+        string? userIdClaim = this.User.FindFirstValue(HackathonClaims.UserIdClaimName);
+        if (!Guid.TryParse(userIdClaim, out Guid userId))
+        {
+            await this.HttpContext.Response.StartAsync(ct);
+            this.HttpContext.Response.StatusCode = 401;
+            return;
+        }
+        
+        HashSet<Guid> allowedSkillClaims;
+        
+        bool isAdmin = StaticData.PredefinedAdminUserId == userId;
+        if (isAdmin)
+        {
+            allowedSkillClaims = await this.dbContext.Skills
+                .Where(x => !x.IsDeleted)
+                .Select(x => x.Id)
+                .ToHashSetAsync(ct);
+        }
+        else
+        {
+            allowedSkillClaims = this.User.FindAll(HackathonClaims.PossibleSkillsToReviewClaimName)
+                .Select(c => c.Value)
+                .Where(v => Guid.TryParse(v, out _))
+                .Select(Guid.Parse)
+                .ToHashSet();
+        }
 
         List<BasicSupplyCertificateWorkflowBindingModel> items = await this.dbContext.SupplyCertificateWorkflows
             .AsNoTracking()
