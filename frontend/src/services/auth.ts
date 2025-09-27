@@ -1,6 +1,8 @@
 ﻿import { jwtDecode } from 'jwt-decode'
 import type { AuthResult, Credentials, User } from '@/types'
-import { authApi, userApi } from '@/api'
+import {
+  authApi
+} from '@/api'
 import { LoginBindingModel } from '@/api/codegen'
 
 const mockLoginTime = (duration: number) => {
@@ -23,7 +25,6 @@ export const login = async (credentials: Credentials): Promise<AuthResult> => {
   {
     const decodedToken = jwtDecode(loginResponse.token)
 
-    const user = await userApi.getCurrentUser()
     await mockLoginTime(750)
 
     return {
@@ -31,10 +32,8 @@ export const login = async (credentials: Credentials): Promise<AuthResult> => {
       expiration: decodedToken.exp,
       user: {
         id: decodedToken['Hackathon-User-ID'],
-        name: user.userName,
         displayName: decodedToken['Hackathon-Display-Name'],
-        claims: decodedToken['Hackathon-Auth'],
-        skills: user.skills,
+        claims: decodedToken['Hackathon-Auth']
       } as User
     } as AuthResult
   }

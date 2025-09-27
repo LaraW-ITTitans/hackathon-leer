@@ -1,6 +1,4 @@
-﻿import type { BasicSkillBindingModel } from '@/api/codegen'
-
-interface Credentials {
+﻿interface Credentials {
   email: string
   password: string
   remember: boolean
@@ -11,7 +9,6 @@ type User = {
   name: string
   displayName: string
   claims: string[]
-  skills: BasicSkillBindingModel[]
 }
 
 interface AuthResult {
