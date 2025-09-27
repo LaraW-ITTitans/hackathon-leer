@@ -1,7 +1,7 @@
 <template>
   <el-config-provider :size="size" :z-index="zIndex" :locale="german">
     <el-container>
-      <el-header v-if="!isBlacklistedRoute">
+      <el-header v-if="!isBlacklistedRoute" class="page-header">
         <PageHeaderComponent />
       </el-header>
       <el-container>
@@ -40,3 +40,20 @@ const route = useRoute()
 const isBlacklistedRoute = computed(() => blacklist.includes(route.path))
 const isFullPageRoute = computed(() => fullPages.includes(route.path))
 </script>
+
+<style lang="scss" scoped>
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 0;
+}
+
+.header-row {
+  width: 100%;
+  margin: 0;
+}
+</style>
