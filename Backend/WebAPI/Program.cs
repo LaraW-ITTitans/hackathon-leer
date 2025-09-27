@@ -50,7 +50,10 @@ public static class Program
         
         builder.Services
             .AddFastEndpoints()
-            .SwaggerDocument();
+            .SwaggerDocument(o =>
+            {
+                o.AutoTagPathSegmentIndex = -1;
+            });
         
         builder.Services.AddCors(options =>
         {
