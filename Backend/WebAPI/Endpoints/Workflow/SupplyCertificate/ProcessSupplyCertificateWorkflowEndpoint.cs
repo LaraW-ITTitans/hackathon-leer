@@ -6,6 +6,8 @@ using ITTitans.Hackathon2025.EntityModel.Workflow.SupplyCertificate;
 using ITTitans.Hackathon2025.Model.Auth;
 using ITTitans.Hackathon2025.Model.Workflow.SupplyCertificate;
 using ITTitans.Hackathon2025.WebAPI.Auth;
+using ITTitans.Hackathon2025.WebAPI.Model.Skill;
+using ITTitans.Hackathon2025.WebAPI.Model.User;
 using ITTitans.Hackathon2025.WebAPI.Model.Workflow.SupplyCertificate;
 using ITTitans.Hackathon2025.WebAPI.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -110,10 +112,33 @@ public class ProcessSupplyCertificateWorkflowEndpoint : Endpoint<ProcessSupplyCe
 
         await this.dbContext.SaveChangesAsync(ct);
 
+        var initiatorBasic = await this.dbContext.Users
+            .AsNoTracking()
+            .Where(u => u.Id == workflow.InitiatorId)
+            .Select(u => new BasicUserBindingModel
+            {
+                Id = u.Id,
+                UserName = u.UserName!,
+                DisplayName = u.DisplayName
+            })
+            .FirstAsync(ct);
+
+        var skillBasic = await this.dbContext.Skills
+            .AsNoTracking()
+            .Where(s => s.Id == workflow.SkillId)
+            .Select(s => new BasicSkillBindingModel
+            {
+                Id = s.Id,
+                Name = s.Name
+            })
+            .FirstAsync(ct);
+
         await this.Send.OkAsync(new BasicSupplyCertificateWorkflowBindingModel
         {
             Id = workflow.Id,
             State = workflow.State,
+            Initiator = initiatorBasic,
+            Skill = skillBasic
         }, ct);
     }
 }

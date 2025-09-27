@@ -1,6 +1,8 @@
 ﻿using FastEndpoints;
 using ITTitans.Hackathon2025.EntityModel;
 using ITTitans.Hackathon2025.Model.Auth;
+using ITTitans.Hackathon2025.WebAPI.Model.Skill;
+using ITTitans.Hackathon2025.WebAPI.Model.User;
 using ITTitans.Hackathon2025.WebAPI.Model.Workflow.SupplyCertificate;
 using ITTitans.Hackathon2025.WebAPI.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +35,17 @@ public class GetSupplyCertificateWorkflowsEndpoint : EndpointWithoutRequest<IEnu
             {
                 Id = w.Id,
                 State = w.State,
+                Initiator = new BasicUserBindingModel
+                {
+                    Id = w.Initiator.Id,
+                    UserName = w.Initiator.UserName!,
+                    DisplayName = w.Initiator.DisplayName
+                },
+                Skill = new BasicSkillBindingModel
+                {
+                    Id = w.Skill.Id,
+                    Name = w.Skill.Name
+                }
             })
             .ToListAsync(ct);
 
