@@ -1,14 +1,12 @@
 using FastEndpoints;
-using ITTitans.Hackathon2025.EntityModel;
 using ITTitans.Hackathon2025.EntityModel.Auth;
 using ITTitans.Hackathon2025.Model.Auth;
-using ITTitans.Hackathon2025.WebAPI.Model.Role;
 using ITTitans.Hackathon2025.WebAPI.Utils;
 using Microsoft.AspNetCore.Identity;
 
 namespace ITTitans.Hackathon2025.WebAPI.Endpoints.Role;
 
-public class DeleteRoleEndpoint : Endpoint<DeleteRoleBindingModel>
+public class DeleteRoleEndpoint : EndpointWithoutRequest
 {
     private readonly RoleManager<HackathonRoleEntity> roleManager;
     private readonly ILogger<DeleteRoleEndpoint> logger;
@@ -21,7 +19,7 @@ public class DeleteRoleEndpoint : Endpoint<DeleteRoleBindingModel>
 
     public override void Configure()
     {
-        this.Delete("api/roles");
+        this.Delete("api/roles/{id:guid}");
         this.AddHackathonPolicy(AuthClaimType.ManageRole);
         
         this.Description(builder => builder
@@ -29,11 +27,11 @@ public class DeleteRoleEndpoint : Endpoint<DeleteRoleBindingModel>
             .WithTags("Roles"));
     }
 
-    public override async Task HandleAsync(DeleteRoleBindingModel req, CancellationToken ct)
+    public override async Task HandleAsync(CancellationToken ct)
     {
-        ArgumentNullException.ThrowIfNull(req);
+        var id = this.Route<Guid>("id");
 
-        HackathonRoleEntity? role = await this.roleManager.FindByIdAsync(req.Id.ToString());
+        HackathonRoleEntity? role = await this.roleManager.FindByIdAsync(id.ToString());
         if (role is null || role.IsDeleted)
         {
             await this.Send.NotFoundAsync(ct);
@@ -53,7 +51,7 @@ public class DeleteRoleEndpoint : Endpoint<DeleteRoleBindingModel>
             return;
         }
 
-        this.logger.LogInformation("Deleted role {Id}", req.Id);
+        this.logger.LogInformation("Deleted role {Id}", id);
         await this.Send.OkAsync(cancellation: ct);
     }
 }
