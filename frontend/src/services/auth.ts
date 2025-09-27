@@ -32,8 +32,7 @@ export const login = async (credentials: Credentials): Promise<AuthResult> => {
       expiration: decodedToken.exp,
       user: {
         id: decodedToken['Hackathon-User-ID'],
-        name: decodedToken['Hackathon-Display-Name'],
-        email: undefined,
+        displayName: decodedToken['Hackathon-Display-Name'],
         claims: decodedToken['Hackathon-Auth']
       } as User
     } as AuthResult

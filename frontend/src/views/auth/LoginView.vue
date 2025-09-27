@@ -128,7 +128,7 @@ const onSubmit = async () => {
       const userStore = useUserStore()
       userStore.login(authResult)
 
-      ElMessage.success(`Willkommen zurück, ${authResult.user.name}!`)
+      ElMessage.success(`Willkommen zurück, ${authResult.user.displayName}!`)
 
       router.push('/users/me')
     }
