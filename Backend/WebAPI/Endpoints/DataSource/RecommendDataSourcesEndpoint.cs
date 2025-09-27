@@ -143,7 +143,7 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
 
             using var content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
 
-            string url = $"https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key={googleAiApiKey}";
+            string url = $"https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash-lite:generateContent?key={googleAiApiKey}";
             using HttpResponseMessage resp = await http.PostAsync(url, content, cancellationToken);
             if (!resp.IsSuccessStatusCode)
             {
@@ -169,7 +169,10 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
                         if (part.TryGetProperty("text", out JsonElement textEl) && textEl.ValueKind == JsonValueKind.String)
                         {
                             json = textEl.GetString();
-                            if (!string.IsNullOrWhiteSpace(json)) break;
+                            if (!string.IsNullOrWhiteSpace(json))
+                            {
+                                break;
+                            }
                         }
                     }
                 }
@@ -260,7 +263,9 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
     private static string ExtractJsonFromMarkdown(string text)
     {
         if (string.IsNullOrWhiteSpace(text))
+        {
             return text;
+        }
 
         text = text.Trim();
 
@@ -270,14 +275,18 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
             // Find the first newline after ```json
             int startIndex = text.IndexOf('\n');
             if (startIndex == -1)
+            {
                 return text; // Fallback if no newline found
+            }
 
             startIndex++; // Move past the newline
 
             // Find the closing ```
-            int endIndex = text.LastIndexOf("```");
+            int endIndex = text.LastIndexOf("```", StringComparison.Ordinal);
             if (endIndex <= startIndex)
+            {
                 return text; // Fallback if no closing ``` found
+            }
 
             // Extract the JSON content between the markers
             return text.Substring(startIndex, endIndex - startIndex).Trim();
@@ -289,7 +298,9 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
             // Find the first newline after ```
             int startIndex = text.IndexOf('\n');
             if (startIndex == -1)
+            {
                 return text; // Fallback if no newline found
+            }
 
             startIndex++; // Move past the newline
 
