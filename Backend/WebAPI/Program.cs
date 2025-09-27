@@ -1,4 +1,5 @@
 using FastEndpoints;
+using FastEndpoints.Swagger;
 using ITTitans.Hackathon2025.EntityModel;
 using ITTitans.Hackathon2025.EntityModel.Auth;
 using ITTitans.Hackathon2025.Model;
@@ -47,7 +48,12 @@ public static class Program
             .AddEnvironmentVariables();
         var webServerAppSettingsService = new WebServerAppSettingsService(new AppSettingsReader(builder.Configuration));
         
-        builder.Services.AddFastEndpoints();
+        builder.Services
+            .AddFastEndpoints()
+            .SwaggerDocument(o =>
+            {
+                o.AutoTagPathSegmentIndex = -1;
+            });
         
         builder.Services.AddCors(options =>
         {
@@ -76,16 +82,15 @@ public static class Program
                     new OpenApiInfo { Title = "Hackathon API", Version = "1.0.0" }
                 );
 
-                // enforce using JWT
+                // enforce using JWT via custom header (X-Hackathon-Token)
+                // Use ApiKey scheme so Swagger UI sends the token in the custom header instead of Authorization
                 swaggerGenerationOptions.AddSecurityDefinition(
-                    "Bearer",
+                    "HackathonToken",
                     new OpenApiSecurityScheme
                     {
-                        Type = SecuritySchemeType.Http,
-                        BearerFormat = "JWT",
+                        Type = SecuritySchemeType.ApiKey,
                         In = ParameterLocation.Header,
-                        Scheme = "bearer",
-                        Description = "Hackathon JWT",
+                        Description = "Hackathon 2025 JWT placed directly as the value of X-Hackathon-Token header",
                         Name = Program.JwtHttpHeader,
                     }
                 );
@@ -98,7 +103,7 @@ public static class Program
                                 Reference = new OpenApiReference
                                 {
                                     Type = ReferenceType.SecurityScheme,
-                                    Id = "Bearer",
+                                    Id = "HackathonToken",
                                 },
                             },
                             Array.Empty<string>()
@@ -190,7 +195,9 @@ public static class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.UseFastEndpoints();
+        app
+            .UseFastEndpoints()
+            .UseSwaggerGen();
 
         if (app.Environment.IsDevelopment())
         {

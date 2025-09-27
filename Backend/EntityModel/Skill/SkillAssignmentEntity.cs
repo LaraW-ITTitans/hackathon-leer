@@ -15,9 +15,9 @@ public class SkillAssignmentEntity
 
     public SkillEntity Skill { get; set; } = null!;
 
-    public Guid? SkillId { get; set; }
+    public Guid SkillId { get; set; }
 
     public SupplyCertificateWorkflowEntity Workflow { get; set; } = null!;
 
-    public Guid? WorkflowId { get; set; }
+    public Guid WorkflowId { get; set; }
 }

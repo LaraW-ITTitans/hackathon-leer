@@ -3,6 +3,7 @@ using System;
 using ITTitans.Hackathon2025.EntityModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ITTitans.Hackathon2025.EntityModel.Migrations
 {
     [DbContext(typeof(HackathonDbContext))]
-    partial class HackathonDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250926193956_UpdateSkillEntityModel")]
+    partial class UpdateSkillEntityModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -189,50 +192,6 @@ namespace ITTitans.Hackathon2025.EntityModel.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("ITTitans.Hackathon2025.EntityModel.DataSource.DataSourceEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(2500)
-                        .HasColumnType("character varying(2500)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DataSource");
-                });
-
-            modelBuilder.Entity("ITTitans.Hackathon2025.EntityModel.DataSource.DataSourceRequirementEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("DataSourceId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("SkillId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DataSourceId");
-
-                    b.HasIndex("SkillId");
-
-                    b.ToTable("DataSourceRequirement");
                 });
 
             modelBuilder.Entity("ITTitans.Hackathon2025.EntityModel.Skill.SkillAssignmentEntity", b =>
@@ -469,25 +428,6 @@ namespace ITTitans.Hackathon2025.EntityModel.Migrations
                     b.Navigation("Attachment");
                 });
 
-            modelBuilder.Entity("ITTitans.Hackathon2025.EntityModel.DataSource.DataSourceRequirementEntity", b =>
-                {
-                    b.HasOne("ITTitans.Hackathon2025.EntityModel.DataSource.DataSourceEntity", "DataSource")
-                        .WithMany("Requirements")
-                        .HasForeignKey("DataSourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ITTitans.Hackathon2025.EntityModel.Skill.SkillEntity", "Skill")
-                        .WithMany()
-                        .HasForeignKey("SkillId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DataSource");
-
-                    b.Navigation("Skill");
-                });
-
             modelBuilder.Entity("ITTitans.Hackathon2025.EntityModel.Skill.SkillAssignmentEntity", b =>
                 {
                     b.HasOne("ITTitans.Hackathon2025.EntityModel.Skill.SkillEntity", "Skill")
@@ -622,11 +562,6 @@ namespace ITTitans.Hackathon2025.EntityModel.Migrations
                     b.Navigation("ReviewedSupplyCertificateWorkflows");
 
                     b.Navigation("SkillAssignments");
-                });
-
-            modelBuilder.Entity("ITTitans.Hackathon2025.EntityModel.DataSource.DataSourceEntity", b =>
-                {
-                    b.Navigation("Requirements");
                 });
 
             modelBuilder.Entity("ITTitans.Hackathon2025.EntityModel.Skill.SkillEntity", b =>

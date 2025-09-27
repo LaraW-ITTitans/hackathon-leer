@@ -1,5 +1,6 @@
 using ITTitans.Hackathon2025.EntityModel.Attachment;
 using ITTitans.Hackathon2025.EntityModel.Auth;
+using ITTitans.Hackathon2025.EntityModel.DataSource;
 using ITTitans.Hackathon2025.EntityModel.Skill;
 using ITTitans.Hackathon2025.EntityModel.Workflow.SupplyCertificate;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -17,6 +18,8 @@ public class HackathonDbContext : IdentityDbContext<HackathonUserEntity, Hackath
 
     public DbSet<SkillReviewConfigurationEntity> SkillReviewConfigurations => this.Set<SkillReviewConfigurationEntity>();
 
+    public DbSet<SkillAssignmentEntity> SkillAssignments => this.Set<SkillAssignmentEntity>();
+
     #region workflow
 
     public DbSet<SupplyCertificateWorkflowEntity> SupplyCertificateWorkflows => this.Set<SupplyCertificateWorkflowEntity>();
@@ -28,6 +31,14 @@ public class HackathonDbContext : IdentityDbContext<HackathonUserEntity, Hackath
     public DbSet<AttachmentEntity> Attachments => this.Set<AttachmentEntity>();
     
     public DbSet<AttachmentLinkEntity> AttachmentLinks => this.Set<AttachmentLinkEntity>();
+
+    #endregion
+
+    #region data source
+
+    public DbSet<DataSourceEntity> DataSources => this.Set<DataSourceEntity>();
+    
+    public DbSet<DataSourceRequirementEntity> DataSourceRequirements => this.Set<DataSourceRequirementEntity>();
 
     #endregion
     

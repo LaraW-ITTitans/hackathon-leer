@@ -2,5 +2,7 @@
 
 public class StartSupplyCertificateWorkflowBindingModel
 {
+    public Guid SkillId { get; set; }
+    
     public IFormFile File { get; set; } = null!;
 }
