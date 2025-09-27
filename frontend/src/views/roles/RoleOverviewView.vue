@@ -1,5 +1,5 @@
 ﻿<script setup lang="ts">
-import RoleListComponent from '@/modules/roles-admin/RoleListComponent.vue'
+import RoleListComponent from '@/modules/roles-admin/RoleListModule.vue'
 </script>
 
 <template>
