@@ -91,7 +91,6 @@ public class ProcessSupplyCertificateWorkflowEndpoint : Endpoint<ProcessSupplyCe
 
         if (req.Accept)
         {
-            // create skill assignment connecting initiator and skill with this workflow
             bool assignmentExists = await this.dbContext.SkillAssignments
                 .AnyAsync(a => a.UserId == workflow.InitiatorId && a.SkillId == workflow.SkillId, ct);
 

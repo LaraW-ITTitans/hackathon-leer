@@ -1,14 +1,12 @@
 using FastEndpoints;
-using ITTitans.Hackathon2025.EntityModel;
 using ITTitans.Hackathon2025.EntityModel.Auth;
 using ITTitans.Hackathon2025.Model.Auth;
-using ITTitans.Hackathon2025.WebAPI.Model.User;
 using ITTitans.Hackathon2025.WebAPI.Utils;
 using Microsoft.AspNetCore.Identity;
 
 namespace ITTitans.Hackathon2025.WebAPI.Endpoints.User;
 
-public class DeleteUserEndpoint : Endpoint<DeleteUserBindingModel>
+public class DeleteUserEndpoint : EndpointWithoutRequest
 {
     private readonly UserManager<HackathonUserEntity> userManager;
     private readonly ILogger<DeleteUserEndpoint> logger;
@@ -21,7 +19,7 @@ public class DeleteUserEndpoint : Endpoint<DeleteUserBindingModel>
 
     public override void Configure()
     {
-        this.Delete("api/users");
+        this.Delete("api/users/{id:guid}");
         this.AddHackathonPolicy(AuthClaimType.ManageUser);
         
         this.Description(builder => builder
@@ -29,11 +27,11 @@ public class DeleteUserEndpoint : Endpoint<DeleteUserBindingModel>
             .WithTags("Users"));
     }
 
-    public override async Task HandleAsync(DeleteUserBindingModel req, CancellationToken ct)
+    public override async Task HandleAsync(CancellationToken ct)
     {
-        ArgumentNullException.ThrowIfNull(req);
-
-        HackathonUserEntity? user = await this.userManager.FindByIdAsync(req.Id.ToString());
+        var userId = this.Route<Guid>("id");
+        
+        HackathonUserEntity? user = await this.userManager.FindByIdAsync(userId.ToString());
         if (user is null || user.IsDeleted)
         {
             await this.Send.NotFoundAsync(ct);
@@ -53,7 +51,7 @@ public class DeleteUserEndpoint : Endpoint<DeleteUserBindingModel>
             return;
         }
 
-        this.logger.LogInformation("Deleted user {Id}", req.Id);
+        this.logger.LogInformation("Deleted user {Id}", userId);
         await this.Send.OkAsync(cancellation: ct);
     }
 }
