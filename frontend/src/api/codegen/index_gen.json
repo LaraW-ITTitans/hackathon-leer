@@ -1,40 +1,16 @@
 {
-  "openapi": "3.0.4",
+  "x-generator": "NSwag v14.4.0.0 (NJsonSchema v11.3.2.0 (Newtonsoft.Json v13.0.0.0))",
+  "openapi": "3.0.0",
   "info": {
-    "title": "Hackathon API",
+    "title": "ITTitans.Hackathon2025.WebAPI",
     "version": "1.0.0"
   },
+  "servers": [
+    {
+      "url": "https://localhost:7108"
+    }
+  ],
   "paths": {
-    "/api/auth/login": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "operationId": "Login",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoginBindingModel"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginResponseBindingModel"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/info": {
       "get": {
         "tags": [
@@ -43,11 +19,11 @@
         "operationId": "GetInfo",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiInfoBindingModel"
+                  "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelApiInfoBindingModel"
                 }
               }
             }
@@ -55,55 +31,91 @@
         }
       }
     },
-    "/api/roles": {
+    "/api/workflows/supply-certificates/{id}/cancel": {
       "post": {
         "tags": [
-          "Roles"
+          "SupplyCertificateWorkflows"
         ],
-        "operationId": "CreateRole",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateRoleBindingModel"
-              }
+        "operationId": "CancelSupplyCertificateWorkflow",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
             }
-          },
-          "required": true
-        },
+          }
+        ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BasicRoleBindingModel"
+                  "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel"
                 }
               }
             }
           },
           "401": {
             "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
           }
-        }
-      },
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/workflows/supply-certificates/own": {
       "get": {
         "tags": [
-          "Roles"
+          "SupplyCertificateWorkflows"
         ],
-        "operationId": "GetAllRoles",
+        "operationId": "GetOwnSupplyCertificateWorkflows",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/BasicRoleBindingModel"
+                    "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/workflows/supply-certificates/reviewable": {
+      "get": {
+        "tags": [
+          "SupplyCertificateWorkflows"
+        ],
+        "operationId": "GetReviewableSupplyCertificateWorkflows",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel"
                   }
                 }
               }
@@ -115,111 +127,29 @@
           "403": {
             "description": "Forbidden"
           }
-        }
-      },
-      "put": {
-        "tags": [
-          "Roles"
-        ],
-        "operationId": "UpdateRole",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateRoleBindingModel"
-              }
-            }
-          },
-          "required": true
         },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BasicRoleBindingModel"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
+        "security": [
+          {
+            "JWTBearerAuth": []
           }
-        }
+        ]
       }
     },
-    "/api/roles/{id}": {
-      "delete": {
-        "tags": [
-          "Roles"
-        ],
-        "operationId": "DeleteRole",
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        }
-      }
-    },
-    "/api/skills": {
-      "post": {
-        "tags": [
-          "Skills"
-        ],
-        "operationId": "CreateSkill",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateSkillBindingModel"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BasicSkillBindingModel"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        }
-      },
+    "/api/workflows/supply-certificates": {
       "get": {
         "tags": [
-          "Skills"
+          "SupplyCertificateWorkflows"
         ],
-        "operationId": "Get All Skills",
+        "operationId": "GetSupplyCertificateWorkflows",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/BasicSkillBindingModel"
+                    "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel"
                   }
                 }
               }
@@ -231,30 +161,38 @@
           "403": {
             "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
       },
-      "put": {
+      "post": {
         "tags": [
-          "Skills"
+          "SupplyCertificateWorkflows"
         ],
-        "operationId": "UpdateSkill",
+        "operationId": "StartSupplyCertificateWorkflow",
         "requestBody": {
+          "x-name": "StartSupplyCertificateWorkflowBindingModel",
+          "description": "",
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateSkillBindingModel"
+                "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateStartSupplyCertificateWorkflowBindingModel"
               }
             }
           },
-          "required": true
+          "required": true,
+          "x-position": 1
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BasicSkillBindingModel"
+                  "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel"
                 }
               }
             }
@@ -265,75 +203,51 @@
           "403": {
             "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
       }
     },
-    "/api/skills/{id}": {
-      "delete": {
+    "/api/workflows/supply-certificates/{id}/process": {
+      "post": {
         "tags": [
-          "Skills"
+          "SupplyCertificateWorkflows"
         ],
-        "operationId": "DeleteSkill",
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "Skills"
-        ],
-        "operationId": "Get Skill By Id",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SkillDetailBindingModel"
-                }
-              }
+        "operationId": "ProcessSupplyCertificateWorkflow",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
             }
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
           }
-        }
-      }
-    },
-    "/api/skills/{id}/reviewers": {
-      "put": {
-        "tags": [
-          "Skills"
         ],
-        "operationId": "UpdateSkillReviewers",
         "requestBody": {
+          "x-name": "ProcessSupplyCertificateWorkflowBindingModel",
+          "description": "",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateSkillReviewersBindingModel"
+                "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateProcessSupplyCertificateWorkflowBindingModel"
               }
             }
           },
-          "required": true
+          "required": true,
+          "x-position": 1
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SkillDetailBindingModel"
+                  "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel"
                 }
               }
             }
@@ -344,7 +258,12 @@
           "403": {
             "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
       }
     },
     "/api/users/change-password": {
@@ -354,14 +273,17 @@
         ],
         "operationId": "ChangeOwnPassword",
         "requestBody": {
+          "x-name": "ChangeOwnPasswordBindingModel",
+          "description": "",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ChangeOwnPasswordBindingModel"
+                "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelUserChangeOwnPasswordBindingModel"
               }
             }
           },
-          "required": true
+          "required": true,
+          "x-position": 1
         },
         "responses": {
           "204": {
@@ -370,7 +292,12 @@
           "401": {
             "description": "Unauthorized"
           }
-        }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
       }
     },
     "/api/users": {
@@ -380,22 +307,25 @@
         ],
         "operationId": "CreateUser",
         "requestBody": {
+          "x-name": "CreateUserBindingModel",
+          "description": "",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateUserBindingModel"
+                "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelUserCreateUserBindingModel"
               }
             }
           },
-          "required": true
+          "required": true,
+          "x-position": 1
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BasicUserBindingModel"
+                  "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel"
                 }
               }
             }
@@ -406,39 +336,12 @@
           "403": {
             "description": "Forbidden"
           }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Users"
-        ],
-        "operationId": "DeleteUser",
-        "requestBody": {
-          "content": {
-            "*/*": {
-              "schema": {
-                "$ref": "#/components/schemas/DeleteUserBindingModel"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeleteUserBindingModel"
-              }
-            }
-          },
-          "required": true
         },
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
+        "security": [
+          {
+            "JWTBearerAuth": []
           }
-        }
+        ]
       },
       "get": {
         "tags": [
@@ -447,13 +350,13 @@
         "operationId": "GetUsers",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/BasicUserBindingModel"
+                    "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel"
                   }
                 }
               }
@@ -465,7 +368,12 @@
           "403": {
             "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
       },
       "put": {
         "tags": [
@@ -473,22 +381,25 @@
         ],
         "operationId": "Update User",
         "requestBody": {
+          "x-name": "UpdateUserBindingModel",
+          "description": "",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateUserBindingModel"
+                "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelUserUpdateUserBindingModel"
               }
             }
           },
-          "required": true
+          "required": true,
+          "x-position": 1
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BasicUserBindingModel"
+                  "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel"
                 }
               }
             }
@@ -499,7 +410,122 @@
           "403": {
             "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users/{id}": {
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "DeleteUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users/me/available-datasources": {
+      "get": {
+        "tags": [
+          "Users",
+          "DataSources"
+        ],
+        "operationId": "GetAvailableDataSourcesForCurrentUser",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users/{id}/available-datasources": {
+      "get": {
+        "tags": [
+          "Users",
+          "DataSources"
+        ],
+        "operationId": "GetAvailableDataSourcesForUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
       }
     },
     "/api/users/me": {
@@ -510,11 +536,732 @@
         "operationId": "GetCurrentUser",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BasicUserBindingModel"
+                  "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelUserDetailedUserBindingModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/me/skills-with-certificates": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "GetCurrentUserSkillsWithCertificates",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users/{id}/skills-with-certificates": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "GetUserSkillsWithCertificates",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/skills": {
+      "post": {
+        "tags": [
+          "Skills"
+        ],
+        "operationId": "CreateSkill",
+        "requestBody": {
+          "x-name": "CreateSkillBindingModel",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelSkillCreateSkillBindingModel"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Skills"
+        ],
+        "operationId": "Get All Skills",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Skills"
+        ],
+        "operationId": "UpdateSkill",
+        "requestBody": {
+          "x-name": "UpdateSkillBindingModel",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelSkillUpdateSkillBindingModel"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/skills/{id}": {
+      "delete": {
+        "tags": [
+          "Skills"
+        ],
+        "operationId": "DeleteSkill",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Skills"
+        ],
+        "operationId": "Get Skill By Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/skills/{id}/reviewers": {
+      "put": {
+        "tags": [
+          "Skills"
+        ],
+        "operationId": "UpdateSkillReviewers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "UpdateSkillReviewersBindingModel",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelSkillUpdateSkillReviewersBindingModel"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/roles": {
+      "post": {
+        "tags": [
+          "Roles"
+        ],
+        "operationId": "CreateRole",
+        "requestBody": {
+          "x-name": "CreateRoleBindingModel",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelRoleCreateRoleBindingModel"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Roles"
+        ],
+        "operationId": "GetAllRoles",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Roles"
+        ],
+        "operationId": "UpdateRole",
+        "requestBody": {
+          "x-name": "UpdateRoleBindingModel",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelRoleUpdateRoleBindingModel"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/roles/{id}": {
+      "delete": {
+        "tags": [
+          "Roles"
+        ],
+        "operationId": "DeleteRole",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/data-sources": {
+      "post": {
+        "tags": [
+          "DataSources"
+        ],
+        "operationId": "CreateDataSource",
+        "requestBody": {
+          "x-name": "CreateUpdateDataSourceBindingModel",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelDataSourceCreateUpdateDataSourceBindingModel"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "DataSources"
+        ],
+        "operationId": "GetDataSources",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/data-sources/{id}": {
+      "delete": {
+        "tags": [
+          "DataSources"
+        ],
+        "operationId": "DeleteDataSource",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "DataSources"
+        ],
+        "operationId": "UpdateDataSource",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        ],
+        "requestBody": {
+          "x-name": "CreateUpdateDataSourceBindingModel",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelDataSourceCreateUpdateDataSourceBindingModel"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/data-sources/recommend": {
+      "get": {
+        "tags": [
+          "DataSources"
+        ],
+        "operationId": "RecommendDataSources",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "max",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelDataSourceDataSourceRecommendationBindingModel"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "operationId": "Login",
+        "requestBody": {
+          "x-name": "LoginBindingModel",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelAuthLoginBindingModel"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelAuthLoginResponseBindingModel"
                 }
               }
             }
@@ -525,7 +1272,7 @@
   },
   "components": {
     "schemas": {
-      "ApiInfoBindingModel": {
+      "ITTitansHackathon2025WebAPIModelApiInfoBindingModel": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -539,80 +1286,232 @@
           }
         }
       },
-      "BasicRoleBindingModel": {
+      "ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "id",
-          "name"
-        ],
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid"
+            "format": "guid"
           },
-          "name": {
-            "type": "string",
-            "nullable": true
+          "state": {
+            "$ref": "#/components/schemas/ITTitansHackathon2025ModelWorkflowSupplyCertificateSupplyCertificateWorkflowStateType"
           }
         }
       },
-      "BasicSkillBindingModel": {
+      "ITTitansHackathon2025ModelWorkflowSupplyCertificateSupplyCertificateWorkflowStateType": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "InReview",
+          "Accepted",
+          "Declined",
+          "Cancelled"
+        ],
+        "enum": [
+          1,
+          2,
+          3,
+          -1
+        ]
+      },
+      "ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateProcessSupplyCertificateWorkflowBindingModel": {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "id",
-          "name"
+          "accept",
+          "reviewComment"
         ],
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
+          "accept": {
+            "type": "boolean"
           },
-          "name": {
+          "reviewComment": {
             "type": "string",
-            "nullable": true
+            "minLength": 1
           }
         }
       },
-      "BasicUserBindingModel": {
+      "ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateStartSupplyCertificateWorkflowBindingModel": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "displayName",
-          "id",
-          "userName"
-        ],
         "properties": {
-          "id": {
+          "skillId": {
             "type": "string",
-            "format": "uuid"
+            "format": "guid"
           },
-          "userName": {
+          "file": {
             "type": "string",
-            "nullable": true
-          },
-          "displayName": {
-            "type": "string",
-            "nullable": true
+            "format": "binary"
           }
         }
       },
-      "ChangeOwnPasswordBindingModel": {
+      "ITTitansHackathon2025WebAPIModelUserChangeOwnPasswordBindingModel": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "currentPassword",
-          "newPassword"
-        ],
         "properties": {
           "currentPassword": {
             "type": "string",
             "maxLength": 2500,
-            "minLength": 0,
-            "nullable": true
+            "minLength": 0
           },
           "newPassword": {
+            "type": "string",
+            "maxLength": 2500,
+            "minLength": 0
+          }
+        }
+      },
+      "ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          }
+        }
+      },
+      "ITTitansHackathon2025WebAPIModelUserCreateUserBindingModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userName": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 0
+          },
+          "displayName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 2500,
+            "minLength": 0
+          }
+        }
+      },
+      "ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "requiredSkills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel"
+            }
+          }
+        }
+      },
+      "ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "ITTitansHackathon2025WebAPIModelUserDetailedUserBindingModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel"
+            }
+          },
+          "reviewableSkills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel"
+            }
+          }
+        }
+      },
+      "ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "skillId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "skillName": {
+            "type": "string"
+          },
+          "workflowId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "certificateFileName": {
+            "type": "string"
+          },
+          "certificateContentType": {
+            "type": "string"
+          },
+          "certificateSizeInBytes": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "certificateContentBase64": {
+            "type": "string"
+          }
+        }
+      },
+      "ITTitansHackathon2025WebAPIModelUserUpdateUserBindingModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "userName": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 0
+          },
+          "displayName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "password": {
             "type": "string",
             "maxLength": 2500,
             "minLength": 0,
@@ -620,21 +1519,7 @@
           }
         }
       },
-      "CreateRoleBindingModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "name"
-        ],
-        "properties": {
-          "name": {
-            "type": "string",
-            "maxLength": 100,
-            "minLength": 0
-          }
-        }
-      },
-      "CreateSkillBindingModel": {
+      "ITTitansHackathon2025WebAPIModelSkillCreateSkillBindingModel": {
         "type": "object",
         "additionalProperties": false,
         "required": [
@@ -651,99 +1536,16 @@
           }
         }
       },
-      "CreateUserBindingModel": {
+      "ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "displayName",
-          "password",
-          "userName"
-        ],
-        "properties": {
-          "userName": {
-            "type": "string",
-            "maxLength": 20,
-            "minLength": 0,
-            "nullable": true
-          },
-          "displayName": {
-            "type": "string",
-            "maxLength": 100,
-            "minLength": 0,
-            "nullable": true
-          },
-          "password": {
-            "type": "string",
-            "maxLength": 2500,
-            "minLength": 0,
-            "nullable": true
-          }
-        }
-      },
-      "DeleteUserBindingModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "id"
-        ],
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid"
-          }
-        }
-      },
-      "LoginBindingModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "password",
-          "rememberMe",
-          "userName"
-        ],
-        "properties": {
-          "userName": {
-            "type": "string",
-            "nullable": true
-          },
-          "password": {
-            "type": "string",
-            "nullable": true
-          },
-          "rememberMe": {
-            "type": "boolean"
-          }
-        }
-      },
-      "LoginResponseBindingModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "token"
-        ],
-        "properties": {
-          "token": {
-            "type": "string",
-            "nullable": true
-          }
-        }
-      },
-      "SkillDetailBindingModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "name",
-          "possibleReviewers"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
+            "format": "guid"
           },
           "name": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "description": {
             "type": "string",
@@ -751,14 +1553,13 @@
           },
           "possibleReviewers": {
             "type": "array",
-            "nullable": true,
             "items": {
-              "$ref": "#/components/schemas/BasicUserBindingModel"
+              "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel"
             }
           }
         }
       },
-      "UpdateRoleBindingModel": {
+      "ITTitansHackathon2025WebAPIModelSkillUpdateSkillBindingModel": {
         "type": "object",
         "additionalProperties": false,
         "required": [
@@ -768,26 +1569,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "maxLength": 100,
-            "minLength": 0
-          }
-        }
-      },
-      "UpdateSkillBindingModel": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "name"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
+            "format": "guid",
+            "minLength": 1
           },
           "name": {
             "type": "string",
@@ -799,73 +1582,177 @@
           }
         }
       },
-      "UpdateSkillReviewersBindingModel": {
+      "ITTitansHackathon2025WebAPIModelSkillUpdateSkillReviewersBindingModel": {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "reviewerUserIds",
-          "skillId"
+          "skillId",
+          "reviewerUserIds"
         ],
         "properties": {
           "skillId": {
             "type": "string",
-            "format": "uuid"
+            "format": "guid",
+            "minLength": 1
           },
           "reviewerUserIds": {
             "type": "array",
             "items": {
               "type": "string",
-              "format": "uuid"
+              "format": "guid"
             }
           }
         }
       },
-      "UpdateUserBindingModel": {
+      "ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "ITTitansHackathon2025WebAPIModelRoleCreateRoleBindingModel": {
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "displayName",
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          }
+        }
+      },
+      "ITTitansHackathon2025WebAPIModelRoleUpdateRoleBindingModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
           "id",
-          "userName"
+          "name"
         ],
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid"
+            "format": "guid",
+            "minLength": 1
           },
-          "userName": {
-            "type": "string",
-            "maxLength": 20,
-            "minLength": 0,
-            "nullable": true
-          },
-          "displayName": {
+          "name": {
             "type": "string",
             "maxLength": 100,
-            "minLength": 0,
+            "minLength": 0
+          }
+        }
+      },
+      "ITTitansHackathon2025WebAPIModelDataSourceCreateUpdateDataSourceBindingModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
             "nullable": true
           },
-          "password": {
+          "requiredSkillIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "guid"
+            }
+          }
+        }
+      },
+      "ITTitansHackathon2025WebAPIModelDataSourceDataSourceRecommendationBindingModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
             "type": "string",
-            "maxLength": 2500,
-            "minLength": 0,
+            "format": "guid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
             "nullable": true
+          },
+          "hasAccess": {
+            "type": "boolean"
+          },
+          "requiredSkills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ITTitansHackathon2025WebAPIModelSkillRequiredSkillAccessBindingModel"
+            }
+          }
+        }
+      },
+      "ITTitansHackathon2025WebAPIModelSkillRequiredSkillAccessBindingModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "hasSkill": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ITTitansHackathon2025WebAPIEndpointsDataSourceRecommendDataSourcesRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ITTitansHackathon2025WebAPIModelAuthLoginResponseBindingModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "ITTitansHackathon2025WebAPIModelAuthLoginBindingModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userName": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "rememberMe": {
+            "type": "boolean"
           }
         }
       }
     },
     "securitySchemes": {
-      "Bearer": {
+      "JWTBearerAuth": {
         "type": "http",
-        "description": "Hackathon JWT",
-        "scheme": "bearer",
+        "description": "Enter a JWT token to authorize the requests...",
+        "scheme": "Bearer",
         "bearerFormat": "JWT"
       }
     }
-  },
-  "security": [
-    {
-      "Bearer": []
-    }
-  ]
+  }
 }

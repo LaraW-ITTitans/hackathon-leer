@@ -5,6 +5,8 @@ import {
   UsersApiClient,
   RolesApiClient,
   SkillsApiClient,
+  SupplyCertificateWorkflowsApiClient,
+  DataSourcesApiClient,
 } from '@/api/codegen'
 
 /*
@@ -35,10 +37,14 @@ const authApi = new AuthApiClient(BASE_PATH, axiosInstance);
 const userApi = new UsersApiClient(BASE_PATH, axiosInstance);
 const roleApi = new RolesApiClient(BASE_PATH, axiosInstance);
 const skillApi = new SkillsApiClient(BASE_PATH, axiosInstance);
+const certificateWorkflowApi = new SupplyCertificateWorkflowsApiClient(BASE_PATH, axiosInstance);
+const dataSourceApi = new DataSourcesApiClient(BASE_PATH, axiosInstance);
 
 export {
   authApi,
   userApi,
   roleApi,
   skillApi,
+  certificateWorkflowApi,
+  dataSourceApi
 }
