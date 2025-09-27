@@ -30,7 +30,7 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
 
     public override void Configure()
     {
-        this.Get("api/data-sources/recommend");
+        this.Post("api/data-sources/recommend");
         // No explicit policy; requires authentication via claim extraction
         this.Description(b => b
             .WithName("RecommendDataSources")
