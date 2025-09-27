@@ -64,6 +64,12 @@ const router = createRouter({
       component: () => import('../views/skills/SkillOverviewView.vue'),
       meta: { public: false, title: 'Administration - Nachweise' },
     },
+    {
+      path: '/admin/workflows',
+      name: 'workflow-management',
+      component: () => import('../views/workflows/SupplyCertificateWorkflowOverviewView.vue'),
+      meta: { public: false, title: 'Administration - Workflows' },
+    },
 
     // User Pages
     {
