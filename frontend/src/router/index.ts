@@ -70,7 +70,7 @@ const router = createRouter({
       path: '/users/me',
       name: 'user-profile',
       component: () => import('../views/user/profile/UserProfileView.vue'),
-      meta: { public: false, title: 'Eigenes Profil' },
+      meta: { public: false, title: 'Eigenes Profil', description: "Benutzerdaten verwalten" },
     },
 
     // last but not least
