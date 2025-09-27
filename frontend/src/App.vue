@@ -1,7 +1,7 @@
 <template>
   <el-config-provider :size="size" :z-index="zIndex" :locale="german">
     <el-container>
-      <el-header v-if="!isBlacklistedRoute" class="page-header">
+      <el-header v-if="!(isBlacklistedRoute || isFullPageRoute)" class="page-header">
         <PageHeaderComponent />
       </el-header>
       <el-container>
@@ -34,9 +34,10 @@ const zIndex = 3000
 const size = 'default'
 
 const blacklist = ['/auth', '/register']
-const fullPages = ['/']
+const fullPages = ['', '/']
 
 const route = useRoute()
+
 const isBlacklistedRoute = computed(() => blacklist.includes(route.path))
 const isFullPageRoute = computed(() => fullPages.includes(route.path))
 </script>
