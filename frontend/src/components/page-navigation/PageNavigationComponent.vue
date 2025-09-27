@@ -13,7 +13,7 @@
       />
     </el-menu-item>
 
-    <template v-for="item in visibleItems" :key="item.to">
+    <template v-for="(item, index) in visibleItems" :key="item.to">
       <!-- leaf -->
       <el-menu-item
         v-if="!item.children?.length"
@@ -24,7 +24,7 @@
       </el-menu-item>
 
       <!-- group with children -->
-      <el-sub-menu v-else :index="item.to">
+      <el-sub-menu v-else :index="index + 1">
         <template #title>{{ item.label }}</template>
         <template v-for="child in item.children" :key="child.to">
           <el-menu-item
@@ -50,8 +50,6 @@
       </el-sub-menu>
     </template>
   </el-menu>
-
-  <div class="h-6" />
 </template>
 
 <script setup lang="ts">
@@ -68,6 +66,8 @@ const items: MenuItem[] = [
 
   // { label: 'Login', to: '/auth', guestOnly: true },
   { label: 'Profil', to: '/users/me', authOnly: true },
+
+  { label: 'Administration', to: '/admin', authOnly: true },
 
   { label: 'Info', to: '/info', disabled: true },
 
@@ -94,12 +94,6 @@ const visibleItems = computed(() => filterByAuth(items))
 
 const route = useRoute()
 
-/**
- * For Element Plus with :router="true", the menu considers an item active
- * when its `index` matches the current route. Using route.path is robust.
- * If you have dynamic routes with params and want child items to highlight,
- * match against the deepest matched record's path.
- */
 const currentIndex = computed(() => {
   const deepest = route.matched[route.matched.length - 1]
   return deepest?.path || route.path

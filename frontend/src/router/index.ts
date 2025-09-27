@@ -41,6 +41,12 @@ const router = createRouter({
 
     // Admin Pages
     {
+      path: '/admin',
+      name: 'admin-overview',
+      component: () => import('../views/admin/overview/AdminView.vue'),
+      meta: { public: false, title: 'Administration' },
+    },
+    {
       path: '/admin/roles',
       name: 'role-management',
       component: () => import('../views/roles/RoleOverviewView.vue'),
