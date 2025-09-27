@@ -1,6 +1,10 @@
 ﻿import { ref } from 'vue';
 import { roleApi } from '@/api'
-import { type BasicRoleBindingModel } from '@/api/codegen'
+import type {
+  BasicRoleBindingModel,
+  CreateRoleBindingModel,
+  UpdateRoleBindingModel
+} from '@/api/codegen'
 
 export const useRoles = () => {
   const roles = ref<BasicRoleBindingModel[]>([]);
@@ -42,7 +46,7 @@ export const useRoles = () => {
   };
 
   // Create a new role
-  const createRole = async (role: RoleDto) => {
+  const createRole = async (role: CreateRoleBindingModel) => {
     loading.value = true;
     error.value = null;
     try {
@@ -60,7 +64,7 @@ export const useRoles = () => {
   };
 
   // Update an existing role
-  const updateRole = async (id: number, role: RoleDto) => {
+  const updateRole = async (id: number, role: UpdateRoleBindingModel) => {
     loading.value = true;
     error.value = null;
     try {
@@ -81,8 +85,6 @@ export const useRoles = () => {
   const deleteRole = async (id: string) => {
     loading.value = true;
     error.value = null;
-
-    console.log('deleteRole composeable', id)
 
     try {
       await roleApi.deleteRole(id);
