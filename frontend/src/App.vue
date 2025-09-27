@@ -1,18 +1,18 @@
 <template>
   <el-config-provider :size="size" :z-index="zIndex" :locale="german">
-    <el-container>
+    <el-container class="app-container">
       <el-header v-if="!(isBlacklistedRoute || isFullPageRoute)" class="page-header">
         <PageHeaderComponent />
       </el-header>
-      <el-container>
+      <el-container class="main-content-container">
         <el-aside width="200px" v-if="showSideMenu">
           <!-- TODO: fill with elements of sub pages -->
         </el-aside>
-        <el-container>
-          <el-main>
+        <el-container class="main-and-footer-container">
+          <el-main class="app-main">
             <RouterView />
           </el-main>
-          <el-footer v-if="!isBlacklistedRoute">
+          <el-footer v-if="!isBlacklistedRoute" class="app-footer">
             <PageFooterComponent />
           </el-footer>
         </el-container>
@@ -48,6 +48,35 @@ const showSideMenu = computed(() => false) // !(isBlacklistedRoute || isFullPage
 </script>
 
 <style lang="scss" scoped>
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the container takes at least the full viewport height */
+}
+
+.main-content-container {
+  flex: 1;
+  display: flex;
+}
+
+.main-and-footer-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.app-main {
+  flex: 1;
+  padding: 20px;
+  padding-bottom: 0 !important;
+}
+
+.app-footer {
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 .app-header {
   position: sticky;
   top: 0;
