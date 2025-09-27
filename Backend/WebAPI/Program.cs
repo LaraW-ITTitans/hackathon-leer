@@ -82,16 +82,15 @@ public static class Program
                     new OpenApiInfo { Title = "Hackathon API", Version = "1.0.0" }
                 );
 
-                // enforce using JWT
+                // enforce using JWT via custom header (X-Hackathon-Token)
+                // Use ApiKey scheme so Swagger UI sends the token in the custom header instead of Authorization
                 swaggerGenerationOptions.AddSecurityDefinition(
-                    "Bearer",
+                    "HackathonToken",
                     new OpenApiSecurityScheme
                     {
-                        Type = SecuritySchemeType.Http,
-                        BearerFormat = "JWT",
+                        Type = SecuritySchemeType.ApiKey,
                         In = ParameterLocation.Header,
-                        Scheme = "bearer",
-                        Description = "Hackathon JWT",
+                        Description = "Hackathon 2025 JWT placed directly as the value of X-Hackathon-Token header",
                         Name = Program.JwtHttpHeader,
                     }
                 );
@@ -104,7 +103,7 @@ public static class Program
                                 Reference = new OpenApiReference
                                 {
                                     Type = ReferenceType.SecurityScheme,
-                                    Id = "Bearer",
+                                    Id = "HackathonToken",
                                 },
                             },
                             Array.Empty<string>()

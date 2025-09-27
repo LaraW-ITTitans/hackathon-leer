@@ -25,7 +25,7 @@ public class StartSupplyCertificateWorkflowEndpoint : Endpoint<StartSupplyCertif
 
     public override void Configure()
     {
-        this.Post("api/workflows/supply-certificates/start");
+        this.Post("api/workflows/supply-certificates");
         this.AddHackathonPolicy(AuthClaimType.SupplyCertificateWorkflowStart);
         this.AllowFormData();
 
