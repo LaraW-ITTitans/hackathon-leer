@@ -1,6 +1,6 @@
 ﻿<template>
   <section class="p-6">
-    <el-page-header content="Benutzerprofil" class="mb-4" />
+    <el-page-header content="Benutzerprofil" class="mb-4" @back="onBack" />
 
     <!-- Profile details -->
     <el-card class="mb-6">
@@ -104,12 +104,14 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import useUserStore from '@/stores/user'
 import { userApi } from '@/api'
 import type { UserState } from '@/types'
 import { ChangeOwnPasswordBindingModel } from '@/api/codegen'
 
 const userStore: UserState = useUserStore()
+const router = useRouter()
 
 const user = computed(() => ({
   id: userStore.user.user.id,
@@ -198,6 +200,10 @@ const canSubmit = computed(() => {
     !loading.value
   )
 })
+
+const onBack = () => {
+  router.back()
+}
 
 const onSubmit = async () => {
   error.value = null
