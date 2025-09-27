@@ -70,6 +70,12 @@ const router = createRouter({
       component: () => import('../views/workflows/SupplyCertificateWorkflowOverviewView.vue'),
       meta: { public: false, title: 'Administration - Workflows' },
     },
+    {
+      path: '/admin/users',
+      name: 'user-management',
+      component: () => import('../views/users/UserOverviewView.vue'),
+      meta: { public: false, title: 'Administration - Benutzer' },
+    },
 
     // User Pages
     {
