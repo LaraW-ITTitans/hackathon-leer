@@ -1,13 +1,10 @@
 ﻿using FastEndpoints;
 using ITTitans.Hackathon2025.EntityModel;
 using ITTitans.Hackathon2025.EntityModel.DataSource;
+using ITTitans.Hackathon2025.Service.Interfaces.Settings;
 using ITTitans.Hackathon2025.WebAPI.Auth;
 using ITTitans.Hackathon2025.WebAPI.Model.DataSource;
-using ITTitans.Hackathon2025.WebAPI.Model.Skill;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.ML;
-using Microsoft.ML.Data;
-using Microsoft.ML.Transforms.Text;
 using System.Security.Claims;
 
 namespace ITTitans.Hackathon2025.WebAPI.Endpoints.DataSource;
@@ -20,11 +17,13 @@ public class RecommendDataSourcesRequest
 
 public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest, IEnumerable<DataSourceRecommendationBindingModel>>
 {
-    private readonly HackathonDbContext dbContext;
+    private readonly HackathonDbContext hackathonDbContext;
+    private readonly IWebServerAppSettingsService webServerAppSettingsService;
 
-    public RecommendDataSourcesEndpoint(HackathonDbContext dbContext)
+    public RecommendDataSourcesEndpoint(HackathonDbContext hackathonDbContext, IWebServerAppSettingsService webServerAppSettingsService)
     {
-        this.dbContext = dbContext;
+        this.hackathonDbContext = hackathonDbContext;
+        this.webServerAppSettingsService = webServerAppSettingsService;
     }
 
     public override void Configure()
@@ -39,6 +38,8 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
 
     public override async Task HandleAsync(RecommendDataSourcesRequest req, CancellationToken ct)
     {
+        ArgumentNullException.ThrowIfNull(req);
+        
         if (string.IsNullOrWhiteSpace(req.Query))
         {
             this.AddError("Missing query parameter 'query'.");
@@ -58,14 +59,14 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
         }
 
         // Load user's skills
-        HashSet<Guid> userSkills = (await this.dbContext.SkillAssignments
+        HashSet<Guid> userSkills = (await this.hackathonDbContext.SkillAssignments
             .AsNoTracking()
             .Where(a => a.UserId == userId)
             .Select(a => a.SkillId)
             .ToListAsync(ct)).ToHashSet();
 
         // Load all data sources with requirements and skill entities (non-deleted)
-        List<DataSourceEntity> dataSources = await this.dbContext.DataSources
+        List<DataSourceEntity> dataSources = await this.hackathonDbContext.DataSources
             .AsNoTracking()
             .Where(d => !d.IsDeleted)
             .Include(d => d.Requirements)
@@ -78,83 +79,9 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
             return;
         }
 
-        // Build ML.NET text featurization and compute cosine similarity between query and each DS text
-        var ml = new MLContext(seed: 42);
-
-        // Prepare in-memory data
-        List<TextDoc> data = dataSources.Select(d => new TextDoc { Text = Combine(d.Name, d.Description) }).ToList();
-        IDataView dataView = ml.Data.LoadFromEnumerable(data);
-
-        TextFeaturizingEstimator? pipeline = ml.Transforms.Text.FeaturizeText("Features", nameof(TextDoc.Text));
-        ITransformer model = pipeline.Fit(dataView);
-
-        // Transform dataset to get features
-        IDataView transformed = model.Transform(dataView);
-        VBuffer<float>[] featuresColumn = transformed.GetColumn<VBuffer<float>>("Features").ToArray();
-
-        // Transform query to feature vector
-        IDataView queryView = ml.Data.LoadFromEnumerable([new TextDoc { Text = req.Query }]);
-        VBuffer<float> queryFeatures = model.Transform(queryView).GetColumn<VBuffer<float>>("Features").First();
-
-        // Convert VBuffers to arrays and compute cosine similarity
-        float[] q = queryFeatures.DenseValues().ToArray();
-        double qNorm = Math.Sqrt(q.Select(v => (double)v * v).Sum());
-        if (qNorm == 0)
-        {
-            qNorm = 1; // avoid division by zero
-        }
-
-        var scored = new List<(DataSourceEntity ds, double score)>();
-        for (int i = 0; i < dataSources.Count; i++)
-        {
-            float[] v = featuresColumn[i].DenseValues().ToArray();
-            double dot = 0;
-            for (int j = 0; j < Math.Min(q.Length, v.Length); j++)
-            {
-                dot += q[j] * v[j];
-            }
-
-            double vNorm = Math.Sqrt(v.Select(x => (double)x * x).Sum());
-            if (vNorm == 0)
-            {
-                vNorm = 1;
-            }
-
-            double cosine = dot / (qNorm * vNorm);
-            scored.Add((dataSources[i], cosine));
-        }
-
-        // Order by descending relevance and take up to max
-        IEnumerable<DataSourceEntity> ordered = scored
-            .OrderByDescending(t => t.score)
-            .Take(max)
-            .Select(t => t.ds);
-
-        // Build response with access flags
-        List<DataSourceRecommendationBindingModel> response = ordered.Select(d =>
-        {
-            List<RequiredSkillAccessBindingModel> reqSkills = d.Requirements
-                .Select(r => r.Skill)
-                .DistinctBy(s => s.Id)
-                .Select(s => new RequiredSkillAccessBindingModel
-                {
-                    Id = s.Id,
-                    Name = s.Name,
-                    HasSkill = userSkills.Contains(s.Id)
-                })
-                .ToList();
-
-            bool hasAccess = reqSkills.All(rs => rs.HasSkill);
-
-            return new DataSourceRecommendationBindingModel
-            {
-                Id = d.Id,
-                Name = d.Name,
-                Description = d.Description,
-                RequiredSkills = reqSkills,
-                HasAccess = hasAccess
-            };
-        }).ToList();
+        List<DataSourceRecommendationBindingModel> response = null!; // TODO
+        
+        string openAiApiKey = this.webServerAppSettingsService.GetOpenAiApiKey();
 
         await this.Send.OkAsync(response, ct);
     }

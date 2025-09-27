@@ -1,5 +1,4 @@
 ﻿using ITTitans.Hackathon2025.Model;
-using ITTitans.Hackathon2025.Service.Interfaces;
 using ITTitans.Hackathon2025.Service.Interfaces.Settings;
 
 namespace ITTitans.Hackathon2025.Service.Settings;
@@ -47,5 +46,11 @@ public class WebServerAppSettingsService : IWebServerAppSettingsService
     public string GetHackathonDbContextConnectionString()
     {
         return this.appSettingsReader.GetValueAsString("ConnectionStrings:HackathonDbContext");
+    }
+    
+    /// <inheritdoc />
+    public string GetOpenAiApiKey()
+    {
+        return this.appSettingsReader.GetValueAsString("OpenAI:ApiKey");
     }
 }

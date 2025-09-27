@@ -11,4 +11,6 @@ public interface IWebServerAppSettingsService
     string GetPredefinedAdminUserPassword();
 
     string GetHackathonDbContextConnectionString();
+    
+    string GetOpenAiApiKey();
 }
