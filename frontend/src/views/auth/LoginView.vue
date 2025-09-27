@@ -3,6 +3,7 @@
     type="flex"
     justify="center"
     align="middle"
+    style="min-height: 100vh"
   >
     <el-col>
       <el-card shadow="hover" style="max-width: 600px">
