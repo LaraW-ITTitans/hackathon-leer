@@ -4,7 +4,7 @@
       <template #header>
         <div class="card-header">
           <span>Rollenverwaltung</span>
-          <el-button type="primary" @click="goToCreateRole">Neue Rolle erstellen</el-button>
+          <el-button type="primary" @click="openDrawer()">Neue Rolle erstellen</el-button>
         </div>
       </template>
 
@@ -24,7 +24,7 @@
         <el-table-column prop="name" label="Name" sortable />
         <el-table-column label="Aktionen" width="200">
           <template #default="scope">
-            <el-button size="small" @click="goToEditRole(scope.row.id)">Edit</el-button>
+            <el-button size="small" @click="openDrawer(scope.row.id)">Edit</el-button>
             <el-popconfirm
               title="Are you sure to delete this role?"
               confirm-button-text="Yes"
@@ -54,22 +54,87 @@
         class="pagination-container"
       />
     </el-card>
+
+    <DrawerComponent
+      :title="formTitle"
+      v-model="formOpen"
+      :width="420"
+      :show-close="true"
+      :close-on-click-overlay="false"
+      :lock-scroll="true"
+      @closed="resetForm"
+    >
+      <el-form
+        ref="roleFormRef"
+        :model="roleForm"
+        :rules="roleFormRules"
+        label-position="top"
+        @submit.prevent="handleSubmit"
+      >
+        <el-form-item label="ID" prop="id" v-if="roleForm.id">
+          <el-input v-model="roleForm.id" disabled />
+        </el-form-item>
+        <el-form-item label="Name" prop="name">
+          <el-input v-model="roleForm.name" placeholder="Enter role name" />
+        </el-form-item>
+        <el-form-item label="Description" prop="description">
+          <el-input
+            v-model="roleForm.description"
+            type="textarea"
+            :rows="3"
+            placeholder="Enter role description"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleSubmit">Save</el-button>
+          <el-button @click="formOpen = false">Cancel</el-button>
+        </el-form-item>
+      </el-form>
+    </DrawerComponent>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRoles } from './composeables/roles'
-import { ElNotification } from 'element-plus'
+import { ElNotification, ElMessage } from 'element-plus'
 import type { BasicRoleBindingModel } from '@/api/codegen'
+import DrawerComponent from '@/components/drawer/DrawerComponent.vue'
+import type { FormInstance, FormRules } from 'element-plus'
 
 const router = useRouter();
-const { roles, loading, error, fetchRoles, deleteRole } = useRoles()
+const { roles, loading, error, fetchRoles, deleteRole, createRole, updateRole } = useRoles()
 
 const searchQuery = ref('')
 const currentPage = ref(1)
 const pageSize = ref(10)
+
+// 1. Define form data structure
+interface RoleForm {
+  id: string | null;
+  name: string;
+  description: string;
+}
+
+const roleFormRef = ref<FormInstance>()
+const roleForm = reactive<RoleForm>({
+  id: null,
+  name: '',
+  description: '',
+})
+
+// 2. Implement form validation rules
+const roleFormRules = reactive<FormRules<RoleForm>>({
+  name: [
+    { required: true, message: 'Please enter role name', trigger: 'blur' },
+    { min: 3, message: 'Length should be at least 3', trigger: 'blur' },
+  ],
+  description: [
+    { required: true, message: 'Please enter role description', trigger: 'blur' },
+    { min: 5, message: 'Length should be at least 5', trigger: 'blur' },
+  ],
+})
 
 // Fetch roles when the component is mounted
 onMounted(async () => {
@@ -107,26 +172,10 @@ const handleCurrentChange = (val: number) => {
   currentPage.value = val
 }
 
-// Navigate to create role page
-const goToCreateRole = () => {
-  router.push({ name: 'RoleCreate' })
-}
-
-// Navigate to edit role page
-const goToEditRole = (id: number) => {
-  router.push({ name: 'RoleEdit', params: { id } })
-}
-
 // Handle role deletion
 const handleDelete = async (id: string) => {
-
-  console.log("row scope lalala", id)
-  //console.log("row scope lalala", id.row)
-  //console.log("row scope lalala", id.row.id)
-
   try {
     await deleteRole(id)
-
     ElNotification({
       title: 'Success',
       message: 'Role deleted successfully!',
@@ -139,6 +188,73 @@ const handleDelete = async (id: string) => {
       type: 'error',
     })
   }
+}
+
+const formTitle = computed(() => roleForm.id ? 'Rolle bearbeiten' : 'Neue Rolle erstellen')
+const formOpen = ref(false)
+
+// 5. Populate form for editing and 6. Reset form on close
+const openDrawer = (entityId?: string) => {
+  if (entityId) {
+    const roleToEdit = roles.value.find(role => role.id === entityId);
+    if (roleToEdit) {
+      roleForm.id = roleToEdit.id || null;
+      roleForm.name = roleToEdit.name || '';
+      roleForm.description = roleToEdit.description || '';
+    } else {
+      ElMessage.error('Role not found for editing.');
+      return;
+    }
+  } else {
+    resetForm(); // Reset for new role creation
+  }
+  formOpen.value = true;
+}
+
+const resetForm = () => {
+  roleForm.id = null;
+  roleForm.name = '';
+  roleForm.description = '';
+  roleFormRef.value?.resetFields(); // Reset validation state
+}
+
+// 4. Handle form submission
+const handleSubmit = async () => {
+  if (!roleFormRef.value) return;
+
+  await roleFormRef.value.validate(async (valid) => {
+    if (valid) {
+      try {
+        if (roleForm.id) {
+          // Update existing role
+          await updateRole(roleForm.id, { name: roleForm.name, description: roleForm.description });
+          ElNotification({
+            title: 'Success',
+            message: 'Role updated successfully!',
+            type: 'success',
+          });
+        } else {
+          // Create new role
+          await createRole({ name: roleForm.name, description: roleForm.description });
+          ElNotification({
+            title: 'Success',
+            message: 'Role created successfully!',
+            type: 'success',
+          });
+        }
+        formOpen.value = false;
+        await fetchRoles(); // Refresh the list
+      } catch (err: any) {
+        ElNotification({
+          title: 'Error',
+          message: err.message || 'Failed to save role.',
+          type: 'error',
+        });
+      }
+    } else {
+      ElMessage.error('Please correct the errors in the form.');
+    }
+  });
 }
 </script>
 
