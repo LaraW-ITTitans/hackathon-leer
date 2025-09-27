@@ -10,6 +10,11 @@
         </el-aside>
         <el-container class="main-and-footer-container">
           <el-main class="app-main">
+            <el-row :gutter="24" v-if="!(isBlacklistedRoute || isFullPageRoute)">
+              <el-col :span="24">
+                <PageNavigationButtonComponent />
+              </el-col>
+            </el-row>
             <RouterView />
           </el-main>
           <el-footer v-if="!isBlacklistedRoute" class="app-footer">
@@ -30,6 +35,7 @@ import german from 'element-plus/es/locale/lang/de'
 
 import PageHeaderComponent from '@/components/layout/PageHeaderComponent.vue'
 import PageFooterComponent from '@/components/layout/PageFooterComponent.vue'
+import PageNavigationButtonComponent from '@/components/page-navigation-buttons/PageNavigationButtonComponent.vue'
 
 const zIndex = 3000
 const size = 'default'

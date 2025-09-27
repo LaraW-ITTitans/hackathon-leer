@@ -2,8 +2,7 @@
   <el-container class="page">
     <el-header class="header" height="72px">
       <div class="brand" @click="scrollTo('top')" role="button" aria-label="Zur Startseite">
-        <el-icon class="logo"><Cpu /></el-icon>
-        <strong>Datenraum Ostfriesland</strong>
+        <el-image class="logo" src="https://www.landkreis-leer.de/media/custom/3399_1_1_k.PNG?1647076132" />
       </div>
       <nav class="nav">
         <a href="#features" @click.prevent="scrollTo('features')">Funktionen</a>
@@ -23,7 +22,7 @@
           </div>
           <h1>Transparente Daten. Smarte Zugänge. Mehr Wert für Ostfriesland.</h1>
           <p class="lede">
-            Der <strong>Daten&nbsp;Raum&nbsp;Leer</strong> ist der zentrale Katalog für Datenquellen aus Verwaltung,
+            Der <strong>Datenraum Ostfriesland</strong> ist der zentrale Katalog für Datenquellen aus Verwaltung,
             Wirtschaft, Wissenschaft und Zivilgesellschaft – mit Marktplatz für Bedarfe und
             zertifikatsbasiertem Zugriffsmanagement.
           </p>
@@ -259,8 +258,7 @@ const heroGradient = computed(() => ({
 <style scoped>
 .page { min-height: 100vh; display: flex; flex-direction: column; }
 .header { position: sticky; top: 0; z-index: 10; display:flex; align-items:center; justify-content:space-between; backdrop-filter: blur(8px); background: color-mix(in oklab, var(--el-bg-color), white 40%); border-bottom: 1px solid var(--el-border-color-lighter); padding: 0 16px; }
-.brand { display:flex; align-items:center; gap:8px; cursor:pointer; }
-.logo { transform: rotate(-8deg); }
+.brand { display:flex; align-items:center; gap:8px; cursor:pointer; text-align: center; align-content: space-evenly }
 .nav { display:flex; align-items:center; gap:12px; }
 .nav a { color: var(--el-text-color-regular); text-decoration: none; padding: 6px 8px; border-radius: 8px; }
 .nav a:hover { background: var(--el-fill-color-lighter); }

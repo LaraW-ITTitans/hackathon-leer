@@ -62,14 +62,14 @@ import type { MenuItem } from '@/components/page-navigation/types'
 const items: MenuItem[] = [
   { label: 'Landing Page', to: '/' },
 
-  { label: 'Home', to: '/home', authOnly: true },
+  // { label: 'Home', to: '/home', authOnly: true },
 
   // { label: 'Login', to: '/auth', guestOnly: true },
   { label: 'Profil', to: '/users/me', authOnly: true },
 
   { label: 'Administration', to: '/admin', authOnly: true },
 
-  { label: 'Info', to: '/info', disabled: true },
+  // { label: 'Info', to: '/info', disabled: true },
 
   { label: 'Datenquellen', to: '/admin/data-sources', authOnly: true }
 ]
