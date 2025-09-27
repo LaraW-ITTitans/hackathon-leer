@@ -577,6 +577,32 @@
         }
       }
     },
+    "/api/workflows/supply-certificates/{id}/file": {
+      "get": {
+        "tags": [
+          "SupplyCertificateWorkflows"
+        ],
+        "operationId": "GetSupplyCertificateWorkflowFile",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplyCertificateWorkflowFileBindingModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
     "/api/workflows/supply-certificates": {
       "get": {
         "tags": [
@@ -1005,6 +1031,10 @@
       "BasicSupplyCertificateWorkflowBindingModel": {
         "type": "object",
         "additionalProperties": false,
+        "required": [
+          "initiator",
+          "skill"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -1012,6 +1042,12 @@
           },
           "state": {
             "$ref": "#/components/schemas/SupplyCertificateWorkflowStateType"
+          },
+          "initiator": {
+            "$ref": "#/components/schemas/BasicUserBindingModel"
+          },
+          "skill": {
+            "$ref": "#/components/schemas/BasicSkillBindingModel"
           }
         }
       },
@@ -1418,6 +1454,24 @@
           "file": {
             "type": "string",
             "format": "binary",
+            "nullable": true
+          }
+        }
+      },
+      "SupplyCertificateWorkflowFileBindingModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "contentBase64",
+          "fileName"
+        ],
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "contentBase64": {
+            "type": "string",
             "nullable": true
           }
         }

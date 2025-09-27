@@ -1242,6 +1242,10 @@ export interface ISupplyCertificateWorkflowsApiClient {
     /**
      * @return OK
      */
+    getSupplyCertificateWorkflowFile( cancelToken?: CancelToken): Promise<SupplyCertificateWorkflowFileBindingModel>;
+    /**
+     * @return OK
+     */
     getSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel[]>;
     /**
      * @param skillId (optional) 
@@ -1451,6 +1455,65 @@ export class SupplyCertificateWorkflowsApiClient extends AuthorizedApiBase imple
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getSupplyCertificateWorkflowFile( cancelToken?: CancelToken): Promise<SupplyCertificateWorkflowFileBindingModel> {
+        let url_ = this.baseUrl + "/api/workflows/supply-certificates/{id}/file";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetSupplyCertificateWorkflowFile(_response);
+        });
+    }
+
+    protected processGetSupplyCertificateWorkflowFile(response: AxiosResponse): Promise<SupplyCertificateWorkflowFileBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = SupplyCertificateWorkflowFileBindingModel.fromJS(resultData200);
+            return Promise.resolve<SupplyCertificateWorkflowFileBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<SupplyCertificateWorkflowFileBindingModel>(null as any);
     }
 
     /**
@@ -2440,6 +2503,8 @@ export interface IBasicSkillBindingModel {
 export class BasicSupplyCertificateWorkflowBindingModel implements IBasicSupplyCertificateWorkflowBindingModel {
     id!: string;
     state!: SupplyCertificateWorkflowStateType;
+    initiator!: BasicUserBindingModel;
+    skill!: BasicSkillBindingModel;
 
     constructor(data?: IBasicSupplyCertificateWorkflowBindingModel) {
         if (data) {
@@ -2448,12 +2513,18 @@ export class BasicSupplyCertificateWorkflowBindingModel implements IBasicSupplyC
                     (this as any)[property] = (data as any)[property];
             }
         }
+        if (!data) {
+            this.initiator = new BasicUserBindingModel();
+            this.skill = new BasicSkillBindingModel();
+        }
     }
 
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
             this.state = _data["state"];
+            this.initiator = _data["initiator"] ? BasicUserBindingModel.fromJS(_data["initiator"]) : new BasicUserBindingModel();
+            this.skill = _data["skill"] ? BasicSkillBindingModel.fromJS(_data["skill"]) : new BasicSkillBindingModel();
         }
     }
 
@@ -2468,6 +2539,8 @@ export class BasicSupplyCertificateWorkflowBindingModel implements IBasicSupplyC
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["state"] = this.state;
+        data["initiator"] = this.initiator ? this.initiator.toJSON() : undefined as any;
+        data["skill"] = this.skill ? this.skill.toJSON() : undefined as any;
         return data;
     }
 }
@@ -2475,6 +2548,8 @@ export class BasicSupplyCertificateWorkflowBindingModel implements IBasicSupplyC
 export interface IBasicSupplyCertificateWorkflowBindingModel {
     id: string;
     state: SupplyCertificateWorkflowStateType;
+    initiator: BasicUserBindingModel;
+    skill: BasicSkillBindingModel;
 }
 
 export class BasicUserBindingModel implements IBasicUserBindingModel {
@@ -3275,6 +3350,46 @@ export class StartSupplyCertificateWorkflowBindingModel implements IStartSupplyC
 export interface IStartSupplyCertificateWorkflowBindingModel {
     skillId: string;
     file: string | undefined;
+}
+
+export class SupplyCertificateWorkflowFileBindingModel implements ISupplyCertificateWorkflowFileBindingModel {
+    fileName!: string | undefined;
+    contentBase64!: string | undefined;
+
+    constructor(data?: ISupplyCertificateWorkflowFileBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.fileName = _data["fileName"];
+            this.contentBase64 = _data["contentBase64"];
+        }
+    }
+
+    static fromJS(data: any): SupplyCertificateWorkflowFileBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new SupplyCertificateWorkflowFileBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fileName"] = this.fileName;
+        data["contentBase64"] = this.contentBase64;
+        return data;
+    }
+}
+
+export interface ISupplyCertificateWorkflowFileBindingModel {
+    fileName: string | undefined;
+    contentBase64: string | undefined;
 }
 
 export enum SupplyCertificateWorkflowStateType {

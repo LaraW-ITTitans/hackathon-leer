@@ -133,6 +133,13 @@ const defaultTiles: Tile[] = [
     icon: 'Star',
     path: 'skills',
   },
+  {
+    key: 'workflows',
+    title: 'Workflows',
+    description: 'Nachweise beantragen und prüfen',
+    icon: 'Document',
+    path: 'workflows',
+  },
 ]
 
 const tiles = computed<Tile[]>(() => props.tiles?.length ? props.tiles : defaultTiles)

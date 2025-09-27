@@ -102,8 +102,32 @@ export const useSupplyCertificateWorkflows = () => {
   }
 
   const getFileUrl = (id: string) => {
-    // Assuming a conventional endpoint to download/view the file
+    // Endpoint to download/view the file
     return `/api/workflows/supply-certificates/${id}/file`
+  }
+
+  const fetchFileBlob = async (id: string) => {
+    try {
+      const res = await axiosInstance.get(getFileUrl(id), { responseType: 'blob' })
+      const contentType = (res.headers?.['content-type'] as string) || ''
+      const disposition = (res.headers?.['content-disposition'] as string) || ''
+      let fileName = ''
+      const match = /filename\*=UTF-8''([^;]+)|filename="?([^";]+)"?/i.exec(disposition)
+      if (match) {
+        fileName = decodeURIComponent(match[1] || match[2] || '')
+      }
+      // Fallback from blob type or id
+      if (!fileName) {
+        const ext = contentType.split('/')[1]
+        fileName = `datei-${id}${ext ? '.' + ext : ''}`
+      }
+      const blob: Blob = res.data
+      const url = URL.createObjectURL(blob)
+      return { blob, url, contentType, fileName }
+    } catch (err) {
+      console.error('fetchFileBlob error', err)
+      throw err
+    }
   }
 
   return {
@@ -119,5 +143,6 @@ export const useSupplyCertificateWorkflows = () => {
     cancelWorkflow,
     processWorkflow,
     getFileUrl,
+    fetchFileBlob,
   }
 }

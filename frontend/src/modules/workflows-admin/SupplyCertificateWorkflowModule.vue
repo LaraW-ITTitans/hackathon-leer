@@ -15,7 +15,11 @@
         <template v-if="ownWorkflows.length">
           <h3>Meine Workflows</h3>
           <el-table :data="ownWorkflows" style="width: 100%" border stripe>
-            <el-table-column prop="id" label="ID" />
+            <el-table-column label="Nachweis">
+              <template #default="scope">
+                {{ workflowSkillName(scope.row) }}
+              </template>
+            </el-table-column>
             <el-table-column label="Status">
               <template #default="scope">
                 <el-tag :type="stateTagType(scope.row.state)">{{ stateText(scope.row.state) }}</el-tag>
@@ -44,7 +48,11 @@
         <template v-if="reviewableWorkflows.length">
           <h3 class="mt-24">Zu prüfen</h3>
           <el-table :data="reviewableWorkflows" style="width: 100%" border stripe>
-            <el-table-column prop="id" label="ID" />
+            <el-table-column label="Nachweis">
+              <template #default="scope">
+                {{ workflowSkillName(scope.row) }}
+              </template>
+            </el-table-column>
             <el-table-column label="Status">
               <template #default="scope">
                 <el-tag :type="stateTagType(scope.row.state)">{{ stateText(scope.row.state) }}</el-tag>
@@ -78,6 +86,31 @@
         <el-empty v-if="!ownWorkflows.length && !reviewableWorkflows.length && !loading" description="Keine Workflows vorhanden." />
       </div>
     </el-card>
+
+    <!-- Preview Dialog -->
+    <el-dialog v-model="previewOpen" :title="`Datei-Vorschau: ${previewFileName}`" width="80%" @closed="onPreviewClosed">
+      <div v-if="previewLoading" style="padding: 24px">
+        <el-skeleton :rows="6" animated />
+      </div>
+      <template v-else>
+        <div v-if="isPdf" class="preview-frame">
+          <iframe :src="previewUrl || ''" title="PDF Vorschau" frameborder="0"></iframe>
+        </div>
+        <div v-else-if="isImage" class="preview-image">
+          <img :src="previewUrl || ''" :alt="previewFileName" />
+        </div>
+        <div v-else class="preview-fallback">
+          <el-alert type="info" :closable="false" title="Keine Vorschau verfügbar. Du kannst die Datei herunterladen." class="mb-12" />
+          <a v-if="previewUrl" :href="previewUrl" :download="previewFileName">Herunterladen</a>
+        </div>
+      </template>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button v-if="previewUrl" @click="downloadCurrent">Download</el-button>
+          <el-button type="primary" @click="previewOpen = false">Schließen</el-button>
+        </span>
+      </template>
+    </el-dialog>
 
     <!-- Drawer with stepper to create workflow -->
     <DrawerComponent
@@ -163,6 +196,7 @@ const {
   cancelWorkflow,
   processWorkflow,
   getFileUrl,
+  fetchFileBlob,
 } = useSupplyCertificateWorkflows()
 
 const decisions = reactive<Record<string, { accept: boolean | null, comment: string }>>({})
@@ -233,6 +267,25 @@ const onCustomUpload = () => { /* handled manually on start */ }
 
 const skillName = (id: string) => skills.value.find(s => s.id === id)?.name
 
+// Best-effort resolution of the skill name for a workflow row
+const skillMap = computed<Record<string, string>>(() => {
+  const map: Record<string, string> = {}
+  for (const s of skills.value) {
+    if (s?.id) map[s.id] = s.name || s.id
+  }
+  return map
+})
+const workflowSkillName = (row: any) => {
+  // Try several common shapes the backend might return
+  return (
+    row?.skill?.name ||
+    row?.skillName ||
+    row?.skill?.title ||
+    (row?.skillId && skillMap.value[row.skillId]) ||
+    '—'
+  )
+}
+
 const start = async () => {
   if (!selectedSkillId.value || !fileList.value.length) return
   try {
@@ -254,9 +307,49 @@ const handleCancel = async (id: string) => {
   }
 }
 
-const viewFile = (id: string) => {
-  const url = getFileUrl(id)
-  window.open(url, '_blank')
+const previewOpen = ref(false)
+const previewLoading = ref(false)
+const previewUrl = ref<string | null>(null)
+const previewType = ref('')
+const previewFileName = ref('Datei')
+
+const isPdf = computed(() => {
+  const name = previewFileName.value.toLowerCase()
+  return previewType.value.toLowerCase().includes('pdf') || name.endsWith('.pdf')
+})
+const isImage = computed(() => previewType.value.toLowerCase().startsWith('image/'))
+
+const viewFile = async (id: string) => {
+  previewLoading.value = true
+  previewOpen.value = true
+  try {
+    const { url, contentType, fileName } = await fetchFileBlob(id)
+    previewUrl.value = url
+    previewType.value = contentType || ''
+    previewFileName.value = fileName || 'Datei'
+  } catch (e: any) {
+    previewOpen.value = false
+    ElNotification({ title: 'Fehler', message: e?.message || 'Datei konnte nicht geladen werden', type: 'error' })
+  } finally {
+    previewLoading.value = false
+  }
+}
+
+const onPreviewClosed = () => {
+  if (previewUrl.value) {
+    URL.revokeObjectURL(previewUrl.value)
+  }
+  previewUrl.value = null
+  previewType.value = ''
+  previewFileName.value = 'Datei'
+}
+
+const downloadCurrent = () => {
+  if (!previewUrl.value) return
+  const a = document.createElement('a')
+  a.href = previewUrl.value
+  a.download = previewFileName.value || 'datei'
+  a.click()
 }
 
 const handleProcess = async (id: string) => {
@@ -291,4 +384,9 @@ const resetForm = () => {
 .decision-row { display: flex; align-items: center; }
 .ml-8 { margin-left: 8px; }
 .mt-12 { margin-top: 12px; }
+.preview-frame { width: 100%; height: 72vh; }
+.preview-frame iframe { width: 100%; height: 100%; }
+.preview-image { text-align: center; }
+.preview-image img { max-width: 100%; max-height: 72vh; }
+.preview-fallback { padding: 16px; }
 </style>
