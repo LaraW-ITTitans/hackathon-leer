@@ -5,7 +5,8 @@
         <PageHeaderComponent />
       </el-header>
       <el-container>
-        <el-aside width="200px" v-if="!(isBlacklistedRoute || isFullPageRoute)">
+        <el-aside width="200px" v-if="showSideMenu">
+          <!-- TODO: fill with elements of sub pages -->
         </el-aside>
         <el-container>
           <el-main>
@@ -40,6 +41,10 @@ const route = useRoute()
 
 const isBlacklistedRoute = computed(() => blacklist.includes(route.path))
 const isFullPageRoute = computed(() => fullPages.includes(route.path))
+
+// TODO calculate from flags
+const showSideMenu = computed(() => false) // !(isBlacklistedRoute || isFullPageRoute))
+
 </script>
 
 <style lang="scss" scoped>
