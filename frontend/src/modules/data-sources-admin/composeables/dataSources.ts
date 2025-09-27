@@ -4,10 +4,12 @@ import type {
   DataSourceBindingModel,
   CreateUpdateDataSourceBindingModel,
   BasicSkillBindingModel,
+  DataSourceRecommendationBindingModel,
 } from '@/api/codegen'
 
 export const useDataSources = () => {
   const dataSources = ref<DataSourceBindingModel[]>([])
+  const recommendedDataSources = ref<DataSourceRecommendationBindingModel[]>([])
   const skills = ref<BasicSkillBindingModel[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -86,13 +88,28 @@ export const useDataSources = () => {
     }
   }
 
+  const fetchRecommendedDataSources = async (query: string, max: number = 20) => {
+    loading.value = true
+    error.value = null
+    try {
+      recommendedDataSources.value = await dataSourceApi.recommendDataSources({ query, max })
+    } catch (err: any) {
+      error.value = err.message || 'Failed to fetch recommended data sources'
+      console.error('Error fetching recommended data sources:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     dataSources,
+    recommendedDataSources,
     skills,
     loading,
     error,
     fetchDataSources,
     fetchSkills,
+    fetchRecommendedDataSources,
     createDataSource,
     updateDataSource,
     deleteDataSource,

@@ -152,18 +152,13 @@
       }
     },
     "/api/data-sources/recommend": {
-      "get": {
+      "post": {
         "tags": [
           "DataSources"
         ],
         "operationId": "RecommendDataSources",
         "requestBody": {
           "content": {
-            "*/*": {
-              "schema": {
-                "$ref": "#/components/schemas/RecommendDataSourcesRequest"
-              }
-            },
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/RecommendDataSourcesRequest"
@@ -970,6 +965,7 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
+          "description",
           "id",
           "name"
         ],
@@ -979,6 +975,10 @@
             "format": "uuid"
           },
           "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
             "type": "string",
             "nullable": true
           }
@@ -1071,6 +1071,12 @@
             "type": "string",
             "maxLength": 100,
             "minLength": 0
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2500,
+            "minLength": 0,
+            "nullable": true
           }
         }
       },
@@ -1304,10 +1310,6 @@
           "query": {
             "type": "string",
             "nullable": true
-          },
-          "max": {
-            "type": "integer",
-            "format": "int32"
           }
         }
       },
@@ -1446,6 +1448,12 @@
             "type": "string",
             "maxLength": 100,
             "minLength": 0
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2500,
+            "minLength": 0,
+            "nullable": true
           }
         }
       },

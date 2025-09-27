@@ -402,10 +402,10 @@ export class DataSourcesApiClient extends AuthorizedApiBase implements IDataSour
 
         let options_: AxiosRequestConfig = {
             data: content_,
-            method: "GET",
+            method: "POST",
             url: url_,
             headers: {
-                "Content-Type": "*/*",
+                "Content-Type": "application/json",
                 "Accept": "application/json"
             },
             cancelToken
@@ -2356,6 +2356,7 @@ export interface IApiInfoBindingModel {
 export class BasicRoleBindingModel implements IBasicRoleBindingModel {
     id!: string;
     name!: string | undefined;
+    description!: string | undefined;
 
     constructor(data?: IBasicRoleBindingModel) {
         if (data) {
@@ -2370,6 +2371,7 @@ export class BasicRoleBindingModel implements IBasicRoleBindingModel {
         if (_data) {
             this.id = _data["id"];
             this.name = _data["name"];
+            this.description = _data["description"];
         }
     }
 
@@ -2384,6 +2386,7 @@ export class BasicRoleBindingModel implements IBasicRoleBindingModel {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["description"] = this.description;
         return data;
     }
 }
@@ -2391,6 +2394,7 @@ export class BasicRoleBindingModel implements IBasicRoleBindingModel {
 export interface IBasicRoleBindingModel {
     id: string;
     name: string | undefined;
+    description: string | undefined;
 }
 
 export class BasicSkillBindingModel implements IBasicSkillBindingModel {
@@ -2559,6 +2563,7 @@ export interface IChangeOwnPasswordBindingModel {
 
 export class CreateRoleBindingModel implements ICreateRoleBindingModel {
     name!: string;
+    description!: string | undefined;
 
     constructor(data?: ICreateRoleBindingModel) {
         if (data) {
@@ -2572,6 +2577,7 @@ export class CreateRoleBindingModel implements ICreateRoleBindingModel {
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
+            this.description = _data["description"];
         }
     }
 
@@ -2585,12 +2591,14 @@ export class CreateRoleBindingModel implements ICreateRoleBindingModel {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
+        data["description"] = this.description;
         return data;
     }
 }
 
 export interface ICreateRoleBindingModel {
     name: string;
+    description: string | undefined;
 }
 
 export class CreateSkillBindingModel implements ICreateSkillBindingModel {
@@ -3035,7 +3043,6 @@ export interface IProcessSupplyCertificateWorkflowBindingModel {
 
 export class RecommendDataSourcesRequest implements IRecommendDataSourcesRequest {
     query!: string | undefined;
-    max!: number;
 
     constructor(data?: IRecommendDataSourcesRequest) {
         if (data) {
@@ -3049,7 +3056,6 @@ export class RecommendDataSourcesRequest implements IRecommendDataSourcesRequest
     init(_data?: any) {
         if (_data) {
             this.query = _data["query"];
-            this.max = _data["max"];
         }
     }
 
@@ -3063,14 +3069,12 @@ export class RecommendDataSourcesRequest implements IRecommendDataSourcesRequest
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["query"] = this.query;
-        data["max"] = this.max;
         return data;
     }
 }
 
 export interface IRecommendDataSourcesRequest {
     query: string | undefined;
-    max: number;
 }
 
 export class RequiredSkillAccessBindingModel implements IRequiredSkillAccessBindingModel {
@@ -3283,6 +3287,7 @@ export enum SupplyCertificateWorkflowStateType {
 export class UpdateRoleBindingModel implements IUpdateRoleBindingModel {
     id!: string;
     name!: string;
+    description!: string | undefined;
 
     constructor(data?: IUpdateRoleBindingModel) {
         if (data) {
@@ -3297,6 +3302,7 @@ export class UpdateRoleBindingModel implements IUpdateRoleBindingModel {
         if (_data) {
             this.id = _data["id"];
             this.name = _data["name"];
+            this.description = _data["description"];
         }
     }
 
@@ -3311,6 +3317,7 @@ export class UpdateRoleBindingModel implements IUpdateRoleBindingModel {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["description"] = this.description;
         return data;
     }
 }
@@ -3318,6 +3325,7 @@ export class UpdateRoleBindingModel implements IUpdateRoleBindingModel {
 export interface IUpdateRoleBindingModel {
     id: string;
     name: string;
+    description: string | undefined;
 }
 
 export class UpdateSkillBindingModel implements IUpdateSkillBindingModel {

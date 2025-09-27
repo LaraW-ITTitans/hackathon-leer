@@ -8,16 +8,31 @@
         </div>
       </template>
 
-      <el-input
-        v-model="searchQuery"
-        placeholder="Datenquellen nach Name durchsuchen"
-        clearable
-        class="search-input"
-      />
+      <div class="controls">
+        <el-radio-group v-model="mode" size="small" class="mode-toggle">
+          <el-radio-button label="search">Suche</el-radio-button>
+          <el-radio-button label="recommend">Empfehlungen</el-radio-button>
+        </el-radio-group>
+        <el-input
+          v-model="searchQuery"
+          :placeholder="mode === 'recommend' ? 'Suchanfrage für Empfehlungen eingeben' : 'Datenquellen nach Name durchsuchen'"
+          clearable
+          class="search-input"
+          @keyup.enter="handleSearchOrRecommend"
+        />
+        <el-button
+          v-if="mode === 'recommend'"
+          type="primary"
+          :loading="loading"
+          :disabled="!searchQuery"
+          class="recommend-btn"
+          @click="handleSearchOrRecommend"
+        >Empfehlungen abrufen</el-button>
+      </div>
 
       <el-alert v-if="error" type="error" :title="error" show-icon class="error-alert" />
 
-      <el-skeleton v-if="loading && !dataSources.length" :rows="5" animated />
+      <el-skeleton v-if="loading && !displayedDataSources.length" :rows="5" animated />
 
       <el-table v-else :data="paginatedDataSources" style="width: 100%" border stripe>
         <el-table-column prop="name" label="Name" sortable />
@@ -128,10 +143,11 @@ import { ElNotification, ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import DrawerComponent from '@/components/drawer/DrawerComponent.vue'
 import { useDataSources } from './composeables/dataSources'
-import type { DataSourceBindingModel, CreateUpdateDataSourceBindingModel, BasicSkillBindingModel } from '@/api/codegen'
+import type { DataSourceBindingModel, CreateUpdateDataSourceBindingModel } from '@/api/codegen'
 
-const { dataSources, skills, loading, error, fetchDataSources, fetchSkills, deleteDataSource, createDataSource, updateDataSource } = useDataSources()
+const { dataSources, recommendedDataSources, skills, loading, error, fetchDataSources, fetchSkills, fetchRecommendedDataSources, deleteDataSource, createDataSource, updateDataSource } = useDataSources()
 
+const mode = ref<'search' | 'recommend'>('search')
 const searchQuery = ref('')
 const currentPage = ref(1)
 const pageSize = ref(10)
@@ -148,14 +164,19 @@ onMounted(async () => {
   }
 })
 
-const filteredDataSources = computed(() => {
-  const list = dataSources.value || []
-  if (!searchQuery.value) return list
-  const q = searchQuery.value.toLowerCase()
-  return list.filter((ds: DataSourceBindingModel) => (ds.name || '').toLowerCase().includes(q))
+const displayedDataSources = computed<any[]>(() => {
+  return mode.value === 'recommend' ? (recommendedDataSources.value || []) : (dataSources.value || [])
 })
 
-const paginatedDataSources = computed(() => {
+const filteredDataSources = computed<any[]>(() => {
+  const list = displayedDataSources.value || []
+  if (mode.value === 'recommend') return list
+  if (!searchQuery.value) return list
+  const q = searchQuery.value.toLowerCase()
+  return list.filter((ds: any) => (ds.name || '').toLowerCase().includes(q))
+})
+
+const paginatedDataSources = computed<any[]>(() => {
   const start = (currentPage.value - 1) * pageSize.value
   const end = start + pageSize.value
   return filteredDataSources.value.slice(start, end)
@@ -168,6 +189,21 @@ const handleSizeChange = (val: number) => {
 
 const handleCurrentChange = (val: number) => {
   currentPage.value = val
+}
+
+const handleSearchOrRecommend = async () => {
+  currentPage.value = 1
+  if (mode.value === 'recommend') {
+    if (!searchQuery.value) return
+    try {
+      await fetchRecommendedDataSources(searchQuery.value)
+      if (!recommendedDataSources.value || recommendedDataSources.value.length === 0) {
+        ElNotification({ title: 'Hinweis', message: 'Keine Empfehlungen gefunden.', type: 'info' })
+      }
+    } catch (e) {
+      /* error already handled in composable */
+    }
+  }
 }
 
 const handleDelete = async (id: string) => {
@@ -262,7 +298,10 @@ const handleSubmit = async () => {
 <style scoped>
 .data-source-list { padding: 20px; }
 .card-header { display: flex; justify-content: space-between; align-items: center; }
-.search-input { margin-bottom: 20px; max-width: 400px; }
+.controls { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+.mode-toggle { margin-right: 8px; }
+.search-input { max-width: 420px; }
+.recommend-btn { }
 .error-alert { margin-bottom: 20px; }
 .pagination-container { margin-top: 20px; justify-content: flex-end; display: flex; }
 .mr-4 { margin-right: 4px; }
