@@ -81,6 +81,9 @@ public static class Program
                     "v1",
                     new OpenApiInfo { Title = "Hackathon API", Version = "1.0.0" }
                 );
+                
+                // This line removes namespaces from model names in Swagger UI
+                swaggerGenerationOptions.CustomSchemaIds(type => type.FullName?.Split('.')[^1]);
 
                 // enforce using JWT via custom header (X-Hackathon-Token)
                 // Use ApiKey scheme so Swagger UI sends the token in the custom header instead of Authorization
@@ -196,8 +199,8 @@ public static class Program
         app.UseAuthorization();
 
         app
-            .UseFastEndpoints()
-            .UseSwaggerGen();
+            .UseFastEndpoints();
+            // TODO: .UseSwaggerGen();
 
         if (app.Environment.IsDevelopment())
         {
