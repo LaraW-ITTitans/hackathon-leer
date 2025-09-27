@@ -40,6 +40,12 @@ const router = createRouter({
       component: () => import('../views/roles/RoleOverviewView.vue'),
       meta: { public: false, title: 'Administration - Rollen' },
     },
+    {
+      path: '/admin/data-sources',
+      name: 'data-sources',
+      component: () => import('../views/sources/DataSourceOverviewView.vue'),
+      meta: { public: false, title: 'Administration - Datenquellen' },
+    },
 
     // User Pages
     {

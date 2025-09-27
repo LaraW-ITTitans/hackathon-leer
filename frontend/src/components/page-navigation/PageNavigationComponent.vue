@@ -70,6 +70,8 @@ const items: MenuItem[] = [
   { label: 'Profil', to: '/users/me', authOnly: true },
 
   { label: 'Info', to: '/info', disabled: true },
+
+  { label: 'Datenquellen', to: '/admin/data-sources', authOnly: true }
 ]
 
 const userStore = useUserStore()
