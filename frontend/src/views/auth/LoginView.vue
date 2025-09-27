@@ -54,6 +54,15 @@
               {{ loading ? 'Sie werden angemeldet..' : 'Anmelden' }}
             </el-button>
           </el-form-item>
+
+          <el-form-item>
+            <el-text>
+              Noch kein Konto? Jetzt
+              <el-link type="default" @click="toRegistration">
+                Registrieren!
+              </el-link>
+            </el-text>
+          </el-form-item>
         </el-form>
       </el-card>
     </el-col>
@@ -63,6 +72,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { QuestionFilled } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { login } from '@/services/auth'
 import useUserStore from '@/stores/user.ts'
@@ -90,6 +100,10 @@ const rules: FormRules = {
     { required: true, message: 'Passwort ist erforderlich', trigger: 'blur' },
     { min: 6, message: 'Mindestens 6 Zeichen', trigger: 'blur' },
   ],
+}
+
+const toRegistration = () => {
+  router.push('/register')
 }
 
 const onSubmit = async () => {

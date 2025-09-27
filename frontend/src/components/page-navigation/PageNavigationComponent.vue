@@ -66,7 +66,7 @@ const items: MenuItem[] = [
 
   { label: 'Home', to: '/home', authOnly: true },
 
-  { label: 'Login', to: '/auth', guestOnly: true },
+  // { label: 'Login', to: '/auth', guestOnly: true },
   { label: 'Profil', to: '/users/me', authOnly: true },
 
   { label: 'Info', to: '/info', disabled: true },
