@@ -58,6 +58,12 @@ const router = createRouter({
       component: () => import('../views/sources/DataSourceOverviewView.vue'),
       meta: { public: false, title: 'Administration - Datenquellen' },
     },
+    {
+      path: '/admin/skills',
+      name: 'skill-management',
+      component: () => import('../views/skills/SkillOverviewView.vue'),
+      meta: { public: false, title: 'Administration - Nachweise' },
+    },
 
     // User Pages
     {
