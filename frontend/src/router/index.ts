@@ -7,6 +7,8 @@ import { authGuard } from './navigation-guard'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+
+    // Publicly available pages
     {
       path: '/',
       name: 'landing-page',
@@ -29,10 +31,19 @@ const router = createRouter({
       meta: { public: true },
     },
 
+    // Admin Pages
     {
       path: '/admin/roles',
       name: 'role-management',
       component: () => import('../views/roles/RoleOverviewView.vue'),
+      meta: { public: false },
+    },
+
+    // User Pages
+    {
+      path: '/users/me',
+      name: 'user-profile',
+      component: () => import('../views/user/profile/UserProfileView.vue'),
       meta: { public: false },
     },
 

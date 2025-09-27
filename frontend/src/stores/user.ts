@@ -10,6 +10,7 @@ const useUserStore = defineStore('user', {
     isAuthenticated: false,
     user: undefined,
     accessToken: undefined,
+    tokenExpiresAt: 0,
   }),
   actions: {
     setUser(user: User) {
@@ -25,6 +26,7 @@ const useUserStore = defineStore('user', {
       this.user = user;
       this.accessToken = user.token;
       this.isAuthenticated = true;
+      this.tokenExpiresAt = user.expiration;
     },
     logout() {
       this.user = undefined;

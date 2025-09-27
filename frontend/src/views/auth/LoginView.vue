@@ -17,7 +17,7 @@
           label-position="top"
           @keyup.enter="onSubmit"
         >
-          <el-form-item label="E-Mail" prop="email">
+          <el-form-item label="E-Mail oder Benutzername" prop="email">
             <el-input
               v-model="form.email"
               placeholder="you@example.com"
@@ -111,7 +111,7 @@ const onSubmit = async () => {
 
       ElMessage.success(`Willkommen zurück, ${authResult.user.name}!`)
 
-      router.push('/home')
+      router.push('/users/me')
     }
   } catch (err: any) {
     const msg = err?.response?.data?.message || 'Login fehlgeschlagen. Prüfe deine Zugangsdaten.'
