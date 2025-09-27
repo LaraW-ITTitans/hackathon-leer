@@ -35,9 +35,14 @@
             />
           </el-form-item>
 
-          <el-form-item>
-            <el-checkbox v-model="form.remember">Eingeloggt bleiben</el-checkbox>
-          </el-form-item>
+          <el-row justify="space-between">
+            <el-col :span="9">
+              <el-checkbox v-model="form.remember">Eingeloggt bleiben</el-checkbox>
+            </el-col>
+            <el-col :span="9" style="text-align: right">
+              <el-link target="_self" :icon="QuestionFilled">Passwort vergessen</el-link>
+            </el-col>
+          </el-row>
 
           <el-form-item>
             <el-button
