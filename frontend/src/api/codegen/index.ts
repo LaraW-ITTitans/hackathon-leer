@@ -106,6 +106,358 @@ export class AuthApiClient extends AuthorizedApiBase implements IAuthApiClient {
     }
 }
 
+export interface IDataSourcesApiClient {
+    /**
+     * @return OK
+     */
+    createDataSource(body: CreateUpdateDataSourceBindingModel,  cancelToken?: CancelToken): Promise<DataSourceBindingModel>;
+    /**
+     * @return OK
+     */
+    getDataSources( cancelToken?: CancelToken): Promise<DataSourceBindingModel[]>;
+    /**
+     * @return No Content
+     */
+    deleteDataSource( cancelToken?: CancelToken): Promise<void>;
+    /**
+     * @return OK
+     */
+    updateDataSource(body: CreateUpdateDataSourceBindingModel,  cancelToken?: CancelToken): Promise<DataSourceBindingModel>;
+    /**
+     * @return OK
+     */
+    recommendDataSources(body: RecommendDataSourcesRequest,  cancelToken?: CancelToken): Promise<DataSourceRecommendationBindingModel[]>;
+}
+
+export class DataSourcesApiClient extends AuthorizedApiBase implements IDataSourcesApiClient {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        super();
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "https://localhost:7108";
+
+    }
+
+    /**
+     * @return OK
+     */
+    createDataSource(body: CreateUpdateDataSourceBindingModel, cancelToken?: CancelToken): Promise<DataSourceBindingModel> {
+        let url_ = this.baseUrl + "/api/data-sources";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCreateDataSource(_response);
+        });
+    }
+
+    protected processCreateDataSource(response: AxiosResponse): Promise<DataSourceBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = DataSourceBindingModel.fromJS(resultData200);
+            return Promise.resolve<DataSourceBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<DataSourceBindingModel>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getDataSources( cancelToken?: CancelToken): Promise<DataSourceBindingModel[]> {
+        let url_ = this.baseUrl + "/api/data-sources";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetDataSources(_response);
+        });
+    }
+
+    protected processGetDataSources(response: AxiosResponse): Promise<DataSourceBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(DataSourceBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<DataSourceBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<DataSourceBindingModel[]>(null as any);
+    }
+
+    /**
+     * @return No Content
+     */
+    deleteDataSource( cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/api/data-sources/{id}";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDeleteDataSource(_response);
+        });
+    }
+
+    protected processDeleteDataSource(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    updateDataSource(body: CreateUpdateDataSourceBindingModel, cancelToken?: CancelToken): Promise<DataSourceBindingModel> {
+        let url_ = this.baseUrl + "/api/data-sources/{id}";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUpdateDataSource(_response);
+        });
+    }
+
+    protected processUpdateDataSource(response: AxiosResponse): Promise<DataSourceBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = DataSourceBindingModel.fromJS(resultData200);
+            return Promise.resolve<DataSourceBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<DataSourceBindingModel>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    recommendDataSources(body: RecommendDataSourcesRequest, cancelToken?: CancelToken): Promise<DataSourceRecommendationBindingModel[]> {
+        let url_ = this.baseUrl + "/api/data-sources/recommend";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "GET",
+            url: url_,
+            headers: {
+                "Content-Type": "*/*",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processRecommendDataSources(_response);
+        });
+    }
+
+    protected processRecommendDataSources(response: AxiosResponse): Promise<DataSourceRecommendationBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(DataSourceRecommendationBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<DataSourceRecommendationBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<DataSourceRecommendationBindingModel[]>(null as any);
+    }
+}
+
 export interface IInfoApiClient {
     /**
      * @return OK
@@ -874,6 +1226,433 @@ export class SkillsApiClient extends AuthorizedApiBase implements ISkillsApiClie
     }
 }
 
+export interface ISupplyCertificateWorkflowsApiClient {
+    /**
+     * @return OK
+     */
+    cancelSupplyCertificateWorkflow( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel>;
+    /**
+     * @return OK
+     */
+    getOwnSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel[]>;
+    /**
+     * @return OK
+     */
+    getReviewableSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel[]>;
+    /**
+     * @return OK
+     */
+    getSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel[]>;
+    /**
+     * @param skillId (optional) 
+     * @param file (optional) 
+     * @return OK
+     */
+    startSupplyCertificateWorkflow(skillId?: string | undefined, file?: FileParameter | null | undefined,  cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel>;
+    /**
+     * @return OK
+     */
+    processSupplyCertificateWorkflow(body: ProcessSupplyCertificateWorkflowBindingModel,  cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel>;
+}
+
+export class SupplyCertificateWorkflowsApiClient extends AuthorizedApiBase implements ISupplyCertificateWorkflowsApiClient {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        super();
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "https://localhost:7108";
+
+    }
+
+    /**
+     * @return OK
+     */
+    cancelSupplyCertificateWorkflow( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel> {
+        let url_ = this.baseUrl + "/api/workflows/supply-certificates/{id}/cancel";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "POST",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCancelSupplyCertificateWorkflow(_response);
+        });
+    }
+
+    protected processCancelSupplyCertificateWorkflow(response: AxiosResponse): Promise<BasicSupplyCertificateWorkflowBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = BasicSupplyCertificateWorkflowBindingModel.fromJS(resultData200);
+            return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getOwnSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel[]> {
+        let url_ = this.baseUrl + "/api/workflows/supply-certificates/own";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetOwnSupplyCertificateWorkflows(_response);
+        });
+    }
+
+    protected processGetOwnSupplyCertificateWorkflows(response: AxiosResponse): Promise<BasicSupplyCertificateWorkflowBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(BasicSupplyCertificateWorkflowBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getReviewableSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel[]> {
+        let url_ = this.baseUrl + "/api/workflows/supply-certificates/reviewable";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetReviewableSupplyCertificateWorkflows(_response);
+        });
+    }
+
+    protected processGetReviewableSupplyCertificateWorkflows(response: AxiosResponse): Promise<BasicSupplyCertificateWorkflowBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(BasicSupplyCertificateWorkflowBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel[]> {
+        let url_ = this.baseUrl + "/api/workflows/supply-certificates";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetSupplyCertificateWorkflows(_response);
+        });
+    }
+
+    protected processGetSupplyCertificateWorkflows(response: AxiosResponse): Promise<BasicSupplyCertificateWorkflowBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(BasicSupplyCertificateWorkflowBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel[]>(null as any);
+    }
+
+    /**
+     * @param skillId (optional) 
+     * @param file (optional) 
+     * @return OK
+     */
+    startSupplyCertificateWorkflow(skillId?: string | undefined, file?: FileParameter | null | undefined, cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel> {
+        let url_ = this.baseUrl + "/api/workflows/supply-certificates";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (skillId === null || skillId === undefined)
+            throw new globalThis.Error("The parameter 'skillId' cannot be null.");
+        else
+            content_.append("skillId", skillId.toString());
+        if (file !== null && file !== undefined)
+            content_.append("file", file.data, file.fileName ? file.fileName : "file");
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processStartSupplyCertificateWorkflow(_response);
+        });
+    }
+
+    protected processStartSupplyCertificateWorkflow(response: AxiosResponse): Promise<BasicSupplyCertificateWorkflowBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = BasicSupplyCertificateWorkflowBindingModel.fromJS(resultData200);
+            return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    processSupplyCertificateWorkflow(body: ProcessSupplyCertificateWorkflowBindingModel, cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel> {
+        let url_ = this.baseUrl + "/api/workflows/supply-certificates/{id}/process";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processProcessSupplyCertificateWorkflow(_response);
+        });
+    }
+
+    protected processProcessSupplyCertificateWorkflow(response: AxiosResponse): Promise<BasicSupplyCertificateWorkflowBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = BasicSupplyCertificateWorkflowBindingModel.fromJS(resultData200);
+            return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel>(null as any);
+    }
+}
+
 export interface IUsersApiClient {
     /**
      * @return No Content
@@ -884,10 +1663,6 @@ export interface IUsersApiClient {
      */
     createUser(body: CreateUserBindingModel,  cancelToken?: CancelToken): Promise<BasicUserBindingModel>;
     /**
-     * @return No Content
-     */
-    deleteUser(body: DeleteUserBindingModel,  cancelToken?: CancelToken): Promise<void>;
-    /**
      * @return OK
      */
     getUsers( cancelToken?: CancelToken): Promise<BasicUserBindingModel[]>;
@@ -896,9 +1671,29 @@ export interface IUsersApiClient {
      */
     update_User(body: UpdateUserBindingModel,  cancelToken?: CancelToken): Promise<BasicUserBindingModel>;
     /**
+     * @return No Content
+     */
+    deleteUser( cancelToken?: CancelToken): Promise<void>;
+    /**
      * @return OK
      */
-    getCurrentUser( cancelToken?: CancelToken): Promise<BasicUserBindingModel>;
+    getAvailableDataSourcesForCurrentUser( cancelToken?: CancelToken): Promise<DataSourceBindingModel[]>;
+    /**
+     * @return OK
+     */
+    getAvailableDataSourcesForUser( cancelToken?: CancelToken): Promise<DataSourceBindingModel[]>;
+    /**
+     * @return OK
+     */
+    getCurrentUser( cancelToken?: CancelToken): Promise<DetailedUserBindingModel>;
+    /**
+     * @return OK
+     */
+    getCurrentUserSkillsWithCertificates( cancelToken?: CancelToken): Promise<SkillWithCertificateBindingModel[]>;
+    /**
+     * @return OK
+     */
+    getUserSkillsWithCertificates( cancelToken?: CancelToken): Promise<SkillWithCertificateBindingModel[]>;
 }
 
 export class UsersApiClient extends AuthorizedApiBase implements IUsersApiClient {
@@ -1035,65 +1830,6 @@ export class UsersApiClient extends AuthorizedApiBase implements IUsersApiClient
     }
 
     /**
-     * @return No Content
-     */
-    deleteUser(body: DeleteUserBindingModel, cancelToken?: CancelToken): Promise<void> {
-        let url_ = this.baseUrl + "/api/users";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_: AxiosRequestConfig = {
-            data: content_,
-            method: "DELETE",
-            url: url_,
-            headers: {
-                "Content-Type": "*/*",
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processDeleteUser(_response);
-        });
-    }
-
-    protected processDeleteUser(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 204) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(null as any);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<void>(null as any);
-    }
-
-    /**
      * @return OK
      */
     getUsers( cancelToken?: CancelToken): Promise<BasicUserBindingModel[]> {
@@ -1223,9 +1959,188 @@ export class UsersApiClient extends AuthorizedApiBase implements IUsersApiClient
     }
 
     /**
+     * @return No Content
+     */
+    deleteUser( cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/api/users/{id}";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDeleteUser(_response);
+        });
+    }
+
+    protected processDeleteUser(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
      * @return OK
      */
-    getCurrentUser( cancelToken?: CancelToken): Promise<BasicUserBindingModel> {
+    getAvailableDataSourcesForCurrentUser( cancelToken?: CancelToken): Promise<DataSourceBindingModel[]> {
+        let url_ = this.baseUrl + "/api/users/me/available-datasources";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetAvailableDataSourcesForCurrentUser(_response);
+        });
+    }
+
+    protected processGetAvailableDataSourcesForCurrentUser(response: AxiosResponse): Promise<DataSourceBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(DataSourceBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<DataSourceBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<DataSourceBindingModel[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getAvailableDataSourcesForUser( cancelToken?: CancelToken): Promise<DataSourceBindingModel[]> {
+        let url_ = this.baseUrl + "/api/users/{id}/available-datasources";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetAvailableDataSourcesForUser(_response);
+        });
+    }
+
+    protected processGetAvailableDataSourcesForUser(response: AxiosResponse): Promise<DataSourceBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(DataSourceBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<DataSourceBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<DataSourceBindingModel[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getCurrentUser( cancelToken?: CancelToken): Promise<DetailedUserBindingModel> {
         let url_ = this.baseUrl + "/api/users/me";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1249,7 +2164,7 @@ export class UsersApiClient extends AuthorizedApiBase implements IUsersApiClient
         });
     }
 
-    protected processGetCurrentUser(response: AxiosResponse): Promise<BasicUserBindingModel> {
+    protected processGetCurrentUser(response: AxiosResponse): Promise<DetailedUserBindingModel> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1263,14 +2178,138 @@ export class UsersApiClient extends AuthorizedApiBase implements IUsersApiClient
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-            result200 = BasicUserBindingModel.fromJS(resultData200);
-            return Promise.resolve<BasicUserBindingModel>(result200);
+            result200 = DetailedUserBindingModel.fromJS(resultData200);
+            return Promise.resolve<DetailedUserBindingModel>(result200);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<BasicUserBindingModel>(null as any);
+        return Promise.resolve<DetailedUserBindingModel>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getCurrentUserSkillsWithCertificates( cancelToken?: CancelToken): Promise<SkillWithCertificateBindingModel[]> {
+        let url_ = this.baseUrl + "/api/users/me/skills-with-certificates";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetCurrentUserSkillsWithCertificates(_response);
+        });
+    }
+
+    protected processGetCurrentUserSkillsWithCertificates(response: AxiosResponse): Promise<SkillWithCertificateBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SkillWithCertificateBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<SkillWithCertificateBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<SkillWithCertificateBindingModel[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getUserSkillsWithCertificates( cancelToken?: CancelToken): Promise<SkillWithCertificateBindingModel[]> {
+        let url_ = this.baseUrl + "/api/users/{id}/skills-with-certificates";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetUserSkillsWithCertificates(_response);
+        });
+    }
+
+    protected processGetUserSkillsWithCertificates(response: AxiosResponse): Promise<SkillWithCertificateBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SkillWithCertificateBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<SkillWithCertificateBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<SkillWithCertificateBindingModel[]>(null as any);
     }
 }
 
@@ -1392,6 +2431,46 @@ export class BasicSkillBindingModel implements IBasicSkillBindingModel {
 export interface IBasicSkillBindingModel {
     id: string;
     name: string | undefined;
+}
+
+export class BasicSupplyCertificateWorkflowBindingModel implements IBasicSupplyCertificateWorkflowBindingModel {
+    id!: string;
+    state!: SupplyCertificateWorkflowStateType;
+
+    constructor(data?: IBasicSupplyCertificateWorkflowBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.state = _data["state"];
+        }
+    }
+
+    static fromJS(data: any): BasicSupplyCertificateWorkflowBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new BasicSupplyCertificateWorkflowBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["state"] = this.state;
+        return data;
+    }
+}
+
+export interface IBasicSupplyCertificateWorkflowBindingModel {
+    id: string;
+    state: SupplyCertificateWorkflowStateType;
 }
 
 export class BasicUserBindingModel implements IBasicUserBindingModel {
@@ -1554,6 +2633,58 @@ export interface ICreateSkillBindingModel {
     description: string | undefined;
 }
 
+export class CreateUpdateDataSourceBindingModel implements ICreateUpdateDataSourceBindingModel {
+    name!: string;
+    description!: string | undefined;
+    requiredSkillIds!: string[] | undefined;
+
+    constructor(data?: ICreateUpdateDataSourceBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.description = _data["description"];
+            if (Array.isArray(_data["requiredSkillIds"])) {
+                this.requiredSkillIds = [] as any;
+                for (let item of _data["requiredSkillIds"])
+                    this.requiredSkillIds!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateUpdateDataSourceBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateUpdateDataSourceBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["description"] = this.description;
+        if (Array.isArray(this.requiredSkillIds)) {
+            data["requiredSkillIds"] = [];
+            for (let item of this.requiredSkillIds)
+                data["requiredSkillIds"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ICreateUpdateDataSourceBindingModel {
+    name: string;
+    description: string | undefined;
+    requiredSkillIds: string[] | undefined;
+}
+
 export class CreateUserBindingModel implements ICreateUserBindingModel {
     userName!: string | undefined;
     displayName!: string | undefined;
@@ -1598,10 +2729,13 @@ export interface ICreateUserBindingModel {
     password: string | undefined;
 }
 
-export class DeleteUserBindingModel implements IDeleteUserBindingModel {
+export class DataSourceBindingModel implements IDataSourceBindingModel {
     id!: string;
+    name!: string | undefined;
+    description!: string | undefined;
+    requiredSkills!: BasicSkillBindingModel[] | undefined;
 
-    constructor(data?: IDeleteUserBindingModel) {
+    constructor(data?: IDataSourceBindingModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1613,12 +2747,19 @@ export class DeleteUserBindingModel implements IDeleteUserBindingModel {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            if (Array.isArray(_data["requiredSkills"])) {
+                this.requiredSkills = [] as any;
+                for (let item of _data["requiredSkills"])
+                    this.requiredSkills!.push(BasicSkillBindingModel.fromJS(item));
+            }
         }
     }
 
-    static fromJS(data: any): DeleteUserBindingModel {
+    static fromJS(data: any): DataSourceBindingModel {
         data = typeof data === 'object' ? data : {};
-        let result = new DeleteUserBindingModel();
+        let result = new DataSourceBindingModel();
         result.init(data);
         return result;
     }
@@ -1626,12 +2767,150 @@ export class DeleteUserBindingModel implements IDeleteUserBindingModel {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        if (Array.isArray(this.requiredSkills)) {
+            data["requiredSkills"] = [];
+            for (let item of this.requiredSkills)
+                data["requiredSkills"].push(item ? item.toJSON() : undefined as any);
+        }
         return data;
     }
 }
 
-export interface IDeleteUserBindingModel {
+export interface IDataSourceBindingModel {
     id: string;
+    name: string | undefined;
+    description: string | undefined;
+    requiredSkills: BasicSkillBindingModel[] | undefined;
+}
+
+export class DataSourceRecommendationBindingModel implements IDataSourceRecommendationBindingModel {
+    id!: string;
+    name!: string | undefined;
+    description!: string | undefined;
+    hasAccess!: boolean;
+    requiredSkills!: RequiredSkillAccessBindingModel[] | undefined;
+
+    constructor(data?: IDataSourceRecommendationBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.hasAccess = _data["hasAccess"];
+            if (Array.isArray(_data["requiredSkills"])) {
+                this.requiredSkills = [] as any;
+                for (let item of _data["requiredSkills"])
+                    this.requiredSkills!.push(RequiredSkillAccessBindingModel.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): DataSourceRecommendationBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataSourceRecommendationBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["hasAccess"] = this.hasAccess;
+        if (Array.isArray(this.requiredSkills)) {
+            data["requiredSkills"] = [];
+            for (let item of this.requiredSkills)
+                data["requiredSkills"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface IDataSourceRecommendationBindingModel {
+    id: string;
+    name: string | undefined;
+    description: string | undefined;
+    hasAccess: boolean;
+    requiredSkills: RequiredSkillAccessBindingModel[] | undefined;
+}
+
+export class DetailedUserBindingModel implements IDetailedUserBindingModel {
+    id!: string;
+    userName!: string | undefined;
+    displayName!: string | undefined;
+    skills!: BasicSkillBindingModel[] | undefined;
+    reviewableSkills!: BasicSkillBindingModel[] | undefined;
+
+    constructor(data?: IDetailedUserBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.userName = _data["userName"];
+            this.displayName = _data["displayName"];
+            if (Array.isArray(_data["skills"])) {
+                this.skills = [] as any;
+                for (let item of _data["skills"])
+                    this.skills!.push(BasicSkillBindingModel.fromJS(item));
+            }
+            if (Array.isArray(_data["reviewableSkills"])) {
+                this.reviewableSkills = [] as any;
+                for (let item of _data["reviewableSkills"])
+                    this.reviewableSkills!.push(BasicSkillBindingModel.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): DetailedUserBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new DetailedUserBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["userName"] = this.userName;
+        data["displayName"] = this.displayName;
+        if (Array.isArray(this.skills)) {
+            data["skills"] = [];
+            for (let item of this.skills)
+                data["skills"].push(item ? item.toJSON() : undefined as any);
+        }
+        if (Array.isArray(this.reviewableSkills)) {
+            data["reviewableSkills"] = [];
+            for (let item of this.reviewableSkills)
+                data["reviewableSkills"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface IDetailedUserBindingModel {
+    id: string;
+    userName: string | undefined;
+    displayName: string | undefined;
+    skills: BasicSkillBindingModel[] | undefined;
+    reviewableSkills: BasicSkillBindingModel[] | undefined;
 }
 
 export class LoginBindingModel implements ILoginBindingModel {
@@ -1714,6 +2993,130 @@ export interface ILoginResponseBindingModel {
     token: string | undefined;
 }
 
+export class ProcessSupplyCertificateWorkflowBindingModel implements IProcessSupplyCertificateWorkflowBindingModel {
+    accept!: boolean;
+    reviewComment!: string;
+
+    constructor(data?: IProcessSupplyCertificateWorkflowBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.accept = _data["accept"];
+            this.reviewComment = _data["reviewComment"];
+        }
+    }
+
+    static fromJS(data: any): ProcessSupplyCertificateWorkflowBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProcessSupplyCertificateWorkflowBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accept"] = this.accept;
+        data["reviewComment"] = this.reviewComment;
+        return data;
+    }
+}
+
+export interface IProcessSupplyCertificateWorkflowBindingModel {
+    accept: boolean;
+    reviewComment: string;
+}
+
+export class RecommendDataSourcesRequest implements IRecommendDataSourcesRequest {
+    query!: string | undefined;
+    max!: number;
+
+    constructor(data?: IRecommendDataSourcesRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.query = _data["query"];
+            this.max = _data["max"];
+        }
+    }
+
+    static fromJS(data: any): RecommendDataSourcesRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new RecommendDataSourcesRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["query"] = this.query;
+        data["max"] = this.max;
+        return data;
+    }
+}
+
+export interface IRecommendDataSourcesRequest {
+    query: string | undefined;
+    max: number;
+}
+
+export class RequiredSkillAccessBindingModel implements IRequiredSkillAccessBindingModel {
+    id!: string;
+    name!: string | undefined;
+    hasSkill!: boolean;
+
+    constructor(data?: IRequiredSkillAccessBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.hasSkill = _data["hasSkill"];
+        }
+    }
+
+    static fromJS(data: any): RequiredSkillAccessBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new RequiredSkillAccessBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["hasSkill"] = this.hasSkill;
+        return data;
+    }
+}
+
+export interface IRequiredSkillAccessBindingModel {
+    id: string;
+    name: string | undefined;
+    hasSkill: boolean;
+}
+
 export class SkillDetailBindingModel implements ISkillDetailBindingModel {
     id!: string;
     name!: string | undefined;
@@ -1768,6 +3171,113 @@ export interface ISkillDetailBindingModel {
     name: string | undefined;
     description: string | undefined;
     possibleReviewers: BasicUserBindingModel[] | undefined;
+}
+
+export class SkillWithCertificateBindingModel implements ISkillWithCertificateBindingModel {
+    skillId!: string;
+    skillName!: string | undefined;
+    workflowId!: string;
+    certificateFileName!: string | undefined;
+    certificateContentType!: string | undefined;
+    certificateSizeInBytes!: number;
+    certificateContentBase64!: string | undefined;
+
+    constructor(data?: ISkillWithCertificateBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.skillId = _data["skillId"];
+            this.skillName = _data["skillName"];
+            this.workflowId = _data["workflowId"];
+            this.certificateFileName = _data["certificateFileName"];
+            this.certificateContentType = _data["certificateContentType"];
+            this.certificateSizeInBytes = _data["certificateSizeInBytes"];
+            this.certificateContentBase64 = _data["certificateContentBase64"];
+        }
+    }
+
+    static fromJS(data: any): SkillWithCertificateBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new SkillWithCertificateBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["skillId"] = this.skillId;
+        data["skillName"] = this.skillName;
+        data["workflowId"] = this.workflowId;
+        data["certificateFileName"] = this.certificateFileName;
+        data["certificateContentType"] = this.certificateContentType;
+        data["certificateSizeInBytes"] = this.certificateSizeInBytes;
+        data["certificateContentBase64"] = this.certificateContentBase64;
+        return data;
+    }
+}
+
+export interface ISkillWithCertificateBindingModel {
+    skillId: string;
+    skillName: string | undefined;
+    workflowId: string;
+    certificateFileName: string | undefined;
+    certificateContentType: string | undefined;
+    certificateSizeInBytes: number;
+    certificateContentBase64: string | undefined;
+}
+
+export class StartSupplyCertificateWorkflowBindingModel implements IStartSupplyCertificateWorkflowBindingModel {
+    skillId!: string;
+    file!: string | undefined;
+
+    constructor(data?: IStartSupplyCertificateWorkflowBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.skillId = _data["skillId"];
+            this.file = _data["file"];
+        }
+    }
+
+    static fromJS(data: any): StartSupplyCertificateWorkflowBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new StartSupplyCertificateWorkflowBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["skillId"] = this.skillId;
+        data["file"] = this.file;
+        return data;
+    }
+}
+
+export interface IStartSupplyCertificateWorkflowBindingModel {
+    skillId: string;
+    file: string | undefined;
+}
+
+export enum SupplyCertificateWorkflowStateType {
+    _1 = 1,
+    _2 = 2,
+    _3 = 3,
+    __1 = -1,
 }
 
 export class UpdateRoleBindingModel implements IUpdateRoleBindingModel {

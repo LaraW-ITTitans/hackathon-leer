@@ -7,6 +7,7 @@
 type User = {
   id: string
   name: string
+  displayName: string
   email: string
   claims: string[]
 }
@@ -21,6 +22,7 @@ type UserState = {
   isAuthenticated: boolean
   user: User | undefined
   accessToken: string | undefined
+  tokenExpiresAt: number
 };
 
 export type {

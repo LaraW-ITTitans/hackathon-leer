@@ -3,13 +3,13 @@
     <el-header class="header" height="72px">
       <div class="brand" @click="scrollTo('top')" role="button" aria-label="Zur Startseite">
         <el-icon class="logo"><Cpu /></el-icon>
-        <strong>Daten Raum Ostfriesland</strong>
+        <strong>Datenraum Ostfriesland</strong>
       </div>
       <nav class="nav">
         <a href="#features" @click.prevent="scrollTo('features')">Funktionen</a>
         <a href="#how" @click.prevent="scrollTo('how')">So funktioniert's</a>
         <a href="#faq" @click.prevent="scrollTo('faq')">FAQ</a>
-        <el-button type="primary" round @click="scrollTo('cta')">Jetzt mitmachen</el-button>
+        <el-button type="primary" round @click="toLogin()">Jetzt mitmachen</el-button>
       </nav>
     </el-header>
 
@@ -167,6 +167,11 @@ import {
   Document,
   Link,
 } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
+import useUserStore from '@/stores/user.ts'
+
+const router = useRouter()
+const userStore = useUserStore()
 
 // Feature-Kacheln
 const features = reactive([
@@ -229,6 +234,14 @@ const subscribe = () => {
   }
   ElMessage.success('Danke! Wir halten dich auf dem Laufenden.')
   email.value = ''
+}
+
+const toLogin = () => {
+  if (userStore.isAuthenticated) {
+    router.push({ name: 'user-profile' })
+  } else {
+    router.push({ name: 'login' })
+  }
 }
 
 // Smooth Scroll

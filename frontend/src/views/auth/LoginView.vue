@@ -17,7 +17,7 @@
           label-position="top"
           @keyup.enter="onSubmit"
         >
-          <el-form-item label="E-Mail" prop="email">
+          <el-form-item label="E-Mail oder Benutzername" prop="email">
             <el-input
               v-model="form.email"
               placeholder="you@example.com"
@@ -35,9 +35,14 @@
             />
           </el-form-item>
 
-          <el-form-item>
-            <el-checkbox v-model="form.remember">Eingeloggt bleiben</el-checkbox>
-          </el-form-item>
+          <el-row justify="space-between">
+            <el-col :span="9">
+              <el-checkbox v-model="form.remember">Eingeloggt bleiben</el-checkbox>
+            </el-col>
+            <el-col :span="9" style="text-align: right">
+              <el-link target="_self" :icon="QuestionFilled">Passwort vergessen</el-link>
+            </el-col>
+          </el-row>
 
           <el-form-item>
             <el-button
@@ -49,6 +54,15 @@
               {{ loading ? 'Sie werden angemeldet..' : 'Anmelden' }}
             </el-button>
           </el-form-item>
+
+          <el-form-item>
+            <el-text>
+              Noch kein Konto? Jetzt
+              <el-link type="default" @click="toRegistration">
+                Registrieren!
+              </el-link>
+            </el-text>
+          </el-form-item>
         </el-form>
       </el-card>
     </el-col>
@@ -58,6 +72,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { QuestionFilled } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { login } from '@/services/auth'
 import useUserStore from '@/stores/user.ts'
@@ -87,6 +102,10 @@ const rules: FormRules = {
   ],
 }
 
+const toRegistration = () => {
+  router.push('/register')
+}
+
 const onSubmit = async () => {
   if (!formRef.value) return
   try {
@@ -111,7 +130,7 @@ const onSubmit = async () => {
 
       ElMessage.success(`Willkommen zurück, ${authResult.user.name}!`)
 
-      router.push('/home')
+      router.push('/users/me')
     }
   } catch (err: any) {
     const msg = err?.response?.data?.message || 'Login fehlgeschlagen. Prüfe deine Zugangsdaten.'
