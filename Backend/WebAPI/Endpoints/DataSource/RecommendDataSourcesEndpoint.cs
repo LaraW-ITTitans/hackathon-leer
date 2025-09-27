@@ -15,7 +15,6 @@ namespace ITTitans.Hackathon2025.WebAPI.Endpoints.DataSource;
 public class RecommendDataSourcesRequest
 {
     public string Query { get; set; } = string.Empty;
-    public int Max { get; set; } = 10;
 }
 
 public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest, IEnumerable<DataSourceRecommendationBindingModel>>
@@ -49,8 +48,6 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
             return;
         }
 
-        int max = req.Max > 0 ? req.Max : 10;
-
         if (!this.TryGetAuthenticatedUserId(out Guid userId))
         {
             await this.HttpContext.Response.StartAsync(ct);
@@ -67,7 +64,7 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
             return;
         }
         
-        List<Guid> orderedIds = await this.GetRecommendationsFromOpenAiAsync(req.Query, dataSources, max, ct);
+        List<Guid> orderedIds = await this.GetRecommendationsFromOpenAiAsync(req.Query, dataSources, ct);
         IEnumerable<DataSourceRecommendationBindingModel> response = BuildResponse(orderedIds, dataSources, userSkills);
 
         await this.Send.OkAsync(response, ct);
@@ -102,14 +99,13 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
     private async Task<List<Guid>> GetRecommendationsFromOpenAiAsync(
         string query,
         List<DataSourceEntity> dataSources,
-        int max,
         CancellationToken cancellationToken)
     {
         string googleAiApiKey = this.webServerAppSettingsService.GetGoogleAiApiKey();
         
         if (string.IsNullOrWhiteSpace(googleAiApiKey))
         {
-            return FallbackKeywordRanking(query, dataSources, max);
+            return new List<Guid>();
         }
 
         try
@@ -127,7 +123,6 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
             string prompt = new StringBuilder()
                 .AppendLine("You are a ranking assistant. Given a search query and a list of data sources (id and text), return the top N ids sorted by relevance to the query. Output strictly JSON with property 'ids' as an array of GUID strings. No extra text.")
                 .AppendLine($"Query: {query}")
-                .AppendLine($"Max: {max}")
                 .AppendLine("DataSources:")
                 .AppendLine(string.Join('\n', items.Select(i => $"- {{\"id\":\"{i.id}\",\"text\":\"{JsonEscape(i.text)}\"}}")))
                 .AppendLine("Return JSON: {\"ids\":[\"...\"]}")
@@ -154,7 +149,7 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
             {
                 string errorContent = await resp.Content.ReadAsStringAsync(cancellationToken);
                 Console.WriteLine(errorContent);
-                return FallbackKeywordRanking(query, dataSources, max);
+                return new List<Guid>();
             }
 
             await using Stream stream = await resp.Content.ReadAsStreamAsync(cancellationToken);
@@ -182,13 +177,15 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
 
             if (string.IsNullOrWhiteSpace(json))
             {
-                return FallbackKeywordRanking(query, dataSources, max);
+                return new List<Guid>();
             }
+
+            json = ExtractJsonFromMarkdown(json);
 
             using JsonDocument idsDoc = JsonDocument.Parse(json);
             if (!idsDoc.RootElement.TryGetProperty("ids", out JsonElement idsEl) || idsEl.ValueKind != JsonValueKind.Array)
             {
-                return FallbackKeywordRanking(query, dataSources, max);
+                return new List<Guid>();
             }
 
             var ids = new List<Guid>();
@@ -197,73 +194,21 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
                 if (idEl.ValueKind == JsonValueKind.String && Guid.TryParse(idEl.GetString(), out Guid g))
                 {
                     ids.Add(g);
-                    if (ids.Count >= max)
-                    {
-                        break;
-                    }
                 }
             }
 
-            // Ensure uniqueness and limit to existing IDs
+            // Ensure uniqueness and keep only existing IDs
             HashSet<Guid> set = dataSources.Select(d => d.Id).ToHashSet();
-            List<Guid> filtered = ids.Where(set.Contains).Distinct().Take(max).ToList();
-
-            // If the model returned less than requested, append fallback-ranked remainder
-            if (filtered.Count < Math.Min(max, dataSources.Count))
-            {
-                List<Guid> fallback = FallbackKeywordRanking(query, dataSources.Where(d => !filtered.Contains(d.Id)).ToList(), max - filtered.Count);
-                filtered.AddRange(fallback);
-            }
+            List<Guid> filtered = ids.Where(set.Contains).Distinct().ToList();
 
             return filtered;
         }
         catch
         {
-            return FallbackKeywordRanking(query, dataSources, max);
-        }
-    }
-
-    private static List<Guid> FallbackKeywordRanking(string query, List<DataSourceEntity> dataSources, int max)
-    {
-        if (dataSources.Count == 0 || max <= 0)
-        {
             return new List<Guid>();
         }
-
-        string[] terms = query.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Select(t => t.ToLowerInvariant()).ToArray();
-
-        return dataSources
-            .Select(ds => new
-            {
-                ds.Id,
-                Score = Score(Combine(ds.Name, ds.Description), terms)
-            })
-            .OrderByDescending(x => x.Score)
-            .ThenBy(x => x.Id)
-            .Take(Math.Min(max, dataSources.Count))
-            .Select(x => x.Id)
-            .ToList();
-
-        static int Score(string text, string[] terms)
-        {
-            string lower = text.ToLowerInvariant();
-            int s = 0;
-            foreach (string t in terms)
-            {
-                if (string.IsNullOrWhiteSpace(t))
-                {
-                    continue;
-                }
-
-                if (lower.Contains(t))
-                {
-                    s += 1;
-                }
-            }
-            return s;
-        }
     }
+
 
     // --- Build response
     private static IEnumerable<DataSourceRecommendationBindingModel> BuildResponse(List<Guid> orderedIds, List<DataSourceEntity> dataSources, HashSet<Guid> userSkills)
@@ -310,5 +255,50 @@ public class RecommendDataSourcesEndpoint : Endpoint<RecommendDataSourcesRequest
             .Replace("\"", "\\\"")
             .Replace("\n", " ")
             .Replace("\r", " ");
+    }
+
+    private static string ExtractJsonFromMarkdown(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return text;
+
+        text = text.Trim();
+
+        // Check if the text starts with ```json and ends with ```
+        if (text.StartsWith("```json", StringComparison.OrdinalIgnoreCase))
+        {
+            // Find the first newline after ```json
+            int startIndex = text.IndexOf('\n');
+            if (startIndex == -1)
+                return text; // Fallback if no newline found
+
+            startIndex++; // Move past the newline
+
+            // Find the closing ```
+            int endIndex = text.LastIndexOf("```");
+            if (endIndex <= startIndex)
+                return text; // Fallback if no closing ``` found
+
+            // Extract the JSON content between the markers
+            return text.Substring(startIndex, endIndex - startIndex).Trim();
+        }
+
+        // Check for generic code blocks without language specification
+        if (text.StartsWith("```") && text.EndsWith("```") && text.Length > 6)
+        {
+            // Find the first newline after ```
+            int startIndex = text.IndexOf('\n');
+            if (startIndex == -1)
+                return text; // Fallback if no newline found
+
+            startIndex++; // Move past the newline
+
+            // Extract content, removing the last ```
+            string extracted = text.Substring(startIndex, text.Length - startIndex - 3).Trim();
+            return extracted;
+        }
+
+        // Return as-is if no markdown formatting detected
+        return text;
     }
 }
