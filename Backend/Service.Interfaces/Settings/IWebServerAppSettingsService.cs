@@ -12,5 +12,5 @@ public interface IWebServerAppSettingsService
 
     string GetHackathonDbContextConnectionString();
     
-    string GetOpenAiApiKey();
+    string GetGoogleAiApiKey();
 }

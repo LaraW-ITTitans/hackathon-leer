@@ -49,8 +49,8 @@ public class WebServerAppSettingsService : IWebServerAppSettingsService
     }
     
     /// <inheritdoc />
-    public string GetOpenAiApiKey()
+    public string GetGoogleAiApiKey()
     {
-        return this.appSettingsReader.GetValueAsString("OpenAI:ApiKey");
+        return this.appSettingsReader.GetValueAsString("GoogleAI:ApiKey");
     }
 }
