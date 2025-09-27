@@ -28,14 +28,14 @@ export default class AuthorizedApiBase {
   };
 }
 
-export interface IInfoApiClient {
+export interface IAuthApiClient {
     /**
-     * @return Success
+     * @return OK
      */
-    getInfo( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelApiInfoBindingModel>;
+    login(body: LoginBindingModel,  cancelToken?: CancelToken): Promise<LoginResponseBindingModel>;
 }
 
-export class InfoApiClient extends AuthorizedApiBase implements IInfoApiClient {
+export class AuthApiClient extends AuthorizedApiBase implements IAuthApiClient {
     protected instance: AxiosInstance;
     protected baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -51,436 +51,13 @@ export class InfoApiClient extends AuthorizedApiBase implements IInfoApiClient {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
-    getInfo( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelApiInfoBindingModel> {
-        let url_ = this.baseUrl + "/api/info";
+    login(body: LoginBindingModel, cancelToken?: CancelToken): Promise<LoginResponseBindingModel> {
+        let url_ = this.baseUrl + "/api/auth/login";
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_: AxiosRequestConfig = {
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGetInfo(_response);
-        });
-    }
-
-    protected processGetInfo(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelApiInfoBindingModel> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = ITTitansHackathon2025WebAPIModelApiInfoBindingModel.fromJS(resultData200);
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelApiInfoBindingModel>(result200);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelApiInfoBindingModel>(null as any);
-    }
-}
-
-export interface ISupplyCertificateWorkflowsApiClient {
-    /**
-     * @return Success
-     */
-    cancelSupplyCertificateWorkflow(id: string,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel>;
-    /**
-     * @return Success
-     */
-    getOwnSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel[]>;
-    /**
-     * @return Success
-     */
-    getReviewableSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel[]>;
-    /**
-     * @return Success
-     */
-    getSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel[]>;
-    /**
-     * @param skillId (optional) 
-     * @param file (optional) 
-     * @return Success
-     */
-    startSupplyCertificateWorkflow(skillId?: string | undefined, file?: FileParameter | undefined,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel>;
-    /**
-     * @return Success
-     */
-    processSupplyCertificateWorkflow(id: string, processSupplyCertificateWorkflowBindingModel: ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateProcessSupplyCertificateWorkflowBindingModel,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel>;
-}
-
-export class SupplyCertificateWorkflowsApiClient extends AuthorizedApiBase implements ISupplyCertificateWorkflowsApiClient {
-    protected instance: AxiosInstance;
-    protected baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(baseUrl?: string, instance?: AxiosInstance) {
-
-        super();
-
-        this.instance = instance || axios.create();
-
-        this.baseUrl = baseUrl ?? "https://localhost:7108";
-
-    }
-
-    /**
-     * @return Success
-     */
-    cancelSupplyCertificateWorkflow(id: string, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel> {
-        let url_ = this.baseUrl + "/api/workflows/supply-certificates/{id}/cancel";
-        if (id === undefined || id === null)
-            throw new globalThis.Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "POST",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processCancelSupplyCertificateWorkflow(_response);
-        });
-    }
-
-    protected processCancelSupplyCertificateWorkflow(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel.fromJS(resultData200);
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    getOwnSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel[]> {
-        let url_ = this.baseUrl + "/api/workflows/supply-certificates/own";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGetOwnSupplyCertificateWorkflows(_response);
-        });
-    }
-
-    protected processGetOwnSupplyCertificateWorkflows(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel.fromJS(item));
-            }
-            else {
-                result200 = null as any;
-            }
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel[]>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel[]>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    getReviewableSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel[]> {
-        let url_ = this.baseUrl + "/api/workflows/supply-certificates/reviewable";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGetReviewableSupplyCertificateWorkflows(_response);
-        });
-    }
-
-    protected processGetReviewableSupplyCertificateWorkflows(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel.fromJS(item));
-            }
-            else {
-                result200 = null as any;
-            }
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel[]>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel[]>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    getSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel[]> {
-        let url_ = this.baseUrl + "/api/workflows/supply-certificates";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGetSupplyCertificateWorkflows(_response);
-        });
-    }
-
-    protected processGetSupplyCertificateWorkflows(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel.fromJS(item));
-            }
-            else {
-                result200 = null as any;
-            }
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel[]>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel[]>(null as any);
-    }
-
-    /**
-     * @param skillId (optional) 
-     * @param file (optional) 
-     * @return Success
-     */
-    startSupplyCertificateWorkflow(skillId?: string | undefined, file?: FileParameter | undefined, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel> {
-        let url_ = this.baseUrl + "/api/workflows/supply-certificates";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = new FormData();
-        if (skillId === null || skillId === undefined)
-            throw new globalThis.Error("The parameter 'skillId' cannot be null.");
-        else
-            content_.append("skillId", skillId.toString());
-        if (file === null || file === undefined)
-            throw new globalThis.Error("The parameter 'file' cannot be null.");
-        else
-            content_.append("file", file.data, file.fileName ? file.fileName : "file");
-
-        let options_: AxiosRequestConfig = {
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processStartSupplyCertificateWorkflow(_response);
-        });
-    }
-
-    protected processStartSupplyCertificateWorkflow(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel.fromJS(resultData200);
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    processSupplyCertificateWorkflow(id: string, processSupplyCertificateWorkflowBindingModel: ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateProcessSupplyCertificateWorkflowBindingModel, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel> {
-        let url_ = this.baseUrl + "/api/workflows/supply-certificates/{id}/process";
-        if (id === undefined || id === null)
-            throw new globalThis.Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(processSupplyCertificateWorkflowBindingModel);
+        const content_ = JSON.stringify(body);
 
         let options_: AxiosRequestConfig = {
             data: content_,
@@ -500,11 +77,11 @@ export class SupplyCertificateWorkflowsApiClient extends AuthorizedApiBase imple
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processProcessSupplyCertificateWorkflow(_response);
+            return this.processLogin(_response);
         });
     }
 
-    protected processProcessSupplyCertificateWorkflow(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel> {
+    protected processLogin(response: AxiosResponse): Promise<LoginResponseBindingModel> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -518,1421 +95,38 @@ export class SupplyCertificateWorkflowsApiClient extends AuthorizedApiBase imple
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-            result200 = ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel.fromJS(resultData200);
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
+            result200 = LoginResponseBindingModel.fromJS(resultData200);
+            return Promise.resolve<LoginResponseBindingModel>(result200);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel>(null as any);
-    }
-}
-
-export interface IUsersApiClient {
-    /**
-     * @return No Content
-     */
-    changeOwnPassword(changeOwnPasswordBindingModel: ITTitansHackathon2025WebAPIModelUserChangeOwnPasswordBindingModel,  cancelToken?: CancelToken): Promise<void>;
-    /**
-     * @return Success
-     */
-    createUser(createUserBindingModel: ITTitansHackathon2025WebAPIModelUserCreateUserBindingModel,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel>;
-    /**
-     * @return Success
-     */
-    getUsers( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel[]>;
-    /**
-     * @return Success
-     */
-    update_User(updateUserBindingModel: ITTitansHackathon2025WebAPIModelUserUpdateUserBindingModel,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel>;
-    /**
-     * @return No Content
-     */
-    deleteUser(id: string,  cancelToken?: CancelToken): Promise<void>;
-    /**
-     * @return Success
-     */
-    getAvailableDataSourcesForCurrentUser( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel[]>;
-    /**
-     * @return Success
-     */
-    getAvailableDataSourcesForUser(id: string,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel[]>;
-    /**
-     * @return Success
-     */
-    getCurrentUser( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelUserDetailedUserBindingModel>;
-    /**
-     * @return Success
-     */
-    getCurrentUserSkillsWithCertificates( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel[]>;
-    /**
-     * @return Success
-     */
-    getUserSkillsWithCertificates(id: string,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel[]>;
-}
-
-export class UsersApiClient extends AuthorizedApiBase implements IUsersApiClient {
-    protected instance: AxiosInstance;
-    protected baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(baseUrl?: string, instance?: AxiosInstance) {
-
-        super();
-
-        this.instance = instance || axios.create();
-
-        this.baseUrl = baseUrl ?? "https://localhost:7108";
-
-    }
-
-    /**
-     * @return No Content
-     */
-    changeOwnPassword(changeOwnPasswordBindingModel: ITTitansHackathon2025WebAPIModelUserChangeOwnPasswordBindingModel, cancelToken?: CancelToken): Promise<void> {
-        let url_ = this.baseUrl + "/api/users/change-password";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(changeOwnPasswordBindingModel);
-
-        let options_: AxiosRequestConfig = {
-            data: content_,
-            method: "PUT",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processChangeOwnPassword(_response);
-        });
-    }
-
-    protected processChangeOwnPassword(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 204) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(null as any);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<void>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    createUser(createUserBindingModel: ITTitansHackathon2025WebAPIModelUserCreateUserBindingModel, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel> {
-        let url_ = this.baseUrl + "/api/users";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(createUserBindingModel);
-
-        let options_: AxiosRequestConfig = {
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processCreateUser(_response);
-        });
-    }
-
-    protected processCreateUser(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel.fromJS(resultData200);
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    getUsers( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel[]> {
-        let url_ = this.baseUrl + "/api/users";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGetUsers(_response);
-        });
-    }
-
-    protected processGetUsers(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel.fromJS(item));
-            }
-            else {
-                result200 = null as any;
-            }
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel[]>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel[]>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    update_User(updateUserBindingModel: ITTitansHackathon2025WebAPIModelUserUpdateUserBindingModel, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel> {
-        let url_ = this.baseUrl + "/api/users";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(updateUserBindingModel);
-
-        let options_: AxiosRequestConfig = {
-            data: content_,
-            method: "PUT",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processUpdate_User(_response);
-        });
-    }
-
-    protected processUpdate_User(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel.fromJS(resultData200);
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel>(null as any);
-    }
-
-    /**
-     * @return No Content
-     */
-    deleteUser(id: string, cancelToken?: CancelToken): Promise<void> {
-        let url_ = this.baseUrl + "/api/users/{id}";
-        if (id === undefined || id === null)
-            throw new globalThis.Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "DELETE",
-            url: url_,
-            headers: {
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processDeleteUser(_response);
-        });
-    }
-
-    protected processDeleteUser(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 204) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(null as any);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<void>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    getAvailableDataSourcesForCurrentUser( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel[]> {
-        let url_ = this.baseUrl + "/api/users/me/available-datasources";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGetAvailableDataSourcesForCurrentUser(_response);
-        });
-    }
-
-    protected processGetAvailableDataSourcesForCurrentUser(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel.fromJS(item));
-            }
-            else {
-                result200 = null as any;
-            }
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel[]>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel[]>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    getAvailableDataSourcesForUser(id: string, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel[]> {
-        let url_ = this.baseUrl + "/api/users/{id}/available-datasources";
-        if (id === undefined || id === null)
-            throw new globalThis.Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGetAvailableDataSourcesForUser(_response);
-        });
-    }
-
-    protected processGetAvailableDataSourcesForUser(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel.fromJS(item));
-            }
-            else {
-                result200 = null as any;
-            }
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel[]>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel[]>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    getCurrentUser( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelUserDetailedUserBindingModel> {
-        let url_ = this.baseUrl + "/api/users/me";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGetCurrentUser(_response);
-        });
-    }
-
-    protected processGetCurrentUser(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelUserDetailedUserBindingModel> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = ITTitansHackathon2025WebAPIModelUserDetailedUserBindingModel.fromJS(resultData200);
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelUserDetailedUserBindingModel>(result200);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelUserDetailedUserBindingModel>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    getCurrentUserSkillsWithCertificates( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel[]> {
-        let url_ = this.baseUrl + "/api/users/me/skills-with-certificates";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGetCurrentUserSkillsWithCertificates(_response);
-        });
-    }
-
-    protected processGetCurrentUserSkillsWithCertificates(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel.fromJS(item));
-            }
-            else {
-                result200 = null as any;
-            }
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel[]>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel[]>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    getUserSkillsWithCertificates(id: string, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel[]> {
-        let url_ = this.baseUrl + "/api/users/{id}/skills-with-certificates";
-        if (id === undefined || id === null)
-            throw new globalThis.Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGetUserSkillsWithCertificates(_response);
-        });
-    }
-
-    protected processGetUserSkillsWithCertificates(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel.fromJS(item));
-            }
-            else {
-                result200 = null as any;
-            }
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel[]>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel[]>(null as any);
-    }
-}
-
-export interface ISkillsApiClient {
-    /**
-     * @return Success
-     */
-    createSkill(createSkillBindingModel: ITTitansHackathon2025WebAPIModelSkillCreateSkillBindingModel,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel>;
-    /**
-     * @return Success
-     */
-    get_All_Skills( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel[]>;
-    /**
-     * @return Success
-     */
-    updateSkill(updateSkillBindingModel: ITTitansHackathon2025WebAPIModelSkillUpdateSkillBindingModel,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel>;
-    /**
-     * @return No Content
-     */
-    deleteSkill(id: string,  cancelToken?: CancelToken): Promise<void>;
-    /**
-     * @return Success
-     */
-    get_Skill_By_Id(id: string,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel>;
-    /**
-     * @return Success
-     */
-    updateSkillReviewers(id: string, updateSkillReviewersBindingModel: ITTitansHackathon2025WebAPIModelSkillUpdateSkillReviewersBindingModel,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel>;
-}
-
-export class SkillsApiClient extends AuthorizedApiBase implements ISkillsApiClient {
-    protected instance: AxiosInstance;
-    protected baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(baseUrl?: string, instance?: AxiosInstance) {
-
-        super();
-
-        this.instance = instance || axios.create();
-
-        this.baseUrl = baseUrl ?? "https://localhost:7108";
-
-    }
-
-    /**
-     * @return Success
-     */
-    createSkill(createSkillBindingModel: ITTitansHackathon2025WebAPIModelSkillCreateSkillBindingModel, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel> {
-        let url_ = this.baseUrl + "/api/skills";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(createSkillBindingModel);
-
-        let options_: AxiosRequestConfig = {
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processCreateSkill(_response);
-        });
-    }
-
-    protected processCreateSkill(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel.fromJS(resultData200);
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    get_All_Skills( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel[]> {
-        let url_ = this.baseUrl + "/api/skills";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGet_All_Skills(_response);
-        });
-    }
-
-    protected processGet_All_Skills(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel.fromJS(item));
-            }
-            else {
-                result200 = null as any;
-            }
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel[]>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel[]>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    updateSkill(updateSkillBindingModel: ITTitansHackathon2025WebAPIModelSkillUpdateSkillBindingModel, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel> {
-        let url_ = this.baseUrl + "/api/skills";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(updateSkillBindingModel);
-
-        let options_: AxiosRequestConfig = {
-            data: content_,
-            method: "PUT",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processUpdateSkill(_response);
-        });
-    }
-
-    protected processUpdateSkill(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel.fromJS(resultData200);
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel>(null as any);
-    }
-
-    /**
-     * @return No Content
-     */
-    deleteSkill(id: string, cancelToken?: CancelToken): Promise<void> {
-        let url_ = this.baseUrl + "/api/skills/{id}";
-        if (id === undefined || id === null)
-            throw new globalThis.Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "DELETE",
-            url: url_,
-            headers: {
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processDeleteSkill(_response);
-        });
-    }
-
-    protected processDeleteSkill(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 204) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(null as any);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<void>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    get_Skill_By_Id(id: string, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel> {
-        let url_ = this.baseUrl + "/api/skills/{id}";
-        if (id === undefined || id === null)
-            throw new globalThis.Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGet_Skill_By_Id(_response);
-        });
-    }
-
-    protected processGet_Skill_By_Id(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel.fromJS(resultData200);
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    updateSkillReviewers(id: string, updateSkillReviewersBindingModel: ITTitansHackathon2025WebAPIModelSkillUpdateSkillReviewersBindingModel, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel> {
-        let url_ = this.baseUrl + "/api/skills/{id}/reviewers";
-        if (id === undefined || id === null)
-            throw new globalThis.Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(updateSkillReviewersBindingModel);
-
-        let options_: AxiosRequestConfig = {
-            data: content_,
-            method: "PUT",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processUpdateSkillReviewers(_response);
-        });
-    }
-
-    protected processUpdateSkillReviewers(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel.fromJS(resultData200);
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel>(null as any);
-    }
-}
-
-export interface IRolesApiClient {
-    /**
-     * @return Success
-     */
-    createRole(createRoleBindingModel: ITTitansHackathon2025WebAPIModelRoleCreateRoleBindingModel,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel>;
-    /**
-     * @return Success
-     */
-    getAllRoles( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel[]>;
-    /**
-     * @return Success
-     */
-    updateRole(updateRoleBindingModel: ITTitansHackathon2025WebAPIModelRoleUpdateRoleBindingModel,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel>;
-    /**
-     * @return No Content
-     */
-    deleteRole(id: string,  cancelToken?: CancelToken): Promise<void>;
-}
-
-export class RolesApiClient extends AuthorizedApiBase implements IRolesApiClient {
-    protected instance: AxiosInstance;
-    protected baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(baseUrl?: string, instance?: AxiosInstance) {
-
-        super();
-
-        this.instance = instance || axios.create();
-
-        this.baseUrl = baseUrl ?? "https://localhost:7108";
-
-    }
-
-    /**
-     * @return Success
-     */
-    createRole(createRoleBindingModel: ITTitansHackathon2025WebAPIModelRoleCreateRoleBindingModel, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel> {
-        let url_ = this.baseUrl + "/api/roles";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(createRoleBindingModel);
-
-        let options_: AxiosRequestConfig = {
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processCreateRole(_response);
-        });
-    }
-
-    protected processCreateRole(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel.fromJS(resultData200);
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    getAllRoles( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel[]> {
-        let url_ = this.baseUrl + "/api/roles";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGetAllRoles(_response);
-        });
-    }
-
-    protected processGetAllRoles(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel[]> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel.fromJS(item));
-            }
-            else {
-                result200 = null as any;
-            }
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel[]>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel[]>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    updateRole(updateRoleBindingModel: ITTitansHackathon2025WebAPIModelRoleUpdateRoleBindingModel, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel> {
-        let url_ = this.baseUrl + "/api/roles";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(updateRoleBindingModel);
-
-        let options_: AxiosRequestConfig = {
-            data: content_,
-            method: "PUT",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processUpdateRole(_response);
-        });
-    }
-
-    protected processUpdateRole(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel.fromJS(resultData200);
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel>(null as any);
-    }
-
-    /**
-     * @return No Content
-     */
-    deleteRole(id: string, cancelToken?: CancelToken): Promise<void> {
-        let url_ = this.baseUrl + "/api/roles/{id}";
-        if (id === undefined || id === null)
-            throw new globalThis.Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "DELETE",
-            url: url_,
-            headers: {
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processDeleteRole(_response);
-        });
-    }
-
-    protected processDeleteRole(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 204) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(null as any);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<void>(null as any);
+        return Promise.resolve<LoginResponseBindingModel>(null as any);
     }
 }
 
 export interface IDataSourcesApiClient {
     /**
-     * @return Success
+     * @return OK
      */
-    createDataSource(createUpdateDataSourceBindingModel: ITTitansHackathon2025WebAPIModelDataSourceCreateUpdateDataSourceBindingModel,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel>;
+    createDataSource(body: CreateUpdateDataSourceBindingModel,  cancelToken?: CancelToken): Promise<DataSourceBindingModel>;
     /**
-     * @return Success
+     * @return OK
      */
-    getDataSources( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel[]>;
+    getDataSources( cancelToken?: CancelToken): Promise<DataSourceBindingModel[]>;
     /**
      * @return No Content
      */
-    deleteDataSource(id: string,  cancelToken?: CancelToken): Promise<void>;
+    deleteDataSource( cancelToken?: CancelToken): Promise<void>;
     /**
-     * @return Success
+     * @return OK
      */
-    updateDataSource(id: string, createUpdateDataSourceBindingModel: ITTitansHackathon2025WebAPIModelDataSourceCreateUpdateDataSourceBindingModel,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel>;
+    updateDataSource(body: CreateUpdateDataSourceBindingModel,  cancelToken?: CancelToken): Promise<DataSourceBindingModel>;
     /**
-     * @return Success
+     * @return OK
      */
-    recommendDataSources(query: string, max: number,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceRecommendationBindingModel[]>;
+    recommendDataSources(body: RecommendDataSourcesRequest,  cancelToken?: CancelToken): Promise<DataSourceRecommendationBindingModel[]>;
 }
 
 export class DataSourcesApiClient extends AuthorizedApiBase implements IDataSourcesApiClient {
@@ -1951,13 +145,13 @@ export class DataSourcesApiClient extends AuthorizedApiBase implements IDataSour
     }
 
     /**
-     * @return Success
+     * @return OK
      */
-    createDataSource(createUpdateDataSourceBindingModel: ITTitansHackathon2025WebAPIModelDataSourceCreateUpdateDataSourceBindingModel, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel> {
+    createDataSource(body: CreateUpdateDataSourceBindingModel, cancelToken?: CancelToken): Promise<DataSourceBindingModel> {
         let url_ = this.baseUrl + "/api/data-sources";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(createUpdateDataSourceBindingModel);
+        const content_ = JSON.stringify(body);
 
         let options_: AxiosRequestConfig = {
             data: content_,
@@ -1981,7 +175,7 @@ export class DataSourcesApiClient extends AuthorizedApiBase implements IDataSour
         });
     }
 
-    protected processCreateDataSource(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel> {
+    protected processCreateDataSource(response: AxiosResponse): Promise<DataSourceBindingModel> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1995,8 +189,8 @@ export class DataSourcesApiClient extends AuthorizedApiBase implements IDataSour
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-            result200 = ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel.fromJS(resultData200);
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel>(result200);
+            result200 = DataSourceBindingModel.fromJS(resultData200);
+            return Promise.resolve<DataSourceBindingModel>(result200);
 
         } else if (status === 401) {
             const _responseText = response.data;
@@ -2010,13 +204,13 @@ export class DataSourcesApiClient extends AuthorizedApiBase implements IDataSour
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel>(null as any);
+        return Promise.resolve<DataSourceBindingModel>(null as any);
     }
 
     /**
-     * @return Success
+     * @return OK
      */
-    getDataSources( cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel[]> {
+    getDataSources( cancelToken?: CancelToken): Promise<DataSourceBindingModel[]> {
         let url_ = this.baseUrl + "/api/data-sources";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2040,7 +234,7 @@ export class DataSourcesApiClient extends AuthorizedApiBase implements IDataSour
         });
     }
 
-    protected processGetDataSources(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel[]> {
+    protected processGetDataSources(response: AxiosResponse): Promise<DataSourceBindingModel[]> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -2057,12 +251,12 @@ export class DataSourcesApiClient extends AuthorizedApiBase implements IDataSour
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel.fromJS(item));
+                    result200!.push(DataSourceBindingModel.fromJS(item));
             }
             else {
                 result200 = null as any;
             }
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel[]>(result200);
+            return Promise.resolve<DataSourceBindingModel[]>(result200);
 
         } else if (status === 401) {
             const _responseText = response.data;
@@ -2076,17 +270,14 @@ export class DataSourcesApiClient extends AuthorizedApiBase implements IDataSour
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel[]>(null as any);
+        return Promise.resolve<DataSourceBindingModel[]>(null as any);
     }
 
     /**
      * @return No Content
      */
-    deleteDataSource(id: string, cancelToken?: CancelToken): Promise<void> {
+    deleteDataSource( cancelToken?: CancelToken): Promise<void> {
         let url_ = this.baseUrl + "/api/data-sources/{id}";
-        if (id === undefined || id === null)
-            throw new globalThis.Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
@@ -2138,16 +329,13 @@ export class DataSourcesApiClient extends AuthorizedApiBase implements IDataSour
     }
 
     /**
-     * @return Success
+     * @return OK
      */
-    updateDataSource(id: string, createUpdateDataSourceBindingModel: ITTitansHackathon2025WebAPIModelDataSourceCreateUpdateDataSourceBindingModel, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel> {
+    updateDataSource(body: CreateUpdateDataSourceBindingModel, cancelToken?: CancelToken): Promise<DataSourceBindingModel> {
         let url_ = this.baseUrl + "/api/data-sources/{id}";
-        if (id === undefined || id === null)
-            throw new globalThis.Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(createUpdateDataSourceBindingModel);
+        const content_ = JSON.stringify(body);
 
         let options_: AxiosRequestConfig = {
             data: content_,
@@ -2171,7 +359,7 @@ export class DataSourcesApiClient extends AuthorizedApiBase implements IDataSour
         });
     }
 
-    protected processUpdateDataSource(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel> {
+    protected processUpdateDataSource(response: AxiosResponse): Promise<DataSourceBindingModel> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -2185,8 +373,8 @@ export class DataSourcesApiClient extends AuthorizedApiBase implements IDataSour
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-            result200 = ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel.fromJS(resultData200);
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel>(result200);
+            result200 = DataSourceBindingModel.fromJS(resultData200);
+            return Promise.resolve<DataSourceBindingModel>(result200);
 
         } else if (status === 401) {
             const _responseText = response.data;
@@ -2200,22 +388,103 @@ export class DataSourcesApiClient extends AuthorizedApiBase implements IDataSour
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel>(null as any);
+        return Promise.resolve<DataSourceBindingModel>(null as any);
     }
 
     /**
-     * @return Success
+     * @return OK
      */
-    recommendDataSources(query: string, max: number, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceRecommendationBindingModel[]> {
-        let url_ = this.baseUrl + "/api/data-sources/recommend?";
-        if (query === undefined || query === null)
-            throw new globalThis.Error("The parameter 'query' must be defined and cannot be null.");
-        else
-            url_ += "query=" + encodeURIComponent("" + query) + "&";
-        if (max === undefined || max === null)
-            throw new globalThis.Error("The parameter 'max' must be defined and cannot be null.");
-        else
-            url_ += "max=" + encodeURIComponent("" + max) + "&";
+    recommendDataSources(body: RecommendDataSourcesRequest, cancelToken?: CancelToken): Promise<DataSourceRecommendationBindingModel[]> {
+        let url_ = this.baseUrl + "/api/data-sources/recommend";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "GET",
+            url: url_,
+            headers: {
+                "Content-Type": "*/*",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processRecommendDataSources(_response);
+        });
+    }
+
+    protected processRecommendDataSources(response: AxiosResponse): Promise<DataSourceRecommendationBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(DataSourceRecommendationBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<DataSourceRecommendationBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<DataSourceRecommendationBindingModel[]>(null as any);
+    }
+}
+
+export interface IInfoApiClient {
+    /**
+     * @return OK
+     */
+    getInfo( cancelToken?: CancelToken): Promise<ApiInfoBindingModel>;
+}
+
+export class InfoApiClient extends AuthorizedApiBase implements IInfoApiClient {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        super();
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "https://localhost:7108";
+
+    }
+
+    /**
+     * @return OK
+     */
+    getInfo( cancelToken?: CancelToken): Promise<ApiInfoBindingModel> {
+        let url_ = this.baseUrl + "/api/info";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_: AxiosRequestConfig = {
@@ -2234,11 +503,11 @@ export class DataSourcesApiClient extends AuthorizedApiBase implements IDataSour
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processRecommendDataSources(_response);
+            return this.processGetInfo(_response);
         });
     }
 
-    protected processRecommendDataSources(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelDataSourceDataSourceRecommendationBindingModel[]> {
+    protected processGetInfo(response: AxiosResponse): Promise<ApiInfoBindingModel> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -2252,36 +521,37 @@ export class DataSourcesApiClient extends AuthorizedApiBase implements IDataSour
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(ITTitansHackathon2025WebAPIModelDataSourceDataSourceRecommendationBindingModel.fromJS(item));
-            }
-            else {
-                result200 = null as any;
-            }
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelDataSourceDataSourceRecommendationBindingModel[]>(result200);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
+            result200 = ApiInfoBindingModel.fromJS(resultData200);
+            return Promise.resolve<ApiInfoBindingModel>(result200);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelDataSourceDataSourceRecommendationBindingModel[]>(null as any);
+        return Promise.resolve<ApiInfoBindingModel>(null as any);
     }
 }
 
-export interface IAuthApiClient {
+export interface IRolesApiClient {
     /**
-     * @return Success
+     * @return OK
      */
-    login(loginBindingModel: ITTitansHackathon2025WebAPIModelAuthLoginBindingModel,  cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelAuthLoginResponseBindingModel>;
+    createRole(body: CreateRoleBindingModel,  cancelToken?: CancelToken): Promise<BasicRoleBindingModel>;
+    /**
+     * @return OK
+     */
+    getAllRoles( cancelToken?: CancelToken): Promise<BasicRoleBindingModel[]>;
+    /**
+     * @return OK
+     */
+    updateRole(body: UpdateRoleBindingModel,  cancelToken?: CancelToken): Promise<BasicRoleBindingModel>;
+    /**
+     * @return No Content
+     */
+    deleteRole( cancelToken?: CancelToken): Promise<void>;
 }
 
-export class AuthApiClient extends AuthorizedApiBase implements IAuthApiClient {
+export class RolesApiClient extends AuthorizedApiBase implements IRolesApiClient {
     protected instance: AxiosInstance;
     protected baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -2297,13 +567,13 @@ export class AuthApiClient extends AuthorizedApiBase implements IAuthApiClient {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
-    login(loginBindingModel: ITTitansHackathon2025WebAPIModelAuthLoginBindingModel, cancelToken?: CancelToken): Promise<ITTitansHackathon2025WebAPIModelAuthLoginResponseBindingModel> {
-        let url_ = this.baseUrl + "/api/auth/login";
+    createRole(body: CreateRoleBindingModel, cancelToken?: CancelToken): Promise<BasicRoleBindingModel> {
+        let url_ = this.baseUrl + "/api/roles";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(loginBindingModel);
+        const content_ = JSON.stringify(body);
 
         let options_: AxiosRequestConfig = {
             data: content_,
@@ -2323,11 +593,11 @@ export class AuthApiClient extends AuthorizedApiBase implements IAuthApiClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processLogin(_response);
+            return this.processCreateRole(_response);
         });
     }
 
-    protected processLogin(response: AxiosResponse): Promise<ITTitansHackathon2025WebAPIModelAuthLoginResponseBindingModel> {
+    protected processCreateRole(response: AxiosResponse): Promise<BasicRoleBindingModel> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -2341,22 +611,1713 @@ export class AuthApiClient extends AuthorizedApiBase implements IAuthApiClient {
             const _responseText = response.data;
             let result200: any = null;
             let resultData200  = _responseText;
-            result200 = ITTitansHackathon2025WebAPIModelAuthLoginResponseBindingModel.fromJS(resultData200);
-            return Promise.resolve<ITTitansHackathon2025WebAPIModelAuthLoginResponseBindingModel>(result200);
+            result200 = BasicRoleBindingModel.fromJS(resultData200);
+            return Promise.resolve<BasicRoleBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ITTitansHackathon2025WebAPIModelAuthLoginResponseBindingModel>(null as any);
+        return Promise.resolve<BasicRoleBindingModel>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getAllRoles( cancelToken?: CancelToken): Promise<BasicRoleBindingModel[]> {
+        let url_ = this.baseUrl + "/api/roles";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetAllRoles(_response);
+        });
+    }
+
+    protected processGetAllRoles(response: AxiosResponse): Promise<BasicRoleBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(BasicRoleBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<BasicRoleBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicRoleBindingModel[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    updateRole(body: UpdateRoleBindingModel, cancelToken?: CancelToken): Promise<BasicRoleBindingModel> {
+        let url_ = this.baseUrl + "/api/roles";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUpdateRole(_response);
+        });
+    }
+
+    protected processUpdateRole(response: AxiosResponse): Promise<BasicRoleBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = BasicRoleBindingModel.fromJS(resultData200);
+            return Promise.resolve<BasicRoleBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicRoleBindingModel>(null as any);
+    }
+
+    /**
+     * @return No Content
+     */
+    deleteRole( cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/api/roles/{id}";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDeleteRole(_response);
+        });
+    }
+
+    protected processDeleteRole(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
     }
 }
 
-export class ITTitansHackathon2025WebAPIModelApiInfoBindingModel implements IITTitansHackathon2025WebAPIModelApiInfoBindingModel {
+export interface ISkillsApiClient {
+    /**
+     * @return OK
+     */
+    createSkill(body: CreateSkillBindingModel,  cancelToken?: CancelToken): Promise<BasicSkillBindingModel>;
+    /**
+     * @return OK
+     */
+    get_All_Skills( cancelToken?: CancelToken): Promise<BasicSkillBindingModel[]>;
+    /**
+     * @return OK
+     */
+    updateSkill(body: UpdateSkillBindingModel,  cancelToken?: CancelToken): Promise<BasicSkillBindingModel>;
+    /**
+     * @return No Content
+     */
+    deleteSkill( cancelToken?: CancelToken): Promise<void>;
+    /**
+     * @return OK
+     */
+    get_Skill_By_Id( cancelToken?: CancelToken): Promise<SkillDetailBindingModel>;
+    /**
+     * @return OK
+     */
+    updateSkillReviewers(body: UpdateSkillReviewersBindingModel,  cancelToken?: CancelToken): Promise<SkillDetailBindingModel>;
+}
+
+export class SkillsApiClient extends AuthorizedApiBase implements ISkillsApiClient {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        super();
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "https://localhost:7108";
+
+    }
+
+    /**
+     * @return OK
+     */
+    createSkill(body: CreateSkillBindingModel, cancelToken?: CancelToken): Promise<BasicSkillBindingModel> {
+        let url_ = this.baseUrl + "/api/skills";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCreateSkill(_response);
+        });
+    }
+
+    protected processCreateSkill(response: AxiosResponse): Promise<BasicSkillBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = BasicSkillBindingModel.fromJS(resultData200);
+            return Promise.resolve<BasicSkillBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicSkillBindingModel>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    get_All_Skills( cancelToken?: CancelToken): Promise<BasicSkillBindingModel[]> {
+        let url_ = this.baseUrl + "/api/skills";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGet_All_Skills(_response);
+        });
+    }
+
+    protected processGet_All_Skills(response: AxiosResponse): Promise<BasicSkillBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(BasicSkillBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<BasicSkillBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicSkillBindingModel[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    updateSkill(body: UpdateSkillBindingModel, cancelToken?: CancelToken): Promise<BasicSkillBindingModel> {
+        let url_ = this.baseUrl + "/api/skills";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUpdateSkill(_response);
+        });
+    }
+
+    protected processUpdateSkill(response: AxiosResponse): Promise<BasicSkillBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = BasicSkillBindingModel.fromJS(resultData200);
+            return Promise.resolve<BasicSkillBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicSkillBindingModel>(null as any);
+    }
+
+    /**
+     * @return No Content
+     */
+    deleteSkill( cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/api/skills/{id}";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDeleteSkill(_response);
+        });
+    }
+
+    protected processDeleteSkill(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    get_Skill_By_Id( cancelToken?: CancelToken): Promise<SkillDetailBindingModel> {
+        let url_ = this.baseUrl + "/api/skills/{id}";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGet_Skill_By_Id(_response);
+        });
+    }
+
+    protected processGet_Skill_By_Id(response: AxiosResponse): Promise<SkillDetailBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = SkillDetailBindingModel.fromJS(resultData200);
+            return Promise.resolve<SkillDetailBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<SkillDetailBindingModel>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    updateSkillReviewers(body: UpdateSkillReviewersBindingModel, cancelToken?: CancelToken): Promise<SkillDetailBindingModel> {
+        let url_ = this.baseUrl + "/api/skills/{id}/reviewers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUpdateSkillReviewers(_response);
+        });
+    }
+
+    protected processUpdateSkillReviewers(response: AxiosResponse): Promise<SkillDetailBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = SkillDetailBindingModel.fromJS(resultData200);
+            return Promise.resolve<SkillDetailBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<SkillDetailBindingModel>(null as any);
+    }
+}
+
+export interface ISupplyCertificateWorkflowsApiClient {
+    /**
+     * @return OK
+     */
+    cancelSupplyCertificateWorkflow( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel>;
+    /**
+     * @return OK
+     */
+    getOwnSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel[]>;
+    /**
+     * @return OK
+     */
+    getReviewableSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel[]>;
+    /**
+     * @return OK
+     */
+    getSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel[]>;
+    /**
+     * @param skillId (optional) 
+     * @param file (optional) 
+     * @return OK
+     */
+    startSupplyCertificateWorkflow(skillId?: string | undefined, file?: FileParameter | null | undefined,  cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel>;
+    /**
+     * @return OK
+     */
+    processSupplyCertificateWorkflow(body: ProcessSupplyCertificateWorkflowBindingModel,  cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel>;
+}
+
+export class SupplyCertificateWorkflowsApiClient extends AuthorizedApiBase implements ISupplyCertificateWorkflowsApiClient {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        super();
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "https://localhost:7108";
+
+    }
+
+    /**
+     * @return OK
+     */
+    cancelSupplyCertificateWorkflow( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel> {
+        let url_ = this.baseUrl + "/api/workflows/supply-certificates/{id}/cancel";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "POST",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCancelSupplyCertificateWorkflow(_response);
+        });
+    }
+
+    protected processCancelSupplyCertificateWorkflow(response: AxiosResponse): Promise<BasicSupplyCertificateWorkflowBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = BasicSupplyCertificateWorkflowBindingModel.fromJS(resultData200);
+            return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getOwnSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel[]> {
+        let url_ = this.baseUrl + "/api/workflows/supply-certificates/own";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetOwnSupplyCertificateWorkflows(_response);
+        });
+    }
+
+    protected processGetOwnSupplyCertificateWorkflows(response: AxiosResponse): Promise<BasicSupplyCertificateWorkflowBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(BasicSupplyCertificateWorkflowBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getReviewableSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel[]> {
+        let url_ = this.baseUrl + "/api/workflows/supply-certificates/reviewable";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetReviewableSupplyCertificateWorkflows(_response);
+        });
+    }
+
+    protected processGetReviewableSupplyCertificateWorkflows(response: AxiosResponse): Promise<BasicSupplyCertificateWorkflowBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(BasicSupplyCertificateWorkflowBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getSupplyCertificateWorkflows( cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel[]> {
+        let url_ = this.baseUrl + "/api/workflows/supply-certificates";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetSupplyCertificateWorkflows(_response);
+        });
+    }
+
+    protected processGetSupplyCertificateWorkflows(response: AxiosResponse): Promise<BasicSupplyCertificateWorkflowBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(BasicSupplyCertificateWorkflowBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel[]>(null as any);
+    }
+
+    /**
+     * @param skillId (optional) 
+     * @param file (optional) 
+     * @return OK
+     */
+    startSupplyCertificateWorkflow(skillId?: string | undefined, file?: FileParameter | null | undefined, cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel> {
+        let url_ = this.baseUrl + "/api/workflows/supply-certificates";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (skillId === null || skillId === undefined)
+            throw new globalThis.Error("The parameter 'skillId' cannot be null.");
+        else
+            content_.append("skillId", skillId.toString());
+        if (file !== null && file !== undefined)
+            content_.append("file", file.data, file.fileName ? file.fileName : "file");
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processStartSupplyCertificateWorkflow(_response);
+        });
+    }
+
+    protected processStartSupplyCertificateWorkflow(response: AxiosResponse): Promise<BasicSupplyCertificateWorkflowBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = BasicSupplyCertificateWorkflowBindingModel.fromJS(resultData200);
+            return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    processSupplyCertificateWorkflow(body: ProcessSupplyCertificateWorkflowBindingModel, cancelToken?: CancelToken): Promise<BasicSupplyCertificateWorkflowBindingModel> {
+        let url_ = this.baseUrl + "/api/workflows/supply-certificates/{id}/process";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processProcessSupplyCertificateWorkflow(_response);
+        });
+    }
+
+    protected processProcessSupplyCertificateWorkflow(response: AxiosResponse): Promise<BasicSupplyCertificateWorkflowBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = BasicSupplyCertificateWorkflowBindingModel.fromJS(resultData200);
+            return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicSupplyCertificateWorkflowBindingModel>(null as any);
+    }
+}
+
+export interface IUsersApiClient {
+    /**
+     * @return No Content
+     */
+    changeOwnPassword(body: ChangeOwnPasswordBindingModel,  cancelToken?: CancelToken): Promise<void>;
+    /**
+     * @return OK
+     */
+    createUser(body: CreateUserBindingModel,  cancelToken?: CancelToken): Promise<BasicUserBindingModel>;
+    /**
+     * @return OK
+     */
+    getUsers( cancelToken?: CancelToken): Promise<BasicUserBindingModel[]>;
+    /**
+     * @return OK
+     */
+    update_User(body: UpdateUserBindingModel,  cancelToken?: CancelToken): Promise<BasicUserBindingModel>;
+    /**
+     * @return No Content
+     */
+    deleteUser( cancelToken?: CancelToken): Promise<void>;
+    /**
+     * @return OK
+     */
+    getAvailableDataSourcesForCurrentUser( cancelToken?: CancelToken): Promise<DataSourceBindingModel[]>;
+    /**
+     * @return OK
+     */
+    getAvailableDataSourcesForUser( cancelToken?: CancelToken): Promise<DataSourceBindingModel[]>;
+    /**
+     * @return OK
+     */
+    getCurrentUser( cancelToken?: CancelToken): Promise<DetailedUserBindingModel>;
+    /**
+     * @return OK
+     */
+    getCurrentUserSkillsWithCertificates( cancelToken?: CancelToken): Promise<SkillWithCertificateBindingModel[]>;
+    /**
+     * @return OK
+     */
+    getUserSkillsWithCertificates( cancelToken?: CancelToken): Promise<SkillWithCertificateBindingModel[]>;
+}
+
+export class UsersApiClient extends AuthorizedApiBase implements IUsersApiClient {
+    protected instance: AxiosInstance;
+    protected baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+
+        super();
+
+        this.instance = instance || axios.create();
+
+        this.baseUrl = baseUrl ?? "https://localhost:7108";
+
+    }
+
+    /**
+     * @return No Content
+     */
+    changeOwnPassword(body: ChangeOwnPasswordBindingModel, cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/api/users/change-password";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processChangeOwnPassword(_response);
+        });
+    }
+
+    protected processChangeOwnPassword(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    createUser(body: CreateUserBindingModel, cancelToken?: CancelToken): Promise<BasicUserBindingModel> {
+        let url_ = this.baseUrl + "/api/users";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCreateUser(_response);
+        });
+    }
+
+    protected processCreateUser(response: AxiosResponse): Promise<BasicUserBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = BasicUserBindingModel.fromJS(resultData200);
+            return Promise.resolve<BasicUserBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicUserBindingModel>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getUsers( cancelToken?: CancelToken): Promise<BasicUserBindingModel[]> {
+        let url_ = this.baseUrl + "/api/users";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetUsers(_response);
+        });
+    }
+
+    protected processGetUsers(response: AxiosResponse): Promise<BasicUserBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(BasicUserBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<BasicUserBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicUserBindingModel[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    update_User(body: UpdateUserBindingModel, cancelToken?: CancelToken): Promise<BasicUserBindingModel> {
+        let url_ = this.baseUrl + "/api/users";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUpdate_User(_response);
+        });
+    }
+
+    protected processUpdate_User(response: AxiosResponse): Promise<BasicUserBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = BasicUserBindingModel.fromJS(resultData200);
+            return Promise.resolve<BasicUserBindingModel>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicUserBindingModel>(null as any);
+    }
+
+    /**
+     * @return No Content
+     */
+    deleteUser( cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/api/users/{id}";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDeleteUser(_response);
+        });
+    }
+
+    protected processDeleteUser(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getAvailableDataSourcesForCurrentUser( cancelToken?: CancelToken): Promise<DataSourceBindingModel[]> {
+        let url_ = this.baseUrl + "/api/users/me/available-datasources";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetAvailableDataSourcesForCurrentUser(_response);
+        });
+    }
+
+    protected processGetAvailableDataSourcesForCurrentUser(response: AxiosResponse): Promise<DataSourceBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(DataSourceBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<DataSourceBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<DataSourceBindingModel[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getAvailableDataSourcesForUser( cancelToken?: CancelToken): Promise<DataSourceBindingModel[]> {
+        let url_ = this.baseUrl + "/api/users/{id}/available-datasources";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetAvailableDataSourcesForUser(_response);
+        });
+    }
+
+    protected processGetAvailableDataSourcesForUser(response: AxiosResponse): Promise<DataSourceBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(DataSourceBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<DataSourceBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<DataSourceBindingModel[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getCurrentUser( cancelToken?: CancelToken): Promise<DetailedUserBindingModel> {
+        let url_ = this.baseUrl + "/api/users/me";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetCurrentUser(_response);
+        });
+    }
+
+    protected processGetCurrentUser(response: AxiosResponse): Promise<DetailedUserBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = DetailedUserBindingModel.fromJS(resultData200);
+            return Promise.resolve<DetailedUserBindingModel>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<DetailedUserBindingModel>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getCurrentUserSkillsWithCertificates( cancelToken?: CancelToken): Promise<SkillWithCertificateBindingModel[]> {
+        let url_ = this.baseUrl + "/api/users/me/skills-with-certificates";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetCurrentUserSkillsWithCertificates(_response);
+        });
+    }
+
+    protected processGetCurrentUserSkillsWithCertificates(response: AxiosResponse): Promise<SkillWithCertificateBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SkillWithCertificateBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<SkillWithCertificateBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<SkillWithCertificateBindingModel[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getUserSkillsWithCertificates( cancelToken?: CancelToken): Promise<SkillWithCertificateBindingModel[]> {
+        let url_ = this.baseUrl + "/api/users/{id}/skills-with-certificates";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetUserSkillsWithCertificates(_response);
+        });
+    }
+
+    protected processGetUserSkillsWithCertificates(response: AxiosResponse): Promise<SkillWithCertificateBindingModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(SkillWithCertificateBindingModel.fromJS(item));
+            }
+            else {
+                result200 = null as any;
+            }
+            return Promise.resolve<SkillWithCertificateBindingModel[]>(result200);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<SkillWithCertificateBindingModel[]>(null as any);
+    }
+}
+
+export class ApiInfoBindingModel implements IApiInfoBindingModel {
     version!: string | undefined;
     systemEnvironment!: string | undefined;
 
-    constructor(data?: IITTitansHackathon2025WebAPIModelApiInfoBindingModel) {
+    constructor(data?: IApiInfoBindingModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2372,9 +2333,9 @@ export class ITTitansHackathon2025WebAPIModelApiInfoBindingModel implements IITT
         }
     }
 
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelApiInfoBindingModel {
+    static fromJS(data: any): ApiInfoBindingModel {
         data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelApiInfoBindingModel();
+        let result = new ApiInfoBindingModel();
         result.init(data);
         return result;
     }
@@ -2387,16 +2348,96 @@ export class ITTitansHackathon2025WebAPIModelApiInfoBindingModel implements IITT
     }
 }
 
-export interface IITTitansHackathon2025WebAPIModelApiInfoBindingModel {
+export interface IApiInfoBindingModel {
     version: string | undefined;
     systemEnvironment: string | undefined;
 }
 
-export class ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel implements IITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel {
+export class BasicRoleBindingModel implements IBasicRoleBindingModel {
     id!: string;
-    state!: ITTitansHackathon2025ModelWorkflowSupplyCertificateSupplyCertificateWorkflowStateType;
+    name!: string | undefined;
 
-    constructor(data?: IITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel) {
+    constructor(data?: IBasicRoleBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): BasicRoleBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new BasicRoleBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export interface IBasicRoleBindingModel {
+    id: string;
+    name: string | undefined;
+}
+
+export class BasicSkillBindingModel implements IBasicSkillBindingModel {
+    id!: string;
+    name!: string | undefined;
+
+    constructor(data?: IBasicSkillBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): BasicSkillBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new BasicSkillBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export interface IBasicSkillBindingModel {
+    id: string;
+    name: string | undefined;
+}
+
+export class BasicSupplyCertificateWorkflowBindingModel implements IBasicSupplyCertificateWorkflowBindingModel {
+    id!: string;
+    state!: SupplyCertificateWorkflowStateType;
+
+    constructor(data?: IBasicSupplyCertificateWorkflowBindingModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2412,9 +2453,9 @@ export class ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSuppl
         }
     }
 
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel {
+    static fromJS(data: any): BasicSupplyCertificateWorkflowBindingModel {
         data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel();
+        let result = new BasicSupplyCertificateWorkflowBindingModel();
         result.init(data);
         return result;
     }
@@ -2427,144 +2468,17 @@ export class ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSuppl
     }
 }
 
-export interface IITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateBasicSupplyCertificateWorkflowBindingModel {
+export interface IBasicSupplyCertificateWorkflowBindingModel {
     id: string;
-    state: ITTitansHackathon2025ModelWorkflowSupplyCertificateSupplyCertificateWorkflowStateType;
+    state: SupplyCertificateWorkflowStateType;
 }
 
-export enum ITTitansHackathon2025ModelWorkflowSupplyCertificateSupplyCertificateWorkflowStateType {
-    InReview = 1,
-    Accepted = 2,
-    Declined = 3,
-    Cancelled = -1,
-}
-
-export class ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateProcessSupplyCertificateWorkflowBindingModel implements IITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateProcessSupplyCertificateWorkflowBindingModel {
-    accept!: boolean;
-    reviewComment!: string;
-
-    constructor(data?: IITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateProcessSupplyCertificateWorkflowBindingModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.accept = _data["accept"];
-            this.reviewComment = _data["reviewComment"];
-        }
-    }
-
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateProcessSupplyCertificateWorkflowBindingModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateProcessSupplyCertificateWorkflowBindingModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["accept"] = this.accept;
-        data["reviewComment"] = this.reviewComment;
-        return data;
-    }
-}
-
-export interface IITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateProcessSupplyCertificateWorkflowBindingModel {
-    accept: boolean;
-    reviewComment: string;
-}
-
-export class ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateStartSupplyCertificateWorkflowBindingModel implements IITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateStartSupplyCertificateWorkflowBindingModel {
-    skillId!: string;
-    file!: string;
-
-    constructor(data?: IITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateStartSupplyCertificateWorkflowBindingModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.skillId = _data["skillId"];
-            this.file = _data["file"];
-        }
-    }
-
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateStartSupplyCertificateWorkflowBindingModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateStartSupplyCertificateWorkflowBindingModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["skillId"] = this.skillId;
-        data["file"] = this.file;
-        return data;
-    }
-}
-
-export interface IITTitansHackathon2025WebAPIModelWorkflowSupplyCertificateStartSupplyCertificateWorkflowBindingModel {
-    skillId: string;
-    file: string;
-}
-
-export class ITTitansHackathon2025WebAPIModelUserChangeOwnPasswordBindingModel implements IITTitansHackathon2025WebAPIModelUserChangeOwnPasswordBindingModel {
-    currentPassword!: string;
-    newPassword!: string;
-
-    constructor(data?: IITTitansHackathon2025WebAPIModelUserChangeOwnPasswordBindingModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.currentPassword = _data["currentPassword"];
-            this.newPassword = _data["newPassword"];
-        }
-    }
-
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelUserChangeOwnPasswordBindingModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelUserChangeOwnPasswordBindingModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["currentPassword"] = this.currentPassword;
-        data["newPassword"] = this.newPassword;
-        return data;
-    }
-}
-
-export interface IITTitansHackathon2025WebAPIModelUserChangeOwnPasswordBindingModel {
-    currentPassword: string;
-    newPassword: string;
-}
-
-export class ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel implements IITTitansHackathon2025WebAPIModelUserBasicUserBindingModel {
+export class BasicUserBindingModel implements IBasicUserBindingModel {
     id!: string;
-    userName!: string;
-    displayName!: string;
+    userName!: string | undefined;
+    displayName!: string | undefined;
 
-    constructor(data?: IITTitansHackathon2025WebAPIModelUserBasicUserBindingModel) {
+    constructor(data?: IBasicUserBindingModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2581,9 +2495,9 @@ export class ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel implement
         }
     }
 
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel {
+    static fromJS(data: any): BasicUserBindingModel {
         data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel();
+        let result = new BasicUserBindingModel();
         result.init(data);
         return result;
     }
@@ -2597,18 +2511,186 @@ export class ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel implement
     }
 }
 
-export interface IITTitansHackathon2025WebAPIModelUserBasicUserBindingModel {
+export interface IBasicUserBindingModel {
     id: string;
-    userName: string;
-    displayName: string;
+    userName: string | undefined;
+    displayName: string | undefined;
 }
 
-export class ITTitansHackathon2025WebAPIModelUserCreateUserBindingModel implements IITTitansHackathon2025WebAPIModelUserCreateUserBindingModel {
-    userName!: string;
-    displayName!: string;
-    password!: string;
+export class ChangeOwnPasswordBindingModel implements IChangeOwnPasswordBindingModel {
+    currentPassword!: string | undefined;
+    newPassword!: string | undefined;
 
-    constructor(data?: IITTitansHackathon2025WebAPIModelUserCreateUserBindingModel) {
+    constructor(data?: IChangeOwnPasswordBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.currentPassword = _data["currentPassword"];
+            this.newPassword = _data["newPassword"];
+        }
+    }
+
+    static fromJS(data: any): ChangeOwnPasswordBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new ChangeOwnPasswordBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["currentPassword"] = this.currentPassword;
+        data["newPassword"] = this.newPassword;
+        return data;
+    }
+}
+
+export interface IChangeOwnPasswordBindingModel {
+    currentPassword: string | undefined;
+    newPassword: string | undefined;
+}
+
+export class CreateRoleBindingModel implements ICreateRoleBindingModel {
+    name!: string;
+
+    constructor(data?: ICreateRoleBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): CreateRoleBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateRoleBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export interface ICreateRoleBindingModel {
+    name: string;
+}
+
+export class CreateSkillBindingModel implements ICreateSkillBindingModel {
+    name!: string;
+    description!: string | undefined;
+
+    constructor(data?: ICreateSkillBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.description = _data["description"];
+        }
+    }
+
+    static fromJS(data: any): CreateSkillBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSkillBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["description"] = this.description;
+        return data;
+    }
+}
+
+export interface ICreateSkillBindingModel {
+    name: string;
+    description: string | undefined;
+}
+
+export class CreateUpdateDataSourceBindingModel implements ICreateUpdateDataSourceBindingModel {
+    name!: string;
+    description!: string | undefined;
+    requiredSkillIds!: string[] | undefined;
+
+    constructor(data?: ICreateUpdateDataSourceBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.description = _data["description"];
+            if (Array.isArray(_data["requiredSkillIds"])) {
+                this.requiredSkillIds = [] as any;
+                for (let item of _data["requiredSkillIds"])
+                    this.requiredSkillIds!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateUpdateDataSourceBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateUpdateDataSourceBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["description"] = this.description;
+        if (Array.isArray(this.requiredSkillIds)) {
+            data["requiredSkillIds"] = [];
+            for (let item of this.requiredSkillIds)
+                data["requiredSkillIds"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ICreateUpdateDataSourceBindingModel {
+    name: string;
+    description: string | undefined;
+    requiredSkillIds: string[] | undefined;
+}
+
+export class CreateUserBindingModel implements ICreateUserBindingModel {
+    userName!: string | undefined;
+    displayName!: string | undefined;
+    password!: string | undefined;
+
+    constructor(data?: ICreateUserBindingModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2625,9 +2707,9 @@ export class ITTitansHackathon2025WebAPIModelUserCreateUserBindingModel implemen
         }
     }
 
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelUserCreateUserBindingModel {
+    static fromJS(data: any): CreateUserBindingModel {
         data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelUserCreateUserBindingModel();
+        let result = new CreateUserBindingModel();
         result.init(data);
         return result;
     }
@@ -2641,19 +2723,19 @@ export class ITTitansHackathon2025WebAPIModelUserCreateUserBindingModel implemen
     }
 }
 
-export interface IITTitansHackathon2025WebAPIModelUserCreateUserBindingModel {
-    userName: string;
-    displayName: string;
-    password: string;
+export interface ICreateUserBindingModel {
+    userName: string | undefined;
+    displayName: string | undefined;
+    password: string | undefined;
 }
 
-export class ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel implements IITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel {
+export class DataSourceBindingModel implements IDataSourceBindingModel {
     id!: string;
-    name!: string;
+    name!: string | undefined;
     description!: string | undefined;
-    requiredSkills!: ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel[];
+    requiredSkills!: BasicSkillBindingModel[] | undefined;
 
-    constructor(data?: IITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel) {
+    constructor(data?: IDataSourceBindingModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2670,14 +2752,14 @@ export class ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel im
             if (Array.isArray(_data["requiredSkills"])) {
                 this.requiredSkills = [] as any;
                 for (let item of _data["requiredSkills"])
-                    this.requiredSkills!.push(ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel.fromJS(item));
+                    this.requiredSkills!.push(BasicSkillBindingModel.fromJS(item));
             }
         }
     }
 
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel {
+    static fromJS(data: any): DataSourceBindingModel {
         data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel();
+        let result = new DataSourceBindingModel();
         result.init(data);
         return result;
     }
@@ -2696,18 +2778,21 @@ export class ITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel im
     }
 }
 
-export interface IITTitansHackathon2025WebAPIModelDataSourceDataSourceBindingModel {
+export interface IDataSourceBindingModel {
     id: string;
-    name: string;
+    name: string | undefined;
     description: string | undefined;
-    requiredSkills: ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel[];
+    requiredSkills: BasicSkillBindingModel[] | undefined;
 }
 
-export class ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel implements IITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel {
+export class DataSourceRecommendationBindingModel implements IDataSourceRecommendationBindingModel {
     id!: string;
-    name!: string;
+    name!: string | undefined;
+    description!: string | undefined;
+    hasAccess!: boolean;
+    requiredSkills!: RequiredSkillAccessBindingModel[] | undefined;
 
-    constructor(data?: IITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel) {
+    constructor(data?: IDataSourceRecommendationBindingModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2720,12 +2805,19 @@ export class ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel impleme
         if (_data) {
             this.id = _data["id"];
             this.name = _data["name"];
+            this.description = _data["description"];
+            this.hasAccess = _data["hasAccess"];
+            if (Array.isArray(_data["requiredSkills"])) {
+                this.requiredSkills = [] as any;
+                for (let item of _data["requiredSkills"])
+                    this.requiredSkills!.push(RequiredSkillAccessBindingModel.fromJS(item));
+            }
         }
     }
 
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel {
+    static fromJS(data: any): DataSourceRecommendationBindingModel {
         data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel();
+        let result = new DataSourceRecommendationBindingModel();
         result.init(data);
         return result;
     }
@@ -2734,23 +2826,33 @@ export class ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel impleme
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["description"] = this.description;
+        data["hasAccess"] = this.hasAccess;
+        if (Array.isArray(this.requiredSkills)) {
+            data["requiredSkills"] = [];
+            for (let item of this.requiredSkills)
+                data["requiredSkills"].push(item ? item.toJSON() : undefined as any);
+        }
         return data;
     }
 }
 
-export interface IITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel {
+export interface IDataSourceRecommendationBindingModel {
     id: string;
-    name: string;
+    name: string | undefined;
+    description: string | undefined;
+    hasAccess: boolean;
+    requiredSkills: RequiredSkillAccessBindingModel[] | undefined;
 }
 
-export class ITTitansHackathon2025WebAPIModelUserDetailedUserBindingModel implements IITTitansHackathon2025WebAPIModelUserDetailedUserBindingModel {
+export class DetailedUserBindingModel implements IDetailedUserBindingModel {
     id!: string;
-    userName!: string;
-    displayName!: string;
-    skills!: ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel[];
-    reviewableSkills!: ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel[];
+    userName!: string | undefined;
+    displayName!: string | undefined;
+    skills!: BasicSkillBindingModel[] | undefined;
+    reviewableSkills!: BasicSkillBindingModel[] | undefined;
 
-    constructor(data?: IITTitansHackathon2025WebAPIModelUserDetailedUserBindingModel) {
+    constructor(data?: IDetailedUserBindingModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2767,19 +2869,19 @@ export class ITTitansHackathon2025WebAPIModelUserDetailedUserBindingModel implem
             if (Array.isArray(_data["skills"])) {
                 this.skills = [] as any;
                 for (let item of _data["skills"])
-                    this.skills!.push(ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel.fromJS(item));
+                    this.skills!.push(BasicSkillBindingModel.fromJS(item));
             }
             if (Array.isArray(_data["reviewableSkills"])) {
                 this.reviewableSkills = [] as any;
                 for (let item of _data["reviewableSkills"])
-                    this.reviewableSkills!.push(ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel.fromJS(item));
+                    this.reviewableSkills!.push(BasicSkillBindingModel.fromJS(item));
             }
         }
     }
 
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelUserDetailedUserBindingModel {
+    static fromJS(data: any): DetailedUserBindingModel {
         data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelUserDetailedUserBindingModel();
+        let result = new DetailedUserBindingModel();
         result.init(data);
         return result;
     }
@@ -2803,24 +2905,284 @@ export class ITTitansHackathon2025WebAPIModelUserDetailedUserBindingModel implem
     }
 }
 
-export interface IITTitansHackathon2025WebAPIModelUserDetailedUserBindingModel {
+export interface IDetailedUserBindingModel {
     id: string;
-    userName: string;
-    displayName: string;
-    skills: ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel[];
-    reviewableSkills: ITTitansHackathon2025WebAPIModelSkillBasicSkillBindingModel[];
+    userName: string | undefined;
+    displayName: string | undefined;
+    skills: BasicSkillBindingModel[] | undefined;
+    reviewableSkills: BasicSkillBindingModel[] | undefined;
 }
 
-export class ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel implements IITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel {
-    skillId!: string;
-    skillName!: string;
-    workflowId!: string;
-    certificateFileName!: string;
-    certificateContentType!: string;
-    certificateSizeInBytes!: number;
-    certificateContentBase64!: string;
+export class LoginBindingModel implements ILoginBindingModel {
+    userName!: string | undefined;
+    password!: string | undefined;
+    rememberMe!: boolean;
 
-    constructor(data?: IITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel) {
+    constructor(data?: ILoginBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userName = _data["userName"];
+            this.password = _data["password"];
+            this.rememberMe = _data["rememberMe"];
+        }
+    }
+
+    static fromJS(data: any): LoginBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new LoginBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userName"] = this.userName;
+        data["password"] = this.password;
+        data["rememberMe"] = this.rememberMe;
+        return data;
+    }
+}
+
+export interface ILoginBindingModel {
+    userName: string | undefined;
+    password: string | undefined;
+    rememberMe: boolean;
+}
+
+export class LoginResponseBindingModel implements ILoginResponseBindingModel {
+    token!: string | undefined;
+
+    constructor(data?: ILoginResponseBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.token = _data["token"];
+        }
+    }
+
+    static fromJS(data: any): LoginResponseBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new LoginResponseBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["token"] = this.token;
+        return data;
+    }
+}
+
+export interface ILoginResponseBindingModel {
+    token: string | undefined;
+}
+
+export class ProcessSupplyCertificateWorkflowBindingModel implements IProcessSupplyCertificateWorkflowBindingModel {
+    accept!: boolean;
+    reviewComment!: string;
+
+    constructor(data?: IProcessSupplyCertificateWorkflowBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.accept = _data["accept"];
+            this.reviewComment = _data["reviewComment"];
+        }
+    }
+
+    static fromJS(data: any): ProcessSupplyCertificateWorkflowBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProcessSupplyCertificateWorkflowBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accept"] = this.accept;
+        data["reviewComment"] = this.reviewComment;
+        return data;
+    }
+}
+
+export interface IProcessSupplyCertificateWorkflowBindingModel {
+    accept: boolean;
+    reviewComment: string;
+}
+
+export class RecommendDataSourcesRequest implements IRecommendDataSourcesRequest {
+    query!: string | undefined;
+    max!: number;
+
+    constructor(data?: IRecommendDataSourcesRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.query = _data["query"];
+            this.max = _data["max"];
+        }
+    }
+
+    static fromJS(data: any): RecommendDataSourcesRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new RecommendDataSourcesRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["query"] = this.query;
+        data["max"] = this.max;
+        return data;
+    }
+}
+
+export interface IRecommendDataSourcesRequest {
+    query: string | undefined;
+    max: number;
+}
+
+export class RequiredSkillAccessBindingModel implements IRequiredSkillAccessBindingModel {
+    id!: string;
+    name!: string | undefined;
+    hasSkill!: boolean;
+
+    constructor(data?: IRequiredSkillAccessBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.hasSkill = _data["hasSkill"];
+        }
+    }
+
+    static fromJS(data: any): RequiredSkillAccessBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new RequiredSkillAccessBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["hasSkill"] = this.hasSkill;
+        return data;
+    }
+}
+
+export interface IRequiredSkillAccessBindingModel {
+    id: string;
+    name: string | undefined;
+    hasSkill: boolean;
+}
+
+export class SkillDetailBindingModel implements ISkillDetailBindingModel {
+    id!: string;
+    name!: string | undefined;
+    description!: string | undefined;
+    possibleReviewers!: BasicUserBindingModel[] | undefined;
+
+    constructor(data?: ISkillDetailBindingModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            if (Array.isArray(_data["possibleReviewers"])) {
+                this.possibleReviewers = [] as any;
+                for (let item of _data["possibleReviewers"])
+                    this.possibleReviewers!.push(BasicUserBindingModel.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SkillDetailBindingModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new SkillDetailBindingModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        if (Array.isArray(this.possibleReviewers)) {
+            data["possibleReviewers"] = [];
+            for (let item of this.possibleReviewers)
+                data["possibleReviewers"].push(item ? item.toJSON() : undefined as any);
+        }
+        return data;
+    }
+}
+
+export interface ISkillDetailBindingModel {
+    id: string;
+    name: string | undefined;
+    description: string | undefined;
+    possibleReviewers: BasicUserBindingModel[] | undefined;
+}
+
+export class SkillWithCertificateBindingModel implements ISkillWithCertificateBindingModel {
+    skillId!: string;
+    skillName!: string | undefined;
+    workflowId!: string;
+    certificateFileName!: string | undefined;
+    certificateContentType!: string | undefined;
+    certificateSizeInBytes!: number;
+    certificateContentBase64!: string | undefined;
+
+    constructor(data?: ISkillWithCertificateBindingModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2841,9 +3203,9 @@ export class ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingMod
         }
     }
 
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel {
+    static fromJS(data: any): SkillWithCertificateBindingModel {
         data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel();
+        let result = new SkillWithCertificateBindingModel();
         result.init(data);
         return result;
     }
@@ -2861,23 +3223,21 @@ export class ITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingMod
     }
 }
 
-export interface IITTitansHackathon2025WebAPIModelSkillSkillWithCertificateBindingModel {
+export interface ISkillWithCertificateBindingModel {
     skillId: string;
-    skillName: string;
+    skillName: string | undefined;
     workflowId: string;
-    certificateFileName: string;
-    certificateContentType: string;
+    certificateFileName: string | undefined;
+    certificateContentType: string | undefined;
     certificateSizeInBytes: number;
-    certificateContentBase64: string;
+    certificateContentBase64: string | undefined;
 }
 
-export class ITTitansHackathon2025WebAPIModelUserUpdateUserBindingModel implements IITTitansHackathon2025WebAPIModelUserUpdateUserBindingModel {
-    id!: string;
-    userName!: string;
-    displayName!: string;
-    password!: string | undefined;
+export class StartSupplyCertificateWorkflowBindingModel implements IStartSupplyCertificateWorkflowBindingModel {
+    skillId!: string;
+    file!: string | undefined;
 
-    constructor(data?: IITTitansHackathon2025WebAPIModelUserUpdateUserBindingModel) {
+    constructor(data?: IStartSupplyCertificateWorkflowBindingModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2888,84 +3248,43 @@ export class ITTitansHackathon2025WebAPIModelUserUpdateUserBindingModel implemen
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
-            this.userName = _data["userName"];
-            this.displayName = _data["displayName"];
-            this.password = _data["password"];
+            this.skillId = _data["skillId"];
+            this.file = _data["file"];
         }
     }
 
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelUserUpdateUserBindingModel {
+    static fromJS(data: any): StartSupplyCertificateWorkflowBindingModel {
         data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelUserUpdateUserBindingModel();
+        let result = new StartSupplyCertificateWorkflowBindingModel();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["userName"] = this.userName;
-        data["displayName"] = this.displayName;
-        data["password"] = this.password;
+        data["skillId"] = this.skillId;
+        data["file"] = this.file;
         return data;
     }
 }
 
-export interface IITTitansHackathon2025WebAPIModelUserUpdateUserBindingModel {
-    id: string;
-    userName: string;
-    displayName: string;
-    password: string | undefined;
+export interface IStartSupplyCertificateWorkflowBindingModel {
+    skillId: string;
+    file: string | undefined;
 }
 
-export class ITTitansHackathon2025WebAPIModelSkillCreateSkillBindingModel implements IITTitansHackathon2025WebAPIModelSkillCreateSkillBindingModel {
-    name!: string;
-    description!: string | undefined;
-
-    constructor(data?: IITTitansHackathon2025WebAPIModelSkillCreateSkillBindingModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.name = _data["name"];
-            this.description = _data["description"];
-        }
-    }
-
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelSkillCreateSkillBindingModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelSkillCreateSkillBindingModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["description"] = this.description;
-        return data;
-    }
+export enum SupplyCertificateWorkflowStateType {
+    _1 = 1,
+    _2 = 2,
+    _3 = 3,
+    __1 = -1,
 }
 
-export interface IITTitansHackathon2025WebAPIModelSkillCreateSkillBindingModel {
-    name: string;
-    description: string | undefined;
-}
-
-export class ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel implements IITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel {
+export class UpdateRoleBindingModel implements IUpdateRoleBindingModel {
     id!: string;
     name!: string;
-    description!: string | undefined;
-    possibleReviewers!: ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel[];
 
-    constructor(data?: IITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel) {
+    constructor(data?: IUpdateRoleBindingModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2978,18 +3297,12 @@ export class ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel implem
         if (_data) {
             this.id = _data["id"];
             this.name = _data["name"];
-            this.description = _data["description"];
-            if (Array.isArray(_data["possibleReviewers"])) {
-                this.possibleReviewers = [] as any;
-                for (let item of _data["possibleReviewers"])
-                    this.possibleReviewers!.push(ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel.fromJS(item));
-            }
         }
     }
 
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel {
+    static fromJS(data: any): UpdateRoleBindingModel {
         data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel();
+        let result = new UpdateRoleBindingModel();
         result.init(data);
         return result;
     }
@@ -2998,29 +3311,21 @@ export class ITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel implem
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        data["description"] = this.description;
-        if (Array.isArray(this.possibleReviewers)) {
-            data["possibleReviewers"] = [];
-            for (let item of this.possibleReviewers)
-                data["possibleReviewers"].push(item ? item.toJSON() : undefined as any);
-        }
         return data;
     }
 }
 
-export interface IITTitansHackathon2025WebAPIModelSkillSkillDetailBindingModel {
+export interface IUpdateRoleBindingModel {
     id: string;
     name: string;
-    description: string | undefined;
-    possibleReviewers: ITTitansHackathon2025WebAPIModelUserBasicUserBindingModel[];
 }
 
-export class ITTitansHackathon2025WebAPIModelSkillUpdateSkillBindingModel implements IITTitansHackathon2025WebAPIModelSkillUpdateSkillBindingModel {
+export class UpdateSkillBindingModel implements IUpdateSkillBindingModel {
     id!: string;
     name!: string;
     description!: string | undefined;
 
-    constructor(data?: IITTitansHackathon2025WebAPIModelSkillUpdateSkillBindingModel) {
+    constructor(data?: IUpdateSkillBindingModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3037,9 +3342,9 @@ export class ITTitansHackathon2025WebAPIModelSkillUpdateSkillBindingModel implem
         }
     }
 
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelSkillUpdateSkillBindingModel {
+    static fromJS(data: any): UpdateSkillBindingModel {
         data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelSkillUpdateSkillBindingModel();
+        let result = new UpdateSkillBindingModel();
         result.init(data);
         return result;
     }
@@ -3053,17 +3358,17 @@ export class ITTitansHackathon2025WebAPIModelSkillUpdateSkillBindingModel implem
     }
 }
 
-export interface IITTitansHackathon2025WebAPIModelSkillUpdateSkillBindingModel {
+export interface IUpdateSkillBindingModel {
     id: string;
     name: string;
     description: string | undefined;
 }
 
-export class ITTitansHackathon2025WebAPIModelSkillUpdateSkillReviewersBindingModel implements IITTitansHackathon2025WebAPIModelSkillUpdateSkillReviewersBindingModel {
+export class UpdateSkillReviewersBindingModel implements IUpdateSkillReviewersBindingModel {
     skillId!: string;
     reviewerUserIds!: string[];
 
-    constructor(data?: IITTitansHackathon2025WebAPIModelSkillUpdateSkillReviewersBindingModel) {
+    constructor(data?: IUpdateSkillReviewersBindingModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3086,9 +3391,9 @@ export class ITTitansHackathon2025WebAPIModelSkillUpdateSkillReviewersBindingMod
         }
     }
 
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelSkillUpdateSkillReviewersBindingModel {
+    static fromJS(data: any): UpdateSkillReviewersBindingModel {
         data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelSkillUpdateSkillReviewersBindingModel();
+        let result = new UpdateSkillReviewersBindingModel();
         result.init(data);
         return result;
     }
@@ -3105,16 +3410,18 @@ export class ITTitansHackathon2025WebAPIModelSkillUpdateSkillReviewersBindingMod
     }
 }
 
-export interface IITTitansHackathon2025WebAPIModelSkillUpdateSkillReviewersBindingModel {
+export interface IUpdateSkillReviewersBindingModel {
     skillId: string;
     reviewerUserIds: string[];
 }
 
-export class ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel implements IITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel {
+export class UpdateUserBindingModel implements IUpdateUserBindingModel {
     id!: string;
-    name!: string;
+    userName!: string | undefined;
+    displayName!: string | undefined;
+    password!: string | undefined;
 
-    constructor(data?: IITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel) {
+    constructor(data?: IUpdateUserBindingModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3126,370 +3433,34 @@ export class ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel implement
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
-            this.name = _data["name"];
-        }
-    }
-
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data;
-    }
-}
-
-export interface IITTitansHackathon2025WebAPIModelRoleBasicRoleBindingModel {
-    id: string;
-    name: string;
-}
-
-export class ITTitansHackathon2025WebAPIModelRoleCreateRoleBindingModel implements IITTitansHackathon2025WebAPIModelRoleCreateRoleBindingModel {
-    name!: string;
-
-    constructor(data?: IITTitansHackathon2025WebAPIModelRoleCreateRoleBindingModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.name = _data["name"];
-        }
-    }
-
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelRoleCreateRoleBindingModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelRoleCreateRoleBindingModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        return data;
-    }
-}
-
-export interface IITTitansHackathon2025WebAPIModelRoleCreateRoleBindingModel {
-    name: string;
-}
-
-export class ITTitansHackathon2025WebAPIModelRoleUpdateRoleBindingModel implements IITTitansHackathon2025WebAPIModelRoleUpdateRoleBindingModel {
-    id!: string;
-    name!: string;
-
-    constructor(data?: IITTitansHackathon2025WebAPIModelRoleUpdateRoleBindingModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-        }
-    }
-
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelRoleUpdateRoleBindingModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelRoleUpdateRoleBindingModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data;
-    }
-}
-
-export interface IITTitansHackathon2025WebAPIModelRoleUpdateRoleBindingModel {
-    id: string;
-    name: string;
-}
-
-export class ITTitansHackathon2025WebAPIModelDataSourceCreateUpdateDataSourceBindingModel implements IITTitansHackathon2025WebAPIModelDataSourceCreateUpdateDataSourceBindingModel {
-    name!: string;
-    description!: string | undefined;
-    requiredSkillIds!: string[];
-
-    constructor(data?: IITTitansHackathon2025WebAPIModelDataSourceCreateUpdateDataSourceBindingModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.name = _data["name"];
-            this.description = _data["description"];
-            if (Array.isArray(_data["requiredSkillIds"])) {
-                this.requiredSkillIds = [] as any;
-                for (let item of _data["requiredSkillIds"])
-                    this.requiredSkillIds!.push(item);
-            }
-        }
-    }
-
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelDataSourceCreateUpdateDataSourceBindingModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelDataSourceCreateUpdateDataSourceBindingModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["description"] = this.description;
-        if (Array.isArray(this.requiredSkillIds)) {
-            data["requiredSkillIds"] = [];
-            for (let item of this.requiredSkillIds)
-                data["requiredSkillIds"].push(item);
-        }
-        return data;
-    }
-}
-
-export interface IITTitansHackathon2025WebAPIModelDataSourceCreateUpdateDataSourceBindingModel {
-    name: string;
-    description: string | undefined;
-    requiredSkillIds: string[];
-}
-
-export class ITTitansHackathon2025WebAPIModelDataSourceDataSourceRecommendationBindingModel implements IITTitansHackathon2025WebAPIModelDataSourceDataSourceRecommendationBindingModel {
-    id!: string;
-    name!: string;
-    description!: string | undefined;
-    hasAccess!: boolean;
-    requiredSkills!: ITTitansHackathon2025WebAPIModelSkillRequiredSkillAccessBindingModel[];
-
-    constructor(data?: IITTitansHackathon2025WebAPIModelDataSourceDataSourceRecommendationBindingModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.description = _data["description"];
-            this.hasAccess = _data["hasAccess"];
-            if (Array.isArray(_data["requiredSkills"])) {
-                this.requiredSkills = [] as any;
-                for (let item of _data["requiredSkills"])
-                    this.requiredSkills!.push(ITTitansHackathon2025WebAPIModelSkillRequiredSkillAccessBindingModel.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelDataSourceDataSourceRecommendationBindingModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelDataSourceDataSourceRecommendationBindingModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["description"] = this.description;
-        data["hasAccess"] = this.hasAccess;
-        if (Array.isArray(this.requiredSkills)) {
-            data["requiredSkills"] = [];
-            for (let item of this.requiredSkills)
-                data["requiredSkills"].push(item ? item.toJSON() : undefined as any);
-        }
-        return data;
-    }
-}
-
-export interface IITTitansHackathon2025WebAPIModelDataSourceDataSourceRecommendationBindingModel {
-    id: string;
-    name: string;
-    description: string | undefined;
-    hasAccess: boolean;
-    requiredSkills: ITTitansHackathon2025WebAPIModelSkillRequiredSkillAccessBindingModel[];
-}
-
-export class ITTitansHackathon2025WebAPIModelSkillRequiredSkillAccessBindingModel implements IITTitansHackathon2025WebAPIModelSkillRequiredSkillAccessBindingModel {
-    id!: string;
-    name!: string;
-    hasSkill!: boolean;
-
-    constructor(data?: IITTitansHackathon2025WebAPIModelSkillRequiredSkillAccessBindingModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.hasSkill = _data["hasSkill"];
-        }
-    }
-
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelSkillRequiredSkillAccessBindingModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelSkillRequiredSkillAccessBindingModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["hasSkill"] = this.hasSkill;
-        return data;
-    }
-}
-
-export interface IITTitansHackathon2025WebAPIModelSkillRequiredSkillAccessBindingModel {
-    id: string;
-    name: string;
-    hasSkill: boolean;
-}
-
-export class ITTitansHackathon2025WebAPIEndpointsDataSourceRecommendDataSourcesRequest implements IITTitansHackathon2025WebAPIEndpointsDataSourceRecommendDataSourcesRequest {
-
-    constructor(data?: IITTitansHackathon2025WebAPIEndpointsDataSourceRecommendDataSourcesRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-    }
-
-    static fromJS(data: any): ITTitansHackathon2025WebAPIEndpointsDataSourceRecommendDataSourcesRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIEndpointsDataSourceRecommendDataSourcesRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        return data;
-    }
-}
-
-export interface IITTitansHackathon2025WebAPIEndpointsDataSourceRecommendDataSourcesRequest {
-}
-
-export class ITTitansHackathon2025WebAPIModelAuthLoginResponseBindingModel implements IITTitansHackathon2025WebAPIModelAuthLoginResponseBindingModel {
-    token!: string;
-
-    constructor(data?: IITTitansHackathon2025WebAPIModelAuthLoginResponseBindingModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.token = _data["token"];
-        }
-    }
-
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelAuthLoginResponseBindingModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelAuthLoginResponseBindingModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["token"] = this.token;
-        return data;
-    }
-}
-
-export interface IITTitansHackathon2025WebAPIModelAuthLoginResponseBindingModel {
-    token: string;
-}
-
-export class ITTitansHackathon2025WebAPIModelAuthLoginBindingModel implements IITTitansHackathon2025WebAPIModelAuthLoginBindingModel {
-    userName!: string;
-    password!: string;
-    rememberMe!: boolean;
-
-    constructor(data?: IITTitansHackathon2025WebAPIModelAuthLoginBindingModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
             this.userName = _data["userName"];
+            this.displayName = _data["displayName"];
             this.password = _data["password"];
-            this.rememberMe = _data["rememberMe"];
         }
     }
 
-    static fromJS(data: any): ITTitansHackathon2025WebAPIModelAuthLoginBindingModel {
+    static fromJS(data: any): UpdateUserBindingModel {
         data = typeof data === 'object' ? data : {};
-        let result = new ITTitansHackathon2025WebAPIModelAuthLoginBindingModel();
+        let result = new UpdateUserBindingModel();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["userName"] = this.userName;
+        data["displayName"] = this.displayName;
         data["password"] = this.password;
-        data["rememberMe"] = this.rememberMe;
         return data;
     }
 }
 
-export interface IITTitansHackathon2025WebAPIModelAuthLoginBindingModel {
-    userName: string;
-    password: string;
-    rememberMe: boolean;
+export interface IUpdateUserBindingModel {
+    id: string;
+    userName: string | undefined;
+    displayName: string | undefined;
+    password: string | undefined;
 }
 
 export class ApiException extends Error {
