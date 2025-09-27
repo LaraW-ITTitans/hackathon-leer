@@ -41,6 +41,7 @@ public class UpdateRoleEndpoint : Endpoint<UpdateRoleBindingModel, BasicRoleBind
         }
 
         role.Name = req.Name;
+        role.Description = req.Description;
         IdentityResult result = await this.roleManager.UpdateAsync(role);
         if (!result.Succeeded)
         {
@@ -58,7 +59,8 @@ public class UpdateRoleEndpoint : Endpoint<UpdateRoleBindingModel, BasicRoleBind
         await this.Send.OkAsync(new BasicRoleBindingModel
         {
             Id = role.Id,
-            Name = role.Name!
+            Name = role.Name!,
+            Description = role.Description,
         }, ct);
     }
 }

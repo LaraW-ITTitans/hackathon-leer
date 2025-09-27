@@ -1,5 +1,4 @@
 using FastEndpoints;
-using ITTitans.Hackathon2025.EntityModel;
 using ITTitans.Hackathon2025.EntityModel.Auth;
 using ITTitans.Hackathon2025.Model.Auth;
 using ITTitans.Hackathon2025.WebAPI.Model.Role;
@@ -35,7 +34,8 @@ public class GetRolesEndpoint : EndpointWithoutRequest<List<BasicRoleBindingMode
             .Select(r => new BasicRoleBindingModel
             {
                 Id = r.Id,
-                Name = r.Name!
+                Name = r.Name!,
+                Description = r.Description,
             })
             .ToListAsync(ct);
 

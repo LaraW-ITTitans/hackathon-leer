@@ -9,5 +9,5 @@ public class CreateUpdateDataSourceBindingModel
 
     public string? Description { get; init; }
 
-    public Guid[] RequiredSkillIds { get; init; } = Array.Empty<Guid>();
+    public Guid[] RequiredSkillIds { get; init; } = [];
 }

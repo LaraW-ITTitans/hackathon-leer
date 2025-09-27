@@ -1,7 +1,5 @@
 ﻿using FastEndpoints;
-using ITTitans.Hackathon2025.EntityModel;
 using ITTitans.Hackathon2025.EntityModel.Auth;
-using ITTitans.Hackathon2025.Model;
 using ITTitans.Hackathon2025.Model.Auth;
 using ITTitans.Hackathon2025.WebAPI.Model.Role;
 using ITTitans.Hackathon2025.WebAPI.Utils;
@@ -37,6 +35,7 @@ public class CreateRoleEndpoint : Endpoint<CreateRoleBindingModel, BasicRoleBind
         var role = new HackathonRoleEntity
         {
             Name = req.Name,
+            Description = req.Description,
             IsDeleted = false,
         };
         IdentityResult result = await this.roleManager.CreateAsync(role);
@@ -58,6 +57,7 @@ public class CreateRoleEndpoint : Endpoint<CreateRoleBindingModel, BasicRoleBind
         {
             Id = role.Id,
             Name = role.Name,
+            Description = role.Description,
         }, ct);
     }
 }
