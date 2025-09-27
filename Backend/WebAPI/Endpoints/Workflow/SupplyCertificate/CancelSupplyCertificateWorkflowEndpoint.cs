@@ -2,11 +2,9 @@
 using FastEndpoints;
 using ITTitans.Hackathon2025.EntityModel;
 using ITTitans.Hackathon2025.EntityModel.Workflow.SupplyCertificate;
-using ITTitans.Hackathon2025.Model.Auth;
 using ITTitans.Hackathon2025.Model.Workflow.SupplyCertificate;
 using ITTitans.Hackathon2025.WebAPI.Auth;
 using ITTitans.Hackathon2025.WebAPI.Model.Workflow.SupplyCertificate;
-using ITTitans.Hackathon2025.WebAPI.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace ITTitans.Hackathon2025.WebAPI.Endpoints.Workflow.SupplyCertificate;

@@ -13,6 +13,7 @@ public enum AuthClaimType
     
     SupplyCertificateWorkflowStart = 20,
     SupplyCertificateWorkflowProcess = 21,
+    SupplyCertificateWorkflowSee = 22,
     
     DemandDataSourceWorkflowStart = 30,
     DemandDataSourceWorkflowProcess = 31,
