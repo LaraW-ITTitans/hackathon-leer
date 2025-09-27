@@ -201,6 +201,9 @@ namespace ITTitans.Hackathon2025.EntityModel.Migrations
                         .HasMaxLength(2500)
                         .HasColumnType("character varying(2500)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)

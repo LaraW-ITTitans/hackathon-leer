@@ -16,4 +16,6 @@ public class DataSourceEntity
     public string? Description { get; set; }
 
     public List<DataSourceRequirementEntity> Requirements { get; init; } = [];
+
+    public bool IsDeleted { get; set; }
 }

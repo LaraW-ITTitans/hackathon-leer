@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ITTitans.Hackathon2025.EntityModel.Migrations
 {
     [DbContext(typeof(HackathonDbContext))]
-    [Migration("20250927093459_AddDataSourceEntities")]
+    [Migration("20250927093926_AddDataSourceEntities")]
     partial class AddDataSourceEntities
     {
         /// <inheritdoc />
@@ -203,6 +203,9 @@ namespace ITTitans.Hackathon2025.EntityModel.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(2500)
                         .HasColumnType("character varying(2500)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
