@@ -17,6 +17,8 @@ public class HackathonDbContext : IdentityDbContext<HackathonUserEntity, Hackath
 
     public DbSet<SkillReviewConfigurationEntity> SkillReviewConfigurations => this.Set<SkillReviewConfigurationEntity>();
 
+    public DbSet<SkillAssignmentEntity> SkillAssignments => this.Set<SkillAssignmentEntity>();
+
     #region workflow
 
     public DbSet<SupplyCertificateWorkflowEntity> SupplyCertificateWorkflows => this.Set<SupplyCertificateWorkflowEntity>();

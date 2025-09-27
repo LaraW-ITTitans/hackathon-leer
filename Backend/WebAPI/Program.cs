@@ -1,4 +1,5 @@
 using FastEndpoints;
+using FastEndpoints.Swagger;
 using ITTitans.Hackathon2025.EntityModel;
 using ITTitans.Hackathon2025.EntityModel.Auth;
 using ITTitans.Hackathon2025.Model;
@@ -47,7 +48,9 @@ public static class Program
             .AddEnvironmentVariables();
         var webServerAppSettingsService = new WebServerAppSettingsService(new AppSettingsReader(builder.Configuration));
         
-        builder.Services.AddFastEndpoints();
+        builder.Services
+            .AddFastEndpoints()
+            .SwaggerDocument();
         
         builder.Services.AddCors(options =>
         {
@@ -190,7 +193,9 @@ public static class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.UseFastEndpoints();
+        app
+            .UseFastEndpoints()
+            .UseSwaggerGen();
 
         if (app.Environment.IsDevelopment())
         {
