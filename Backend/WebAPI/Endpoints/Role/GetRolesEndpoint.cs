@@ -24,7 +24,7 @@ public class GetRolesEndpoint : EndpointWithoutRequest<List<BasicRoleBindingMode
         this.AddHackathonPolicy(AuthClaimType.SeeRole);
         
         this.Description(builder => builder
-            .WithName("Get All Roles")
+            .WithName("GetAllRoles")
             .WithTags("Roles"));
     }
 

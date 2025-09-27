@@ -186,10 +186,6 @@ export interface IRolesApiClient {
      */
     createRole(body: CreateRoleBindingModel,  cancelToken?: CancelToken): Promise<BasicRoleBindingModel>;
     /**
-     * @return No Content
-     */
-    deleteRole(body: DeleteRoleBindingModel,  cancelToken?: CancelToken): Promise<void>;
-    /**
      * @return OK
      */
     getAllRoles( cancelToken?: CancelToken): Promise<BasicRoleBindingModel[]>;
@@ -197,6 +193,10 @@ export interface IRolesApiClient {
      * @return OK
      */
     updateRole(body: UpdateRoleBindingModel,  cancelToken?: CancelToken): Promise<BasicRoleBindingModel>;
+    /**
+     * @return No Content
+     */
+    deleteRole( cancelToken?: CancelToken): Promise<void>;
 }
 
 export class RolesApiClient extends AuthorizedApiBase implements IRolesApiClient {
@@ -275,65 +275,6 @@ export class RolesApiClient extends AuthorizedApiBase implements IRolesApiClient
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Promise.resolve<BasicRoleBindingModel>(null as any);
-    }
-
-    /**
-     * @return No Content
-     */
-    deleteRole(body: DeleteRoleBindingModel, cancelToken?: CancelToken): Promise<void> {
-        let url_ = this.baseUrl + "/api/roles";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_: AxiosRequestConfig = {
-            data: content_,
-            method: "DELETE",
-            url: url_,
-            headers: {
-                "Content-Type": "*/*",
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processDeleteRole(_response);
-        });
-    }
-
-    protected processDeleteRole(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 204) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(null as any);
-
-        } else if (status === 401) {
-            const _responseText = response.data;
-            return throwException("Unauthorized", status, _responseText, _headers);
-
-        } else if (status === 403) {
-            const _responseText = response.data;
-            return throwException("Forbidden", status, _responseText, _headers);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<void>(null as any);
     }
 
     /**
@@ -463,6 +404,61 @@ export class RolesApiClient extends AuthorizedApiBase implements IRolesApiClient
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Promise.resolve<BasicRoleBindingModel>(null as any);
+    }
+
+    /**
+     * @return No Content
+     */
+    deleteRole( cancelToken?: CancelToken): Promise<void> {
+        let url_ = this.baseUrl + "/api/roles/{id}";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDeleteRole(_response);
+        });
+    }
+
+    protected processDeleteRole(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(null as any);
+
+        } else if (status === 401) {
+            const _responseText = response.data;
+            return throwException("Unauthorized", status, _responseText, _headers);
+
+        } else if (status === 403) {
+            const _responseText = response.data;
+            return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(null as any);
     }
 }
 
@@ -899,6 +895,10 @@ export interface IUsersApiClient {
      * @return OK
      */
     update_User(body: UpdateUserBindingModel,  cancelToken?: CancelToken): Promise<BasicUserBindingModel>;
+    /**
+     * @return OK
+     */
+    getCurrentUser( cancelToken?: CancelToken): Promise<BasicUserBindingModel>;
 }
 
 export class UsersApiClient extends AuthorizedApiBase implements IUsersApiClient {
@@ -1214,6 +1214,57 @@ export class UsersApiClient extends AuthorizedApiBase implements IUsersApiClient
         } else if (status === 403) {
             const _responseText = response.data;
             return throwException("Forbidden", status, _responseText, _headers);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<BasicUserBindingModel>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getCurrentUser( cancelToken?: CancelToken): Promise<BasicUserBindingModel> {
+        let url_ = this.baseUrl + "/api/users/me";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetCurrentUser(_response);
+        });
+    }
+
+    protected processGetCurrentUser(response: AxiosResponse): Promise<BasicUserBindingModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = BasicUserBindingModel.fromJS(resultData200);
+            return Promise.resolve<BasicUserBindingModel>(result200);
 
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
@@ -1545,42 +1596,6 @@ export interface ICreateUserBindingModel {
     userName: string | undefined;
     displayName: string | undefined;
     password: string | undefined;
-}
-
-export class DeleteRoleBindingModel implements IDeleteRoleBindingModel {
-    id!: string;
-
-    constructor(data?: IDeleteRoleBindingModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (this as any)[property] = (data as any)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-        }
-    }
-
-    static fromJS(data: any): DeleteRoleBindingModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new DeleteRoleBindingModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        return data;
-    }
-}
-
-export interface IDeleteRoleBindingModel {
-    id: string;
 }
 
 export class DeleteUserBindingModel implements IDeleteUserBindingModel {

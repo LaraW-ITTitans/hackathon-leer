@@ -23,6 +23,7 @@ const useUserStore = defineStore('user', {
     },
     login(user: AuthResult) {
       this.user = user;
+      this.accessToken = user.token;
       this.isAuthenticated = true;
     },
     logout() {
