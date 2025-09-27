@@ -150,13 +150,20 @@ const remainingSeconds = computed(() =>
 const expiresLabel = computed(() => {
   const s = remainingSeconds.value
   if (s <= 0) return 'Expired'
+
   if (s < 60) return `${s}s`
+
   const m = Math.floor(s / 60)
   const sec = s % 60
   if (s < 3600) return `${m}m ${sec}s`
+
   const h = Math.floor(m / 60)
   const mm = m % 60
-  return `${h}h ${mm}m`
+  if (s < 86400) return `${h}h ${mm}m`
+
+  const d = Math.floor(h / 24)
+  const hh = h % 24
+  return `${d}d ${hh}h ${mm}m`
 })
 
 const localExpiry = computed(() => {
