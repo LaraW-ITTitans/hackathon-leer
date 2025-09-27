@@ -5,6 +5,13 @@
       <template #header>
         <div class="card-header">
           <span>Account</span>
+          <el-button
+            type="danger"
+            :icon="Logout"
+            @click="logout"
+          >
+            Logout
+          </el-button>
         </div>
       </template>
 
@@ -205,6 +212,11 @@ const canSubmit = computed(() => {
     !loading.value
   )
 })
+
+const logout = () => {
+  userStore.logout()
+  router.push('/')
+}
 
 const onSubmit = async () => {
   error.value = null

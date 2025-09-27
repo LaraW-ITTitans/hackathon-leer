@@ -31,6 +31,7 @@ const useUserStore = defineStore('user', {
     logout() {
       this.user = undefined;
       this.isAuthenticated = false;
+      this.$reset()
     },
   },
   persist: true,
